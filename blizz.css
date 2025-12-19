@@ -1,0 +1,833 @@
+/**
+ * EnterpriseBotBlizz - Polished Widget Styles
+ * Matching wwz-chatbot design with prefixed classes
+ */
+
+/* ========================================
+   GOOGLE FONTS - Albert Sans
+   ======================================== */
+@import url('https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700&display=swap');
+
+/* ========================================
+   CSS VARIABLES
+   ======================================== */
+.enterprisebot-blizz-app-container {
+    --eb-primary: #147bd1;
+    --eb-primary-hover: #1069b5;
+    --eb-text: #333333;
+    --eb-text-muted: #666666;
+    --eb-text-light: #808080;
+    --eb-bg: #ffffff;
+    --eb-bg-secondary: #f5f5f5;
+    --eb-border: #d0d7de;
+    --eb-border-light: #e5e5e5;
+    --eb-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --eb-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --eb-radius-sm: 6px;
+    --eb-radius-md: 18px;
+    --eb-radius-lg: 24px;
+    --eb-radius-full: 50%;
+}
+
+/* ========================================
+   RESET & BASE
+   ======================================== */
+.enterprisebot-blizz-app-container *,
+.enterprisebot-blizz-app-container *::before,
+.enterprisebot-blizz-app-container *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.enterprisebot-blizz-app-container {
+    font-family: 'Albert Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--eb-text);
+    background: var(--eb-bg);
+    width: 100%;
+    height: 100%;
+}
+
+/* Hidden utility */
+.enterprisebot-blizz-hidden {
+    display: none !important;
+}
+
+/* ========================================
+   COLLAPSED BAR
+   ======================================== */
+.enterprisebot-blizz-collapsed-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--eb-bg);
+    border: 1px solid var(--eb-border-light);
+    border-radius: var(--eb-radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--eb-shadow);
+}
+
+.enterprisebot-blizz-collapsed-bar:hover {
+    border-color: var(--eb-primary);
+    box-shadow: var(--eb-shadow-lg);
+}
+
+.enterprisebot-blizz-collapsed-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--eb-text);
+}
+
+.enterprisebot-blizz-expand-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: var(--eb-text-muted);
+    border-radius: var(--eb-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-expand-btn:hover {
+    background: var(--eb-bg-secondary);
+    color: var(--eb-primary);
+}
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+.enterprisebot-blizz-main-content {
+    display: flex;
+    flex-direction: column;
+    background: var(--eb-bg);
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--eb-radius-sm);
+    box-shadow: var(--eb-shadow-lg);
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.enterprisebot-blizz-chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--eb-bg);
+    border-bottom: 1px solid var(--eb-border-light);
+    min-height: 56px;
+}
+
+.enterprisebot-blizz-header-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--eb-text);
+}
+
+.enterprisebot-blizz-header-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.enterprisebot-blizz-header-btn {
+    padding: 8px;
+    background: transparent;
+    border: none;
+    color: var(--eb-text-muted);
+    cursor: pointer;
+    border-radius: var(--eb-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-header-btn:hover {
+    background: var(--eb-bg-secondary);
+    color: var(--eb-text);
+}
+
+/* ========================================
+   CHAT CONTENT
+   ======================================== */
+.enterprisebot-blizz-chat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* ========================================
+   WELCOME SCREEN
+   ======================================== */
+.enterprisebot-blizz-welcome-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 24px;
+    overflow-y: auto;
+}
+
+.enterprisebot-blizz-welcome-content {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.enterprisebot-blizz-welcome-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: var(--eb-radius-full);
+    margin-bottom: 24px;
+    object-fit: cover;
+    box-shadow: var(--eb-shadow);
+}
+
+.enterprisebot-blizz-welcome-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--eb-text);
+    margin-bottom: 12px;
+}
+
+.enterprisebot-blizz-welcome-subtitle {
+    font-size: 1rem;
+    color: var(--eb-text-muted);
+    font-weight: 400;
+}
+
+/* Welcome Input Wrapper */
+.enterprisebot-blizz-welcome-input-wrapper {
+    width: 100%;
+    max-width: 600px;
+    padding: 0 20px;
+}
+
+.enterprisebot-blizz-welcome-input {
+    border: 1px solid var(--eb-border);
+    border-radius: var(--eb-radius-lg);
+    box-shadow: var(--eb-shadow);
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-welcome-input:focus-within {
+    border-color: var(--eb-primary);
+    box-shadow: 0 2px 12px rgba(20, 123, 209, 0.15);
+}
+
+/* Welcome Suggestions */
+.enterprisebot-blizz-welcome-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* ========================================
+   CHAT SCREEN
+   ======================================== */
+.enterprisebot-blizz-chat-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ========================================
+   MESSAGES CONTAINER
+   ======================================== */
+.enterprisebot-blizz-messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.enterprisebot-blizz-messages-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.enterprisebot-blizz-messages-container::-webkit-scrollbar-thumb {
+    background: var(--eb-border);
+    border-radius: 3px;
+}
+
+.enterprisebot-blizz-messages-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* ========================================
+   MESSAGE STYLES
+   ======================================== */
+.enterprisebot-blizz-message {
+    display: flex;
+    gap: 12px;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.enterprisebot-blizz-message-user {
+    flex-direction: row-reverse;
+}
+
+.enterprisebot-blizz-message-bot {
+    flex-direction: row;
+}
+
+/* Avatar */
+.enterprisebot-blizz-message-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--eb-radius-full);
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.enterprisebot-blizz-message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.enterprisebot-blizz-message-user .enterprisebot-blizz-message-avatar {
+    background: var(--eb-primary);
+    color: var(--eb-bg);
+}
+
+.enterprisebot-blizz-message-bot .enterprisebot-blizz-message-avatar {
+    background: var(--eb-bg-secondary);
+}
+
+/* Message Content */
+.enterprisebot-blizz-message-content {
+    display: flex;
+    flex-direction: column;
+    max-width: calc(100% - 52px);
+}
+
+.enterprisebot-blizz-message-user .enterprisebot-blizz-message-content {
+    align-items: flex-end;
+}
+
+/* Message Bubble */
+.enterprisebot-blizz-message-bubble {
+    padding: 12px 18px;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+
+.enterprisebot-blizz-message-user .enterprisebot-blizz-message-bubble {
+    background: var(--eb-primary);
+    color: var(--eb-bg);
+    border-radius: 20px 20px 4px 20px;
+}
+
+.enterprisebot-blizz-message-bot .enterprisebot-blizz-message-bubble {
+    background: var(--eb-bg-secondary);
+    color: var(--eb-text);
+    border-radius: 20px 20px 20px 4px;
+    padding: 14px 18px;
+}
+
+/* Links in bot messages */
+.enterprisebot-blizz-message-bot .enterprisebot-blizz-message-bubble a {
+    color: var(--eb-primary);
+    text-decoration: underline;
+}
+
+.enterprisebot-blizz-message-bot .enterprisebot-blizz-message-bubble a:hover {
+    color: var(--eb-primary-hover);
+}
+
+/* HTML content in bot messages */
+.enterprisebot-blizz-message-bot .enterprisebot-blizz-message-bubble p {
+    margin: 0 0 12px 0;
+}
+
+.enterprisebot-blizz-message-bot .enterprisebot-blizz-message-bubble p:last-child {
+    margin-bottom: 0;
+}
+
+.enterprisebot-blizz-message-bot .enterprisebot-blizz-message-bubble ul,
+.enterprisebot-blizz-message-bot .enterprisebot-blizz-message-bubble ol {
+    margin: 12px 0;
+    padding-left: 24px;
+}
+
+.enterprisebot-blizz-message-bot .enterprisebot-blizz-message-bubble li {
+    margin: 6px 0;
+}
+
+/* Message Actions */
+.enterprisebot-blizz-message-actions {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.enterprisebot-blizz-message:hover .enterprisebot-blizz-message-actions {
+    opacity: 1;
+}
+
+.enterprisebot-blizz-action-btn {
+    padding: 6px 8px;
+    background: transparent;
+    border: none;
+    color: var(--eb-text-light);
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-action-btn:hover {
+    background: var(--eb-bg-secondary);
+    color: var(--eb-text);
+}
+
+/* ========================================
+   BOTTOM INPUT AREA
+   ======================================== */
+.enterprisebot-blizz-bottom-input-wrapper {
+    padding: 16px 20px 20px;
+    background: var(--eb-bg);
+    border-top: 1px solid var(--eb-border-light);
+}
+
+/* Suggestions */
+.enterprisebot-blizz-suggestions-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Suggestion Button */
+.enterprisebot-blizz-suggestion-btn {
+    background: var(--eb-bg) !important;
+    border: 1px solid var(--eb-border) !important;
+    color: var(--eb-text) !important;
+    padding: 10px 18px !important;
+    border-radius: var(--eb-radius-md) !important;
+    cursor: pointer !important;
+    font-size: 0.875rem !important;
+    font-family: 'Albert Sans', sans-serif !important;
+    font-weight: 500 !important;
+    transition: all 0.2s ease !important;
+}
+
+.enterprisebot-blizz-suggestion-btn:hover {
+    background: var(--eb-primary) !important;
+    border-color: var(--eb-primary) !important;
+    color: var(--eb-bg) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(20, 123, 209, 0.25);
+}
+
+/* Input Container */
+.enterprisebot-blizz-input-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--eb-bg-secondary);
+    border-radius: var(--eb-radius-lg);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.enterprisebot-blizz-input-container textarea {
+    flex: 1;
+    padding: 8px 4px;
+    border: none;
+    background: transparent;
+    font-size: 0.9375rem;
+    font-family: 'Albert Sans', sans-serif;
+    resize: none;
+    outline: none;
+    min-height: 24px;
+    max-height: 200px;
+    line-height: 1.5;
+    color: var(--eb-text);
+}
+
+.enterprisebot-blizz-input-container textarea::placeholder {
+    color: var(--eb-text-light);
+}
+
+/* Input Actions */
+.enterprisebot-blizz-input-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.enterprisebot-blizz-input-btn {
+    padding: 8px;
+    background: transparent;
+    border: none;
+    color: var(--eb-text-muted);
+    cursor: pointer;
+    border-radius: var(--eb-radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-input-btn:hover {
+    background: #e5e5e5;
+    color: var(--eb-text);
+}
+
+/* Send Button */
+.enterprisebot-blizz-send-btn {
+    background: var(--eb-primary) !important;
+    color: var(--eb-bg) !important;
+}
+
+.enterprisebot-blizz-send-btn:hover {
+    background: var(--eb-primary-hover) !important;
+    transform: scale(1.05);
+}
+
+/* Disclaimer */
+.enterprisebot-blizz-disclaimer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--eb-text-light);
+    margin-top: 12px;
+}
+
+/* ========================================
+   TYPING INDICATOR
+   ======================================== */
+.enterprisebot-blizz-typing-indicator {
+    display: flex;
+    gap: 5px;
+    padding: 12px 0;
+}
+
+.enterprisebot-blizz-typing-indicator span {
+    width: 8px;
+    height: 8px;
+    background: var(--eb-text-light);
+    border-radius: var(--eb-radius-full);
+    animation: enterprisebot-blizz-typing 1.4s infinite;
+}
+
+.enterprisebot-blizz-typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.enterprisebot-blizz-typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes enterprisebot-blizz-typing {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.5;
+    }
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   OVERLAY SCREENS
+   ======================================== */
+.enterprisebot-blizz-overlay-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--eb-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.enterprisebot-blizz-overlay-content {
+    text-align: center;
+    padding: 32px;
+    max-width: 400px;
+}
+
+.enterprisebot-blizz-overlay-content h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--eb-text);
+    margin-bottom: 20px;
+}
+
+.enterprisebot-blizz-overlay-content p {
+    font-size: 1rem;
+    color: var(--eb-text-muted);
+    margin-bottom: 16px;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+.enterprisebot-blizz-primary-btn {
+    background: var(--eb-primary);
+    color: var(--eb-bg);
+    border: none;
+    padding: 12px 28px;
+    border-radius: var(--eb-radius-sm);
+    cursor: pointer;
+    font-size: 0.9375rem;
+    font-family: 'Albert Sans', sans-serif;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-primary-btn:hover {
+    background: var(--eb-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(20, 123, 209, 0.25);
+}
+
+.enterprisebot-blizz-secondary-btn {
+    background: transparent;
+    color: var(--eb-text-muted);
+    border: 1px solid var(--eb-border);
+    padding: 12px 28px;
+    border-radius: var(--eb-radius-sm);
+    cursor: pointer;
+    font-size: 0.9375rem;
+    font-family: 'Albert Sans', sans-serif;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-secondary-btn:hover {
+    background: var(--eb-bg-secondary);
+    border-color: var(--eb-text-muted);
+}
+
+/* ========================================
+   FEEDBACK FORM
+   ======================================== */
+.enterprisebot-blizz-feedback-content {
+    max-width: 420px;
+}
+
+.enterprisebot-blizz-feedback-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--eb-text);
+    margin-bottom: 24px;
+}
+
+.enterprisebot-blizz-feedback-smileys {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.enterprisebot-blizz-smiley-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.enterprisebot-blizz-smiley-btn {
+    width: 48px;
+    height: 48px;
+    border: 2px solid var(--eb-border);
+    border-radius: var(--eb-radius-full);
+    background: var(--eb-bg);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--eb-text-muted);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.enterprisebot-blizz-smiley-btn:hover {
+    border-color: var(--eb-primary);
+    color: var(--eb-primary);
+    transform: scale(1.1);
+}
+
+.enterprisebot-blizz-smiley-wrapper.enterprisebot-blizz-selected .enterprisebot-blizz-smiley-btn {
+    background: var(--eb-primary);
+    border-color: var(--eb-primary);
+    color: var(--eb-bg);
+    transform: scale(1.1);
+}
+
+.enterprisebot-blizz-smiley-label {
+    font-size: 0.6875rem;
+    color: var(--eb-text-light);
+    margin-top: 6px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.enterprisebot-blizz-smiley-wrapper:hover .enterprisebot-blizz-smiley-label,
+.enterprisebot-blizz-smiley-wrapper.enterprisebot-blizz-selected .enterprisebot-blizz-smiley-label {
+    opacity: 1;
+}
+
+.enterprisebot-blizz-feedback-textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--eb-border);
+    border-radius: var(--eb-radius-sm);
+    font-size: 0.9375rem;
+    font-family: 'Albert Sans', sans-serif;
+    resize: vertical;
+    min-height: 80px;
+    margin-bottom: 20px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.enterprisebot-blizz-feedback-textarea:focus {
+    border-color: var(--eb-primary);
+}
+
+.enterprisebot-blizz-feedback-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* ========================================
+   THANK YOU SCREEN
+   ======================================== */
+.enterprisebot-blizz-thank-you-icon {
+    margin-bottom: 20px;
+}
+
+.enterprisebot-blizz-thank-you-icon svg {
+    width: 64px;
+    height: 64px;
+}
+
+/* ========================================
+   NOTIFICATIONS (Toast)
+   ======================================== */
+.enterprisebot-blizz-notification {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    border-radius: var(--eb-radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    z-index: 1000;
+    animation: enterprisebot-blizz-slideUp 0.3s ease-out;
+    box-shadow: var(--eb-shadow-lg);
+}
+
+.enterprisebot-blizz-notification-success {
+    background: #10b981;
+    color: #ffffff;
+}
+
+.enterprisebot-blizz-notification-error {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.enterprisebot-blizz-notification-info {
+    background: var(--eb-primary);
+    color: #ffffff;
+}
+
+@keyframes enterprisebot-blizz-slideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ========================================
+   ERROR MESSAGE
+   ======================================== */
+.enterprisebot-blizz-error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    padding: 12px 16px;
+    background: #fef2f2;
+    border-radius: var(--eb-radius-sm);
+    margin-bottom: 12px;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 640px) {
+    .enterprisebot-blizz-welcome-screen {
+        padding: 32px 16px;
+    }
+
+    .enterprisebot-blizz-welcome-title {
+        font-size: 1.5rem;
+    }
+
+    .enterprisebot-blizz-welcome-avatar {
+        width: 60px;
+        height: 60px;
+    }
+
+    .enterprisebot-blizz-messages-container {
+        padding: 16px;
+    }
+
+    .enterprisebot-blizz-bottom-input-wrapper {
+        padding: 12px 16px 16px;
+    }
+
+    .enterprisebot-blizz-feedback-smileys {
+        gap: 8px;
+    }
+
+    .enterprisebot-blizz-smiley-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 0.875rem;
+    }
+}
