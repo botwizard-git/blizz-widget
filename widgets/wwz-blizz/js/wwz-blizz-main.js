@@ -1,10 +1,10 @@
 /**
- * EnterpriseBotBlizz - Main Entry Point
+ * WWZBlizz - Main Entry Point
  */
 (function() {
     'use strict';
 
-    var EBB = window.EnterpriseBotBlizz;
+    var EBB = window.WWZBlizz;
 
     EBB.Main = {
         /**
@@ -16,7 +16,7 @@
             var Events = EBB.Events;
             var StateManager = EBB.StateManager;
 
-            console.log('[EnterpriseBotBlizz] Initializing widget...');
+            console.log('[WWZBlizz] Initializing widget...');
 
             // Initialize UI element references
             UI.init();
@@ -38,7 +38,7 @@
             // Render welcome suggestions
             UI.renderWelcomeSuggestions(CONFIG.defaultSuggestions);
 
-            console.log('[EnterpriseBotBlizz] Initialization complete');
+            console.log('[WWZBlizz] Initialization complete');
         },
 
         /**
@@ -49,7 +49,7 @@
             var StateManager = EBB.StateManager;
 
             var messages = StateManager.getMessages();
-            console.log('[EnterpriseBotBlizz] Restoring', messages.length, 'messages');
+            console.log('[WWZBlizz] Restoring', messages.length, 'messages');
 
             UI.showChatScreen();
             UI.renderMessages(messages);
@@ -64,13 +64,13 @@
             var UI = EBB.UI;
             var StateManager = EBB.StateManager;
 
-            console.log('[EnterpriseBotBlizz] Starting new session...');
+            console.log('[WWZBlizz] Starting new session...');
 
             StateManager.reset();
             UI.showWelcomeScreen();
             UI.renderWelcomeSuggestions(CONFIG.defaultSuggestions);
 
-            console.log('[EnterpriseBotBlizz] New session started');
+            console.log('[WWZBlizz] New session started');
         },
 
         /**
@@ -92,12 +92,12 @@
          */
         getVersionInfo: function() {
             return {
-                name: 'EnterpriseBotBlizz Widget',
+                name: 'WWZBlizz Widget',
                 version: '1.0.0',
                 bot: EBB.CONFIG.botName
             };
         }
     };
 
-    console.log('[EnterpriseBotBlizz] Main loaded');
+    console.log('[WWZBlizz] Main loaded');
 })();

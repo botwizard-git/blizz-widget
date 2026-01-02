@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EnterpriseBotBlizz Widget Test</title>
+    <title>WWZ Blizz Widget Test</title>
     <style>
         /* Sample page styles to test that widget doesn't conflict */
         body {
@@ -32,31 +32,31 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         /* This is where the widget will be embedded */
-        #enterprisebot-blizz-parent {
+        #wwz-blizz-parent {
             margin: 20px 0;
         }
     </style>
 </head>
 <body>
     <div class="page-header">
-        <h1>Blizz.ch Test Page</h1>
+        <h1>WWZ Blizz Test Page</h1>
     </div>
 
     <div class="page-content">
         <div class="sample-card">
             <h2>Welcome to the Test Page</h2>
-            <p>This page demonstrates the EnterpriseBotBlizz widget embedded inline. The widget should appear below this text.</p>
+            <p>This page demonstrates the WWZBlizz widget embedded inline. The widget should appear below this text.</p>
         </div>
 
         <!-- This is where the chatbot widget will be embedded -->
-        <div id="enterprisebot-blizz-parent"></div>
+        <div id="wwz-blizz-parent"></div>
 
         <div class="sample-card">
             <h2>Additional Content</h2>
             <p>This content appears below the widget to show that the layout is preserved.</p>
             <ul>
-                <li>The widget uses prefixed CSS classes (enterprisebot-blizz-*)</li>
-                <li>All JavaScript is namespaced under window.EnterpriseBotBlizz</li>
+                <li>The widget uses prefixed CSS classes (wwz-blizz-*)</li>
+                <li>All JavaScript is namespaced under window.WWZBlizz</li>
                 <li>The close button minimizes the widget to a collapsed bar</li>
                 <li>Click the collapsed bar or expand button to restore</li>
             </ul>
@@ -65,14 +65,14 @@
         <div class="sample-card">
             <h2>API Controls</h2>
             <p>You can control the widget programmatically:</p>
-            <button onclick="window.EnterpriseBotBlizz.Main.collapse()">Collapse Widget</button>
-            <button onclick="window.EnterpriseBotBlizz.Main.expand()">Expand Widget</button>
-            <button onclick="window.EnterpriseBotBlizz.Main.startNewSession()">New Session</button>
-            <button onclick="console.log(window.EnterpriseBotBlizz.Main.getVersionInfo())">Log Version Info</button>
+            <button onclick="window.WWZBlizz.Main.collapse()">Collapse Widget</button>
+            <button onclick="window.WWZBlizz.Main.expand()">Expand Widget</button>
+            <button onclick="window.WWZBlizz.Main.startNewSession()">New Session</button>
+            <button onclick="console.log(window.WWZBlizz.Main.getVersionInfo())">Log Version Info</button>
         </div>
     </div>
 
     <!-- Load the widget -->
-    <script src="blizz.js"></script>
+    <script src="wwz-blizz.js"></script>
 </body>
 </html>

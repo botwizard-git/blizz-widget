@@ -1,12 +1,11 @@
 /**
- * EnterpriseBotBlizz - Session Storage Service
+ * WWZBlizz - Session Storage Service
  */
 (function() {
     'use strict';
 
-    var EBB = window.EnterpriseBotBlizz;
+    var EBB = window.WWZBlizz;
     var STORAGE_KEYS = EBB.STORAGE_KEYS;
-    var CHAT_HISTORY_KEY = 'enterprisebot_blizz_history';
 
     EBB.SessionService = {
         /**
@@ -28,7 +27,7 @@
             if (!userId) {
                 userId = this.generateUUID();
                 localStorage.setItem(STORAGE_KEYS.USER_ID, userId);
-                console.log('[EnterpriseBotBlizz] Created new userId:', userId);
+                console.log('[WWZBlizz] Created new userId:', userId);
             }
             return userId;
         },
@@ -56,7 +55,7 @@
             try {
                 localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(messages));
             } catch (e) {
-                console.error('[EnterpriseBotBlizz] Failed to save messages:', e);
+                console.error('[WWZBlizz] Failed to save messages:', e);
             }
         },
 
@@ -68,7 +67,7 @@
                 var stored = localStorage.getItem(STORAGE_KEYS.MESSAGES);
                 return stored ? JSON.parse(stored) : [];
             } catch (e) {
-                console.error('[EnterpriseBotBlizz] Failed to get messages:', e);
+                console.error('[WWZBlizz] Failed to get messages:', e);
                 return [];
             }
         },
@@ -94,7 +93,7 @@
             localStorage.removeItem(STORAGE_KEYS.SESSION_ID);
             localStorage.removeItem(STORAGE_KEYS.MESSAGES);
             localStorage.removeItem(STORAGE_KEYS.SESSION_METADATA);
-            console.log('[EnterpriseBotBlizz] Session cleared');
+            console.log('[WWZBlizz] Session cleared');
         },
 
         /**
@@ -107,5 +106,5 @@
         }
     };
 
-    console.log('[EnterpriseBotBlizz] SessionService loaded');
+    console.log('[WWZBlizz] SessionService loaded');
 })();

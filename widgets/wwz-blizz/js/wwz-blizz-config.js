@@ -1,12 +1,12 @@
 /**
- * EnterpriseBotBlizz - Configuration
+ * WWZBlizz - Configuration
  */
 (function() {
     'use strict';
 
-    window.EnterpriseBotBlizz = window.EnterpriseBotBlizz || {};
+    window.WWZBlizz = window.WWZBlizz || {};
 
-    window.EnterpriseBotBlizz.CONFIG = {
+    window.WWZBlizz.CONFIG = {
         // Bot display info
         botName: 'Ivy',
         botAvatar: 'https://chatbot2go-hybrid.enterprisebot.co/assets/botForge/67031622bbfbfaaccecd88f0/wwz_rescaled_image.png',
@@ -52,13 +52,13 @@
     };
 
     // Storage keys for localStorage (prefixed to avoid conflicts)
-    window.EnterpriseBotBlizz.STORAGE_KEYS = {
-        USER_ID: 'enterprisebot_blizz_userId',
-        SESSION_ID: 'enterprisebot_blizz_sessionId',
-        MESSAGES: 'enterprisebot_blizz_messages',
-        SESSION_METADATA: 'enterprisebot_blizz_sessionMeta',
-        COLLAPSED: 'enterprisebot_blizz_collapsed'
+    window.WWZBlizz.STORAGE_KEYS = {
+        USER_ID: 'wwz_blizz_userId',
+        SESSION_ID: 'wwz_blizz_sessionId',
+        MESSAGES: 'wwz_blizz_messages',
+        SESSION_METADATA: 'wwz_blizz_sessionMeta',
+        COLLAPSED: 'wwz_blizz_collapsed'
     };
 
-    console.log('[EnterpriseBotBlizz] Config loaded');
+    console.log('[WWZBlizz] Config loaded');
 })();

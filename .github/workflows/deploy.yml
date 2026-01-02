@@ -1,0 +1,41 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PRODUCTION_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.PRODUCTION_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to production server
+        run: |
+          ssh -i ~/.ssh/id_rsa root@${{ secrets.PRODUCTION_HOST }} << 'EOF'
+            echo "Starting deployment..."
+
+            # Navigate to project directory
+            cd /var/www/blizz-widgets
+
+            # Force pull latest changes
+            echo "Pulling latest code..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            # Make deployment script executable
+            chmod +x scripts/server-deploy.sh
+
+            # Run deployment script
+            echo "Running deployment script..."
+            ./scripts/server-deploy.sh
+
+            echo "Deployment completed!"
+          EOF

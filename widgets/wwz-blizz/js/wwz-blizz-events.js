@@ -1,10 +1,10 @@
 /**
- * EnterpriseBotBlizz - Event Handlers
+ * WWZBlizz - Event Handlers
  */
 (function() {
     'use strict';
 
-    var EBB = window.EnterpriseBotBlizz;
+    var EBB = window.WWZBlizz;
 
     EBB.Events = {
         /**
@@ -17,12 +17,12 @@
             var StateManager = EBB.StateManager;
 
             // Welcome screen - Send button
-            document.getElementById('enterprisebot-blizz-welcome-send-btn').addEventListener('click', function() {
+            document.getElementById('wwz-blizz-welcome-send-btn').addEventListener('click', function() {
                 self.handleWelcomeSend();
             });
 
             // Welcome screen - Enter key
-            document.getElementById('enterprisebot-blizz-welcome-message-input').addEventListener('keypress', function(e) {
+            document.getElementById('wwz-blizz-welcome-message-input').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     self.handleWelcomeSend();
@@ -30,18 +30,18 @@
             });
 
             // Auto-resize welcome textarea
-            document.getElementById('enterprisebot-blizz-welcome-message-input').addEventListener('input', function() {
+            document.getElementById('wwz-blizz-welcome-message-input').addEventListener('input', function() {
                 this.style.height = 'auto';
                 this.style.height = Math.min(this.scrollHeight, 120) + 'px';
             });
 
             // Chat screen - Send button
-            document.getElementById('enterprisebot-blizz-send-btn').addEventListener('click', function() {
+            document.getElementById('wwz-blizz-send-btn').addEventListener('click', function() {
                 self.handleSend();
             });
 
             // Chat screen - Enter key
-            document.getElementById('enterprisebot-blizz-message-input').addEventListener('keypress', function(e) {
+            document.getElementById('wwz-blizz-message-input').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
                     self.handleSend();
@@ -49,33 +49,33 @@
             });
 
             // Auto-resize chat textarea
-            document.getElementById('enterprisebot-blizz-message-input').addEventListener('input', function() {
+            document.getElementById('wwz-blizz-message-input').addEventListener('input', function() {
                 this.style.height = 'auto';
                 this.style.height = Math.min(this.scrollHeight, 120) + 'px';
             });
 
             // Close/minimize button
-            document.getElementById('enterprisebot-blizz-close-btn').addEventListener('click', function() {
+            document.getElementById('wwz-blizz-close-btn').addEventListener('click', function() {
                 self.collapseWidget();
             });
 
             // Expand button
-            document.getElementById('enterprisebot-blizz-expand-btn').addEventListener('click', function() {
+            document.getElementById('wwz-blizz-expand-btn').addEventListener('click', function() {
                 self.expandWidget();
             });
 
             // Collapsed bar click
-            document.getElementById('enterprisebot-blizz-collapsed-bar').addEventListener('click', function() {
+            document.getElementById('wwz-blizz-collapsed-bar').addEventListener('click', function() {
                 self.expandWidget();
             });
 
             // End session button
-            document.getElementById('enterprisebot-blizz-end-session-btn').addEventListener('click', function() {
+            document.getElementById('wwz-blizz-end-session-btn').addEventListener('click', function() {
                 self.endConversation();
             });
 
             // Feedback smileys
-            var smileys = document.querySelectorAll('.enterprisebot-blizz-smiley-wrapper');
+            var smileys = document.querySelectorAll('.wwz-blizz-smiley-wrapper');
             for (var i = 0; i < smileys.length; i++) {
                 (function(wrapper) {
                     wrapper.addEventListener('click', function() {
@@ -86,24 +86,24 @@
             }
 
             // Feedback buttons
-            document.getElementById('enterprisebot-blizz-submit-feedback-btn').addEventListener('click', function() {
+            document.getElementById('wwz-blizz-submit-feedback-btn').addEventListener('click', function() {
                 self.submitFeedback();
             });
 
-            document.getElementById('enterprisebot-blizz-feedback-skip-btn').addEventListener('click', function() {
+            document.getElementById('wwz-blizz-feedback-skip-btn').addEventListener('click', function() {
                 self.skipFeedback();
             });
 
             // Copy message (event delegation)
-            document.getElementById('enterprisebot-blizz-messages-container').addEventListener('click', function(e) {
-                var copyBtn = e.target.closest('.enterprisebot-blizz-copy-btn');
+            document.getElementById('wwz-blizz-messages-container').addEventListener('click', function(e) {
+                var copyBtn = e.target.closest('.wwz-blizz-copy-btn');
                 if (copyBtn) {
                     var text = copyBtn.getAttribute('data-text');
                     self.copyMessage(text);
                 }
             });
 
-            console.log('[EnterpriseBotBlizz] Events initialized');
+            console.log('[WWZBlizz] Events initialized');
         },
 
         /**
@@ -238,7 +238,7 @@
             var UI = EBB.UI;
             var StateManager = EBB.StateManager;
 
-            console.log('[EnterpriseBotBlizz] Auto-reply for greeting:', text);
+            console.log('[WWZBlizz] Auto-reply for greeting:', text);
 
             StateManager.setLoading(true);
             UI.showTypingIndicator();
@@ -310,7 +310,7 @@
                     }
                 })
                 .catch(function(error) {
-                    console.error('[EnterpriseBotBlizz] API Error:', error);
+                    console.error('[WWZBlizz] API Error:', error);
                     UI.hideTypingIndicator();
                     StateManager.setLoading(false);
                     self.handleAPIError(error);
@@ -381,7 +381,7 @@
             UI.showWelcomeScreen();
             UI.renderWelcomeSuggestions(CONFIG.defaultSuggestions);
 
-            console.log('[EnterpriseBotBlizz] Started new conversation');
+            console.log('[WWZBlizz] Started new conversation');
         },
 
         /**
@@ -395,7 +395,7 @@
          * End conversation
          */
         endConversation: function() {
-            console.log('[EnterpriseBotBlizz] Ending conversation');
+            console.log('[WWZBlizz] Ending conversation');
             EBB.UI.updateView('feedback');
         },
 
@@ -416,16 +416,16 @@
             var APIService = EBB.APIService;
 
             var rating = StateManager.getRating();
-            var comment = document.getElementById('enterprisebot-blizz-feedback-text').value.trim();
+            var comment = document.getElementById('wwz-blizz-feedback-text').value.trim();
 
-            console.log('[EnterpriseBotBlizz] Submitting feedback:', { rating: rating, comment: comment });
+            console.log('[WWZBlizz] Submitting feedback:', { rating: rating, comment: comment });
 
             APIService.submitFeedback(rating, comment)
                 .then(function() {
                     self.showThankYou();
                 })
                 .catch(function(error) {
-                    console.error('[EnterpriseBotBlizz] Feedback submission failed:', error);
+                    console.error('[WWZBlizz] Feedback submission failed:', error);
                     self.showThankYou();
                 });
         },
@@ -453,5 +453,5 @@
         }
     };
 
-    console.log('[EnterpriseBotBlizz] Events loaded');
+    console.log('[WWZBlizz] Events loaded');
 })();

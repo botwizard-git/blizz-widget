@@ -1,10 +1,10 @@
 /**
- * EnterpriseBotBlizz - API Service
+ * WWZBlizz - API Service
  */
 (function() {
     'use strict';
 
-    var EBB = window.EnterpriseBotBlizz;
+    var EBB = window.WWZBlizz;
     var CONFIG = EBB.CONFIG;
     var SessionService = EBB.SessionService;
 
@@ -63,7 +63,7 @@
             var self = this;
             var payload = this.buildPayload(message);
 
-            console.log('[EnterpriseBotBlizz] Sending message');
+            console.log('[WWZBlizz] Sending message');
 
             return fetch(CONFIG.apiEndpoint, {
                 method: 'POST',
@@ -116,11 +116,11 @@
                 return response.ok;
             })
             .catch(function(error) {
-                console.error('[EnterpriseBotBlizz] Feedback submission failed:', error);
+                console.error('[WWZBlizz] Feedback submission failed:', error);
                 return false;
             });
         }
     };
 
-    console.log('[EnterpriseBotBlizz] APIService loaded');
+    console.log('[WWZBlizz] APIService loaded');
 })();

@@ -1,10 +1,10 @@
 /**
- * EnterpriseBotBlizz - State Management
+ * WWZBlizz - State Management
  */
 (function() {
     'use strict';
 
-    var EBB = window.EnterpriseBotBlizz;
+    var EBB = window.WWZBlizz;
     var SessionService = EBB.SessionService;
 
     // Application state
@@ -32,7 +32,7 @@
             state.messages = SessionService.getMessages();
             state.isCollapsed = SessionService.isCollapsed();
 
-            console.log('[EnterpriseBotBlizz] State initialized:', {
+            console.log('[WWZBlizz] State initialized:', {
                 userId: state.userId,
                 sessionId: state.sessionId,
                 messageCount: state.messages.length,
@@ -203,9 +203,9 @@
             state.retryCount = 0;
             state.lastUserMessage = null;
 
-            console.log('[EnterpriseBotBlizz] State reset');
+            console.log('[WWZBlizz] State reset');
         }
     };
 
-    console.log('[EnterpriseBotBlizz] StateManager loaded');
+    console.log('[WWZBlizz] StateManager loaded');
 })();

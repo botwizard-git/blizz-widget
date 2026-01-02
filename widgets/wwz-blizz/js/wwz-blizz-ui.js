@@ -1,10 +1,10 @@
 /**
- * EnterpriseBotBlizz - UI Rendering
+ * WWZBlizz - UI Rendering
  */
 (function() {
     'use strict';
 
-    var EBB = window.EnterpriseBotBlizz;
+    var EBB = window.WWZBlizz;
     var CONFIG = EBB.CONFIG;
 
     EBB.UI = {
@@ -15,32 +15,32 @@
          */
         init: function() {
             // Welcome screen elements
-            this.elements.welcomeScreen = document.getElementById('enterprisebot-blizz-welcome-screen');
-            this.elements.welcomeMessageInput = document.getElementById('enterprisebot-blizz-welcome-message-input');
-            this.elements.welcomeSendBtn = document.getElementById('enterprisebot-blizz-welcome-send-btn');
-            this.elements.welcomeSuggestions = document.getElementById('enterprisebot-blizz-welcome-suggestions');
+            this.elements.welcomeScreen = document.getElementById('wwz-blizz-welcome-screen');
+            this.elements.welcomeMessageInput = document.getElementById('wwz-blizz-welcome-message-input');
+            this.elements.welcomeSendBtn = document.getElementById('wwz-blizz-welcome-send-btn');
+            this.elements.welcomeSuggestions = document.getElementById('wwz-blizz-welcome-suggestions');
 
             // Chat screen elements
-            this.elements.chatScreen = document.getElementById('enterprisebot-blizz-chat-screen');
-            this.elements.messagesContainer = document.getElementById('enterprisebot-blizz-messages-container');
-            this.elements.suggestionsContainer = document.getElementById('enterprisebot-blizz-suggestions-container');
-            this.elements.messageInput = document.getElementById('enterprisebot-blizz-message-input');
-            this.elements.sendBtn = document.getElementById('enterprisebot-blizz-send-btn');
+            this.elements.chatScreen = document.getElementById('wwz-blizz-chat-screen');
+            this.elements.messagesContainer = document.getElementById('wwz-blizz-messages-container');
+            this.elements.suggestionsContainer = document.getElementById('wwz-blizz-suggestions-container');
+            this.elements.messageInput = document.getElementById('wwz-blizz-message-input');
+            this.elements.sendBtn = document.getElementById('wwz-blizz-send-btn');
 
             // Collapsed bar
-            this.elements.collapsedBar = document.getElementById('enterprisebot-blizz-collapsed-bar');
-            this.elements.expandBtn = document.getElementById('enterprisebot-blizz-expand-btn');
-            this.elements.mainContent = document.getElementById('enterprisebot-blizz-main');
-            this.elements.closeBtn = document.getElementById('enterprisebot-blizz-close-btn');
+            this.elements.collapsedBar = document.getElementById('wwz-blizz-collapsed-bar');
+            this.elements.expandBtn = document.getElementById('wwz-blizz-expand-btn');
+            this.elements.mainContent = document.getElementById('wwz-blizz-main');
+            this.elements.closeBtn = document.getElementById('wwz-blizz-close-btn');
 
             // Overlay elements
-            this.elements.chatContent = document.getElementById('enterprisebot-blizz-chat-content');
-            this.elements.closeConfirm = document.getElementById('enterprisebot-blizz-close-confirm');
-            this.elements.feedbackContainer = document.getElementById('enterprisebot-blizz-feedback-container');
-            this.elements.thankYou = document.getElementById('enterprisebot-blizz-thank-you');
-            this.elements.feedbackText = document.getElementById('enterprisebot-blizz-feedback-text');
+            this.elements.chatContent = document.getElementById('wwz-blizz-chat-content');
+            this.elements.closeConfirm = document.getElementById('wwz-blizz-close-confirm');
+            this.elements.feedbackContainer = document.getElementById('wwz-blizz-feedback-container');
+            this.elements.thankYou = document.getElementById('wwz-blizz-thank-you');
+            this.elements.feedbackText = document.getElementById('wwz-blizz-feedback-text');
 
-            console.log('[EnterpriseBotBlizz] UI elements initialized');
+            console.log('[WWZBlizz] UI elements initialized');
         },
 
         /**
@@ -117,8 +117,8 @@
          * Show chat screen
          */
         showChatScreen: function() {
-            this.elements.welcomeScreen.classList.add('enterprisebot-blizz-hidden');
-            this.elements.chatScreen.classList.remove('enterprisebot-blizz-hidden');
+            this.elements.welcomeScreen.classList.add('wwz-blizz-hidden');
+            this.elements.chatScreen.classList.remove('wwz-blizz-hidden');
             this.elements.messageInput.focus();
         },
 
@@ -126,8 +126,8 @@
          * Show welcome screen
          */
         showWelcomeScreen: function() {
-            this.elements.welcomeScreen.classList.remove('enterprisebot-blizz-hidden');
-            this.elements.chatScreen.classList.add('enterprisebot-blizz-hidden');
+            this.elements.welcomeScreen.classList.remove('wwz-blizz-hidden');
+            this.elements.chatScreen.classList.add('wwz-blizz-hidden');
             this.elements.welcomeMessageInput.focus();
         },
 
@@ -135,16 +135,16 @@
          * Show collapsed state
          */
         showCollapsed: function() {
-            this.elements.mainContent.classList.add('enterprisebot-blizz-hidden');
-            this.elements.collapsedBar.classList.remove('enterprisebot-blizz-hidden');
+            this.elements.mainContent.classList.add('wwz-blizz-hidden');
+            this.elements.collapsedBar.classList.remove('wwz-blizz-hidden');
         },
 
         /**
          * Show expanded state
          */
         showExpanded: function() {
-            this.elements.collapsedBar.classList.add('enterprisebot-blizz-hidden');
-            this.elements.mainContent.classList.remove('enterprisebot-blizz-hidden');
+            this.elements.collapsedBar.classList.add('wwz-blizz-hidden');
+            this.elements.mainContent.classList.remove('wwz-blizz-hidden');
         },
 
         /**
@@ -156,29 +156,29 @@
             var isHtml = message.isHtml || false;
 
             if (message.isUser) {
-                messageDiv.className = 'enterprisebot-blizz-message enterprisebot-blizz-message-user';
+                messageDiv.className = 'wwz-blizz-message wwz-blizz-message-user';
                 messageDiv.innerHTML =
-                    '<div class="enterprisebot-blizz-message-avatar">' +
+                    '<div class="wwz-blizz-message-avatar">' +
                         '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">' +
                             '<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>' +
                         '</svg>' +
                     '</div>' +
-                    '<div class="enterprisebot-blizz-message-content">' +
-                        '<div class="enterprisebot-blizz-message-bubble">' + this.escapeHtml(message.text) + '</div>' +
+                    '<div class="wwz-blizz-message-content">' +
+                        '<div class="wwz-blizz-message-bubble">' + this.escapeHtml(message.text) + '</div>' +
                     '</div>';
             } else {
                 var plainText = this.stripHtml(message.text);
                 var escapedPlainText = plainText.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
-                messageDiv.className = 'enterprisebot-blizz-message enterprisebot-blizz-message-bot';
+                messageDiv.className = 'wwz-blizz-message wwz-blizz-message-bot';
                 messageDiv.innerHTML =
-                    '<div class="enterprisebot-blizz-message-avatar">' +
+                    '<div class="wwz-blizz-message-avatar">' +
                         '<img src="' + CONFIG.botAvatar + '" alt="' + CONFIG.botName + '">' +
                     '</div>' +
-                    '<div class="enterprisebot-blizz-message-content">' +
-                        '<div class="enterprisebot-blizz-message-bubble">' + this.formatBotMessage(message.text, isHtml) + '</div>' +
-                        '<div class="enterprisebot-blizz-message-actions">' +
-                            '<button class="enterprisebot-blizz-action-btn enterprisebot-blizz-copy-btn" title="Kopieren" data-text="' + escapedPlainText + '">' +
+                    '<div class="wwz-blizz-message-content">' +
+                        '<div class="wwz-blizz-message-bubble">' + this.formatBotMessage(message.text, isHtml) + '</div>' +
+                        '<div class="wwz-blizz-message-actions">' +
+                            '<button class="wwz-blizz-action-btn wwz-blizz-copy-btn" title="Kopieren" data-text="' + escapedPlainText + '">' +
                                 '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
                                     '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>' +
                                     '<path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>' +
@@ -223,7 +223,7 @@
 
             suggestions.forEach(function(text) {
                 var btn = document.createElement('button');
-                btn.className = 'enterprisebot-blizz-suggestion-btn';
+                btn.className = 'wwz-blizz-suggestion-btn';
                 btn.textContent = text;
                 btn.addEventListener('click', function() {
                     EBB.Events.handleSuggestionClick(text);
@@ -246,7 +246,7 @@
 
             suggestions.forEach(function(text) {
                 var btn = document.createElement('button');
-                btn.className = 'enterprisebot-blizz-suggestion-btn';
+                btn.className = 'wwz-blizz-suggestion-btn';
                 btn.textContent = text;
                 btn.addEventListener('click', function() {
                     EBB.Events.handleWelcomeSuggestionClick(text);
@@ -270,14 +270,14 @@
 
             var container = this.elements.messagesContainer;
             var typingDiv = document.createElement('div');
-            typingDiv.className = 'enterprisebot-blizz-message enterprisebot-blizz-message-bot';
-            typingDiv.id = 'enterprisebot-blizz-typing-indicator';
+            typingDiv.className = 'wwz-blizz-message wwz-blizz-message-bot';
+            typingDiv.id = 'wwz-blizz-typing-indicator';
             typingDiv.innerHTML =
-                '<div class="enterprisebot-blizz-message-avatar">' +
+                '<div class="wwz-blizz-message-avatar">' +
                     '<img src="' + CONFIG.botAvatar + '" alt="' + CONFIG.botName + '">' +
                 '</div>' +
-                '<div class="enterprisebot-blizz-message-content">' +
-                    '<div class="enterprisebot-blizz-typing-indicator">' +
+                '<div class="wwz-blizz-message-content">' +
+                    '<div class="wwz-blizz-typing-indicator">' +
                         '<span></span><span></span><span></span>' +
                     '</div>' +
                 '</div>';
@@ -289,7 +289,7 @@
          * Hide typing indicator
          */
         hideTypingIndicator: function() {
-            var typing = document.getElementById('enterprisebot-blizz-typing-indicator');
+            var typing = document.getElementById('wwz-blizz-typing-indicator');
             if (typing) {
                 typing.parentNode.removeChild(typing);
             }
@@ -307,21 +307,21 @@
          * Update view
          */
         updateView: function(viewName) {
-            this.elements.closeConfirm.classList.add('enterprisebot-blizz-hidden');
-            this.elements.feedbackContainer.classList.add('enterprisebot-blizz-hidden');
-            this.elements.thankYou.classList.add('enterprisebot-blizz-hidden');
+            this.elements.closeConfirm.classList.add('wwz-blizz-hidden');
+            this.elements.feedbackContainer.classList.add('wwz-blizz-hidden');
+            this.elements.thankYou.classList.add('wwz-blizz-hidden');
 
             switch (viewName) {
                 case 'chat':
                     break;
                 case 'closeConfirm':
-                    this.elements.closeConfirm.classList.remove('enterprisebot-blizz-hidden');
+                    this.elements.closeConfirm.classList.remove('wwz-blizz-hidden');
                     break;
                 case 'feedback':
-                    this.elements.feedbackContainer.classList.remove('enterprisebot-blizz-hidden');
+                    this.elements.feedbackContainer.classList.remove('wwz-blizz-hidden');
                     break;
                 case 'thankYou':
-                    this.elements.thankYou.classList.remove('enterprisebot-blizz-hidden');
+                    this.elements.thankYou.classList.remove('wwz-blizz-hidden');
                     break;
             }
 
@@ -332,14 +332,14 @@
          * Update smiley selection
          */
         updateSmileySelection: function(rating) {
-            var wrappers = document.querySelectorAll('.enterprisebot-blizz-smiley-wrapper');
+            var wrappers = document.querySelectorAll('.wwz-blizz-smiley-wrapper');
             for (var i = 0; i < wrappers.length; i++) {
                 var wrapper = wrappers[i];
                 var wrapperRating = parseInt(wrapper.getAttribute('data-rating'));
                 if (wrapperRating === rating) {
-                    wrapper.classList.add('enterprisebot-blizz-selected');
+                    wrapper.classList.add('wwz-blizz-selected');
                 } else {
-                    wrapper.classList.remove('enterprisebot-blizz-selected');
+                    wrapper.classList.remove('wwz-blizz-selected');
                 }
             }
         },
@@ -380,9 +380,9 @@
         showError: function(message) {
             var container = this.elements.suggestionsContainer;
             container.innerHTML =
-                '<div class="enterprisebot-blizz-error-message">' + this.escapeHtml(message) + '</div>' +
-                '<button class="enterprisebot-blizz-suggestion-btn" onclick="window.EnterpriseBotBlizz.Events.retryLastMessage()">Erneut versuchen</button>' +
-                '<button class="enterprisebot-blizz-suggestion-btn" onclick="window.EnterpriseBotBlizz.Events.startNewConversation()">Neues Gesprach</button>';
+                '<div class="wwz-blizz-error-message">' + this.escapeHtml(message) + '</div>' +
+                '<button class="wwz-blizz-suggestion-btn" onclick="window.WWZBlizz.Events.retryLastMessage()">Erneut versuchen</button>' +
+                '<button class="wwz-blizz-suggestion-btn" onclick="window.WWZBlizz.Events.startNewConversation()">Neues Gesprach</button>';
         },
 
         /**
@@ -392,7 +392,7 @@
             type = type || 'info';
 
             var notification = document.createElement('div');
-            notification.className = 'enterprisebot-blizz-notification enterprisebot-blizz-notification-' + type;
+            notification.className = 'wwz-blizz-notification wwz-blizz-notification-' + type;
             notification.textContent = message;
 
             document.body.appendChild(notification);
@@ -435,5 +435,5 @@
         }
     };
 
-    console.log('[EnterpriseBotBlizz] UI loaded');
+    console.log('[WWZBlizz] UI loaded');
 })();
