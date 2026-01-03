@@ -80,6 +80,49 @@
     }
 
     /**
+     * Apply config values as CSS custom properties
+     */
+    function applyConfigStyles(container) {
+        const Config = window.WWZIvy.Config;
+
+        // Apply launcher size
+        if (Config.launcher?.size) {
+            container.style.setProperty('--wwz-ivy-launcher-size', Config.launcher.size + 'px');
+        }
+        if (Config.launcher?.sizeMobile) {
+            container.style.setProperty('--wwz-ivy-launcher-size-mobile', Config.launcher.sizeMobile + 'px');
+        }
+
+        // Apply position
+        if (Config.position?.bottom !== undefined) {
+            container.style.setProperty('--wwz-ivy-position-bottom', Config.position.bottom + 'px');
+        }
+        if (Config.position?.right !== undefined) {
+            container.style.setProperty('--wwz-ivy-position-right', Config.position.right + 'px');
+        }
+        if (Config.position?.bottomMobile !== undefined) {
+            container.style.setProperty('--wwz-ivy-position-bottom-mobile', Config.position.bottomMobile + 'px');
+        }
+        if (Config.position?.rightMobile !== undefined) {
+            container.style.setProperty('--wwz-ivy-position-right-mobile', Config.position.rightMobile + 'px');
+        }
+
+        // Apply widget dimensions
+        if (Config.widget?.width) {
+            container.style.setProperty('--wwz-ivy-widget-width', Config.widget.width + 'px');
+        }
+        if (Config.widget?.height) {
+            container.style.setProperty('--wwz-ivy-widget-height', Config.widget.height + 'px');
+        }
+        if (Config.widget?.minHeight) {
+            container.style.setProperty('--wwz-ivy-widget-min-height', Config.widget.minHeight + 'px');
+        }
+        if (Config.widget?.maxHeight) {
+            container.style.setProperty('--wwz-ivy-widget-max-height', Config.widget.maxHeight);
+        }
+    }
+
+    /**
      * Initialize widget
      */
     function initWidget() {
@@ -93,6 +136,9 @@
 
         // Add container class
         container.className = 'wwz-ivy-container';
+
+        // Apply configurable styles as CSS custom properties
+        applyConfigStyles(container);
 
         // Initialize modules
         window.WWZIvy.State.init();
@@ -121,6 +167,12 @@
                     if (state.messages.length > 0) {
                         window.WWZIvy.UI.renderMessages(state.messages);
                     } else {
+                        // Add welcome message as first bot message if no messages exist
+                        const welcomeMessage = window.WWZIvy.State.addMessage({
+                            role: 'bot',
+                            text: window.WWZIvy.Config.welcomeMessage
+                        });
+                        window.WWZIvy.UI.addMessage(welcomeMessage);
                         window.WWZIvy.UI.renderSuggestions(window.WWZIvy.Config.suggestions);
                     }
                 } else {
@@ -136,6 +188,14 @@
             startNewSession: function() {
                 window.WWZIvy.State.startNewSession();
                 window.WWZIvy.UI.getElements().messages.innerHTML = '';
+                
+                // Add welcome message as first bot message
+                const welcomeMessage = window.WWZIvy.State.addMessage({
+                    role: 'bot',
+                    text: window.WWZIvy.Config.welcomeMessage
+                });
+                window.WWZIvy.UI.addMessage(welcomeMessage);
+                
                 window.WWZIvy.UI.renderSuggestions(window.WWZIvy.Config.suggestions);
                 window.WWZIvy.UI.showScreen('chat');
             },
@@ -169,6 +229,13 @@
                 }
             }
         };
+
+        // Auto-open if configured (after Main API is exposed)
+        if (window.WWZIvy.Config.autoOpen) {
+            setTimeout(() => {
+                window.WWZIvy.Main.expand();
+            }, 100);
+        }
 
         console.log('WWZIvy: Chatbot initialized', window.WWZIvy.Main.getVersionInfo());
     }

@@ -112,21 +112,32 @@
         /**
          * Submit feedback
          */
-        submitFeedback: async function(rating, sessionId) {
+        submitFeedback: async function(feedbackData, sessionId) {
             // Feedback endpoint (if available)
             const feedbackEndpoint = Config.apiEndpoint.replace('/chat', '/feedback');
 
             try {
+                const payload = {
+                    sessionId: sessionId || Storage.getSessionId(),
+                    timestamp: new Date().toISOString()
+                };
+
+                // Handle both old format (just rating) and new format (object)
+                if (typeof feedbackData === 'object' && feedbackData !== null) {
+                    payload.rating = feedbackData.rating;
+                    payload.options = feedbackData.options || [];
+                    payload.additionalFeedback = feedbackData.additionalFeedback || '';
+                } else {
+                    // Legacy format - just rating number
+                    payload.rating = feedbackData;
+                }
+
                 const response = await fetch(feedbackEndpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        sessionId: sessionId || Storage.getSessionId(),
-                        rating: rating,
-                        timestamp: new Date().toISOString()
-                    })
+                    body: JSON.stringify(payload)
                 });
 
                 return response.ok;

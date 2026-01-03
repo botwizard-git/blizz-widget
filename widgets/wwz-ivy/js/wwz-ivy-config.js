@@ -19,6 +19,12 @@
         wwzLogo: 'https://chatbot2go-hybrid.enterprisebot.co/assets/botForge/67031622bbfbfaaccecd88f0/wwz_rescaled_image.png',
         launcherIcon: 'https://chatbot2go-hybrid.enterprisebot.co/assets/botForge/67031622bbfbfaaccecd88f0/rescaled_image.png',
 
+        // Widget behavior
+        autoOpen: false, // Set to true to auto-open widget on page load
+
+        // Welcome message (first bot message in chat)
+        welcomeMessage: 'Willkommen beim Chat Service von WWZ. Ich bin Ivy und beantworte gerne Ihre Fragen zu unseren Produkten und Services. Bitte beachten sie, dass ich keinen direkten Zugang zu Kundendaten habe. Schliessen Sie das Chatfenster mit dem Kreuzchen oben rechts, um nach der Konversation Feedback zu geben.',
+
         // Welcome screen content (German)
         welcomeTitle: 'Guten Tag!',
         welcomeDescription: 'Unsere digitale Assistentin Ivy hilft Ihnen gerne weiter. Sie hat jedoch keinen direkten Zugang zu Kunden- und Rechnungsinformationen.',
@@ -37,10 +43,47 @@
         menuNewChat: 'Neues Gespräch',
         menuFullscreen: 'Vollbild',
 
-        // Feedback screen
-        feedbackQuestion: 'Wie war Ihre Erfahrung mit unserem digitalen Assistenten?',
-        feedbackContinue: 'Weiter',
-        feedbackDownload: 'Chat-Transkript',
+        // Feedback screen configuration
+        feedback: {
+            question: 'Wie war Ihre Erfahrung mit unserem digitalen Assistenten?',
+            ratingLabels: {
+                1: 'Sehr mangelhaft',
+                2: 'Mangelhaft',
+                3: 'Befriedigend',
+                4: 'Gut',
+                5: 'Sehr gut'
+            },
+            // Second question based on rating (positive vs negative)
+            positiveQuestion: 'Was hat Ihnen gefallen?',
+            negativeQuestion: 'Was war das Problem?',
+            // Options for positive feedback
+            positiveOptions: [
+                'Schnelle Antworten',
+                'Einfach zu verwenden',
+                'Hat mein Problem gelöst',
+                'Sehr effizient'
+            ],
+            // Options for negative feedback
+            negativeOptions: [
+                'Dauerte zu lange',
+                'Verstand mich nicht',
+                'Problem wurde nicht gelöst',
+                'Technisches Problem'
+            ],
+            // Text input configuration
+            additionalFeedbackLabel: 'Zusätzliches Feedback geben',
+            additionalFeedbackPlaceholder: 'Ihr Feedback hier eingeben...',
+            sendButton: 'Feedback senden',
+            continueButton: 'Weiter',
+            downloadButton: 'Chat-Transkript'
+        },
+
+        // Thank you screen
+        thankyou: {
+            title: 'Vielen Dank!',
+            description: 'Ihr Feedback hilft uns, unseren Service zu verbessern.',
+            closeButton: 'Schliessen'
+        },
 
         // Default suggestions
         suggestions: [
@@ -63,6 +106,28 @@
         typingDelay: 500,
         retryDelay: 2000,
         maxRetries: 3,
+
+        // Widget dimensions
+        widget: {
+            width: 400,
+            height: 650,
+            minHeight: 500,
+            maxHeight: '90vh'
+        },
+
+        // Launcher button configuration
+        launcher: {
+            size: 60,           // Button size in px
+            sizeMobile: 50      // Button size on mobile
+        },
+
+        // Widget position on screen
+        position: {
+            bottom: 15,         // Distance from bottom in px
+            right: 20,          // Distance from right in px
+            bottomMobile: 10,
+            rightMobile: 10
+        },
 
         // Version
         version: '1.0.0'

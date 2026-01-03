@@ -163,72 +163,73 @@
 
     <div class="page-content">
         <div class="card">
-            <h2>Welcome to the Test Page</h2>
-            <p>This page demonstrates the WWZ Ivy chatbot widget. Click the blue robot bubble in the bottom-right corner to open the chatbot.</p>
+            <h2>Willkommen auf der Testseite</h2>
+            <p>Diese Seite demonstriert das WWZ Ivy Chatbot-Widget. Klicken Sie auf die blaue Roboter-Blase in der unteren rechten Ecke, um den Chatbot zu öffnen.</p>
 
             <div class="sample-content">
-                <h3>Features</h3>
+                <h3>Funktionen</h3>
                 <ul>
-                    <li>Welcome screen with Terms of Service</li>
-                    <li>Chat interface with message bubbles</li>
-                    <li>Copy and text-to-speech for bot messages</li>
-                    <li>Voice input (speech recognition)</li>
-                    <li>Suggestion buttons</li>
-                    <li>Feedback rating (1-5)</li>
-                    <li>Chat transcript download</li>
-                    <li>Fullscreen mode</li>
+                    <li>Begrüssungsbildschirm mit Nutzungsbedingungen</li>
+                    <li>Chat-Interface mit Nachrichtenblasen</li>
+                    <li>Kopieren und Text-zu-Sprache für Bot-Nachrichten</li>
+                    <li>Spracheingabe (Spracherkennung)</li>
+                    <li>Vorschlags-Buttons</li>
+                    <li>Feedback-Bewertung (1-5)</li>
+                    <li>Chat-Transkript herunterladen</li>
+                    <li>Vollbildmodus</li>
+                    <li>HTML-Rendering für Bot-Antworten</li>
                 </ul>
             </div>
         </div>
 
         <div class="card">
-            <h2>API Controls</h2>
-            <p>You can control the widget programmatically using the <code>window.WWZIvy.Main</code> API:</p>
+            <h2>API-Steuerung</h2>
+            <p>Sie können das Widget programmatisch über die <code>window.WWZIvy.Main</code> API steuern:</p>
 
             <div class="controls">
                 <button class="btn btn-primary" onclick="window.WWZIvy.Main.expand()">
-                    Open Widget
+                    Widget öffnen
                 </button>
                 <button class="btn btn-secondary" onclick="window.WWZIvy.Main.collapse()">
-                    Close Widget
+                    Widget schliessen
                 </button>
                 <button class="btn btn-secondary" onclick="window.WWZIvy.Main.startNewSession()">
-                    New Session
+                    Neue Sitzung
                 </button>
                 <button class="btn btn-secondary" onclick="console.log(window.WWZIvy.Main.getVersionInfo())">
-                    Log Version Info
+                    Versionsinfo loggen
                 </button>
                 <button class="btn btn-secondary" onclick="console.log(window.WWZIvy.Main.getState())">
-                    Log State
+                    Status loggen
                 </button>
                 <button class="btn btn-danger" onclick="localStorage.clear(); location.reload();">
-                    Clear Storage & Reload
+                    Speicher löschen & neu laden
                 </button>
             </div>
 
             <div class="info-box">
-                <p><strong>Available Methods:</strong></p>
+                <p><strong>Verfügbare Methoden:</strong></p>
                 <ul>
-                    <li><code>WWZIvy.Main.expand()</code> - Open the widget</li>
-                    <li><code>WWZIvy.Main.collapse()</code> - Close the widget</li>
-                    <li><code>WWZIvy.Main.startNewSession()</code> - Start a new chat</li>
-                    <li><code>WWZIvy.Main.sendMessage(text)</code> - Send a message</li>
-                    <li><code>WWZIvy.Main.getVersionInfo()</code> - Get version info</li>
-                    <li><code>WWZIvy.Main.getState()</code> - Get current state</li>
+                    <li><code>WWZIvy.Main.expand()</code> - Widget öffnen</li>
+                    <li><code>WWZIvy.Main.collapse()</code> - Widget schliessen</li>
+                    <li><code>WWZIvy.Main.startNewSession()</code> - Neuen Chat starten</li>
+                    <li><code>WWZIvy.Main.sendMessage(text)</code> - Nachricht senden</li>
+                    <li><code>WWZIvy.Main.getVersionInfo()</code> - Versionsinfo abrufen</li>
+                    <li><code>WWZIvy.Main.getState()</code> - Aktuellen Status abrufen</li>
                 </ul>
             </div>
         </div>
 
         <div class="card">
-            <h2>Embedding Instructions</h2>
-            <p>To embed this chatbot on your website, add the following code:</p>
+            <h2>Einbindungsanleitung</h2>
+            <p>Um diesen Chatbot auf Ihrer Website einzubinden, fügen Sie folgenden Code hinzu:</p>
 
             <div class="info-box">
                 <code>&lt;div id="wwz-ivy-parent"&gt;&lt;/div&gt;</code><br><br>
                 <code>&lt;script src="wwz-ivy.js"&gt;&lt;/script&gt;</code>
             </div>
 
-            <p style="margin-top: 16px;">The widget will automatically initialize and appear as a floating bubble in the bottom-right corner.</p>
+            <p style="margin-top: 16px;">Das Widget wird automatisch initialisiert und erscheint als schwebende Blase in der unteren rechten Ecke.</p>
         </div>
     </div>
 

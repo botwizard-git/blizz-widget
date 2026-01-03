@@ -62,6 +62,21 @@
                     this.handleRatingSelect(parseInt(e.target.dataset.rating));
                 }
             });
+            
+            // Feedback options
+            if (elements.feedbackOptions) {
+                elements.feedbackOptions.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('wwz-ivy-feedback-option')) {
+                        e.target.classList.toggle('wwz-ivy-selected');
+                    }
+                });
+            }
+            
+            // Feedback send button
+            if (elements.feedbackSend) {
+                elements.feedbackSend.addEventListener('click', () => this.handleFeedbackSend());
+            }
+            
             elements.feedbackContinue.addEventListener('click', () => this.handleFeedbackContinue());
             elements.downloadTranscript.addEventListener('click', () => UI.downloadTranscript());
 
@@ -86,6 +101,12 @@
                 if (state.messages.length > 0) {
                     UI.renderMessages(state.messages);
                 } else {
+                    // Add welcome message as first bot message if no messages exist
+                    const welcomeMessage = State.addMessage({
+                        role: 'bot',
+                        text: Config.welcomeMessage
+                    });
+                    UI.addMessage(welcomeMessage);
                     UI.renderSuggestions(Config.suggestions);
                 }
             } else {
@@ -116,6 +137,7 @@
         handleClose: function() {
             const state = State.get();
             if (state.messages.length > 0) {
+                UI.resetFeedbackForm();
                 UI.showScreen('feedback');
             } else {
                 this.handleMinimize();
@@ -135,6 +157,14 @@
         handleAcceptTerms: function() {
             State.acceptTerms();
             UI.showScreen('chat');
+            
+            // Add welcome message as first bot message from config
+            const welcomeMessage = State.addMessage({
+                role: 'bot',
+                text: Config.welcomeMessage
+            });
+            UI.addMessage(welcomeMessage);
+            
             UI.renderSuggestions(Config.suggestions);
         },
 
@@ -312,16 +342,55 @@
         },
 
         /**
+         * Handle feedback send
+         */
+        handleFeedbackSend: async function() {
+            const rating = State.get().feedbackRating;
+            if (!rating) return;
+
+            const elements = UI.getElements();
+            const selectedOptions = [];
+            if (elements.feedbackOptions) {
+                const selected = elements.feedbackOptions.querySelectorAll('.wwz-ivy-feedback-option.wwz-ivy-selected');
+                selected.forEach(btn => selectedOptions.push(btn.dataset.option));
+            }
+            
+            const additionalFeedback = elements.feedbackTextInput ? elements.feedbackTextInput.value.trim() : '';
+
+            // Submit feedback to API
+            await API.submitFeedback({
+                rating: rating,
+                options: selectedOptions,
+                additionalFeedback: additionalFeedback
+            });
+
+            UI.showThankYou();
+        },
+
+        /**
          * Handle feedback continue
          */
         handleFeedbackContinue: async function() {
             const rating = State.get().feedbackRating;
 
             if (rating) {
-                await API.submitFeedback(rating);
+                const elements = UI.getElements();
+                const selectedOptions = [];
+                if (elements.feedbackOptions) {
+                    const selected = elements.feedbackOptions.querySelectorAll('.wwz-ivy-feedback-option.wwz-ivy-selected');
+                    selected.forEach(btn => selectedOptions.push(btn.dataset.option));
+                }
+                
+                const additionalFeedback = elements.feedbackTextInput ? elements.feedbackTextInput.value.trim() : '';
+
+                await API.submitFeedback({
+                    rating: rating,
+                    options: selectedOptions,
+                    additionalFeedback: additionalFeedback
+                });
             }
 
-            UI.showScreen('thankyou');
+            UI.showThankYou();
         },
 
         /**

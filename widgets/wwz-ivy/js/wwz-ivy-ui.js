@@ -24,6 +24,10 @@
         thumbUp: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>',
         thumbDown: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path></svg>',
         check: '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+        success: `<svg class="wwz-ivy-success-animation" xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle class="wwz-ivy-success-circle" cx="12" cy="12" r="10" fill="none"/>
+            <polyline class="wwz-ivy-success-check" points="9 12 11 14 15 10"/>
+        </svg>`,
         user: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>'
     };
 
@@ -122,35 +126,54 @@
 
                         <!-- Feedback Screen -->
                         <div class="wwz-ivy-feedback wwz-ivy-hidden" id="wwz-ivy-feedback">
-                            <h2 class="wwz-ivy-feedback-question">${Config.feedbackQuestion}</h2>
-                            <div class="wwz-ivy-rating" id="wwz-ivy-rating">
-                                <button class="wwz-ivy-rating-btn" data-rating="1">1</button>
-                                <button class="wwz-ivy-rating-btn" data-rating="2">2</button>
-                                <button class="wwz-ivy-rating-btn" data-rating="3">3</button>
-                                <button class="wwz-ivy-rating-btn" data-rating="4">4</button>
-                                <button class="wwz-ivy-rating-btn" data-rating="5">5</button>
-                            </div>
-                            <div class="wwz-ivy-feedback-actions">
-                                <button class="wwz-ivy-feedback-btn wwz-ivy-feedback-continue" id="wwz-ivy-feedback-continue">
-                                    <span>${Config.feedbackContinue}</span>
-                                    ${Icons.arrow}
-                                </button>
-                                <button class="wwz-ivy-feedback-btn" id="wwz-ivy-download-transcript">
-                                    ${Icons.download}
-                                    <span>${Config.feedbackDownload}</span>
-                                </button>
+                            <div class="wwz-ivy-feedback-content">
+                                <h2 class="wwz-ivy-feedback-question">${Config.feedback.question}</h2>
+                                <div class="wwz-ivy-rating" id="wwz-ivy-rating">
+                                    ${Object.keys(Config.feedback.ratingLabels).map(rating => `
+                                        <div class="wwz-ivy-rating-item">
+                                            <button class="wwz-ivy-rating-btn wwz-ivy-rating-${rating}" data-rating="${rating}">${rating}</button>
+                                            <span class="wwz-ivy-rating-label">${Config.feedback.ratingLabels[rating]}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="wwz-ivy-feedback-second-question wwz-ivy-hidden" id="wwz-ivy-feedback-second-question">
+                                    <h3 class="wwz-ivy-feedback-second-title" id="wwz-ivy-feedback-second-title"></h3>
+                                    <div class="wwz-ivy-feedback-options" id="wwz-ivy-feedback-options"></div>
+                                </div>
+                                <div class="wwz-ivy-feedback-text-panel wwz-ivy-hidden" id="wwz-ivy-feedback-text-panel">
+                                    <label class="wwz-ivy-feedback-text-label">${Config.feedback.additionalFeedbackLabel}</label>
+                                    <textarea 
+                                        class="wwz-ivy-feedback-text-input" 
+                                        id="wwz-ivy-feedback-text-input"
+                                        placeholder="${Config.feedback.additionalFeedbackPlaceholder}"
+                                        rows="3"
+                                    ></textarea>
+                                </div>
+                                <div class="wwz-ivy-feedback-actions">
+                                    <button class="wwz-ivy-btn wwz-ivy-btn-primary" id="wwz-ivy-feedback-send">
+                                        ${Config.feedback.sendButton}
+                                    </button>
+                                    <button class="wwz-ivy-feedback-btn wwz-ivy-feedback-continue" id="wwz-ivy-feedback-continue">
+                                        <span>${Config.feedback.continueButton}</span>
+                                        ${Icons.arrow}
+                                    </button>
+                                    <button class="wwz-ivy-feedback-btn" id="wwz-ivy-download-transcript">
+                                        ${Icons.download}
+                                        <span>${Config.feedback.downloadButton}</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Thank You Screen -->
                         <div class="wwz-ivy-thankyou wwz-ivy-hidden" id="wwz-ivy-thankyou">
                             <div class="wwz-ivy-thankyou-icon">
-                                ${Icons.check}
+                                ${Icons.success}
                             </div>
-                            <h2 class="wwz-ivy-thankyou-title">Vielen Dank!</h2>
-                            <p class="wwz-ivy-thankyou-desc">Ihr Feedback hilft uns, unseren Service zu verbessern.</p>
+                            <h2 class="wwz-ivy-thankyou-title">${Config.thankyou.title}</h2>
+                            <p class="wwz-ivy-thankyou-desc">${Config.thankyou.description}</p>
                             <button class="wwz-ivy-btn wwz-ivy-btn-primary" id="wwz-ivy-thankyou-close">
-                                Schliessen
+                                ${Config.thankyou.closeButton}
                             </button>
                         </div>
                     </div>
@@ -182,6 +205,12 @@
                 sendBtn: document.getElementById('wwz-ivy-send-btn'),
                 micBtn: document.getElementById('wwz-ivy-mic-btn'),
                 rating: document.getElementById('wwz-ivy-rating'),
+                feedbackSecondQuestion: document.getElementById('wwz-ivy-feedback-second-question'),
+                feedbackSecondTitle: document.getElementById('wwz-ivy-feedback-second-title'),
+                feedbackOptions: document.getElementById('wwz-ivy-feedback-options'),
+                feedbackTextPanel: document.getElementById('wwz-ivy-feedback-text-panel'),
+                feedbackTextInput: document.getElementById('wwz-ivy-feedback-text-input'),
+                feedbackSend: document.getElementById('wwz-ivy-feedback-send'),
                 feedbackContinue: document.getElementById('wwz-ivy-feedback-continue'),
                 downloadTranscript: document.getElementById('wwz-ivy-download-transcript'),
                 thankyouClose: document.getElementById('wwz-ivy-thankyou-close')
@@ -267,10 +296,10 @@
                             <img src="${Config.botAvatar}" alt="${Config.botName}">
                         </div>
                         <div class="wwz-ivy-message-actions">
-                            <button class="wwz-ivy-message-action wwz-ivy-copy-btn" aria-label="Copy" data-text="${this.escapeHtml(message.text)}">
+                            <button class="wwz-ivy-message-action wwz-ivy-copy-btn" aria-label="Copy" data-text="${this.escapeHtml(this.extractPlainText(message.text))}">
                                 ${Icons.copy}
                             </button>
-                            <button class="wwz-ivy-message-action wwz-ivy-speak-btn" aria-label="Read aloud" data-text="${this.escapeHtml(message.text)}">
+                            <button class="wwz-ivy-message-action wwz-ivy-speak-btn" aria-label="Read aloud" data-text="${this.escapeHtml(this.extractPlainText(message.text))}">
                                 ${Icons.speaker}
                             </button>
                         </div>
@@ -358,6 +387,71 @@
                     btn.classList.remove('wwz-ivy-selected');
                 }
             });
+
+            // Show second question and options based on rating
+            const ratingNum = parseInt(rating);
+            const isPositive = ratingNum >= 4;
+            
+            // Update second question
+            elements.feedbackSecondTitle.textContent = isPositive 
+                ? Config.feedback.positiveQuestion 
+                : Config.feedback.negativeQuestion;
+            
+            // Update options
+            const options = isPositive 
+                ? Config.feedback.positiveOptions 
+                : Config.feedback.negativeOptions;
+            
+            elements.feedbackOptions.innerHTML = options.map(option => 
+                `<button class="wwz-ivy-feedback-option" data-option="${this.escapeHtml(option)}">${this.escapeHtml(option)}</button>`
+            ).join('');
+            
+            // Show second question and text panel
+            elements.feedbackSecondQuestion.classList.remove('wwz-ivy-hidden');
+            elements.feedbackTextPanel.classList.remove('wwz-ivy-hidden');
+        },
+
+        /**
+         * Reset feedback form
+         */
+        resetFeedbackForm: function() {
+            if (elements.rating) {
+                const buttons = elements.rating.querySelectorAll('.wwz-ivy-rating-btn');
+                buttons.forEach(btn => btn.classList.remove('wwz-ivy-selected'));
+            }
+            if (elements.feedbackSecondQuestion) {
+                elements.feedbackSecondQuestion.classList.add('wwz-ivy-hidden');
+            }
+            if (elements.feedbackTextPanel) {
+                elements.feedbackTextPanel.classList.add('wwz-ivy-hidden');
+            }
+            if (elements.feedbackTextInput) {
+                elements.feedbackTextInput.value = '';
+            }
+            if (elements.feedbackOptions) {
+                const optionButtons = elements.feedbackOptions.querySelectorAll('.wwz-ivy-feedback-option');
+                optionButtons.forEach(btn => btn.classList.remove('wwz-ivy-selected'));
+            }
+            // Reset state
+            State.setFeedbackRating(null);
+        },
+
+        /**
+         * Show thank you screen with animation
+         */
+        showThankYou: function() {
+            this.showScreen('thankyou');
+            // Reset animation by removing and re-adding the SVG
+            const iconEl = elements.thankyou.querySelector('.wwz-ivy-thankyou-icon');
+            if (iconEl) {
+                const svg = iconEl.querySelector('.wwz-ivy-success-animation');
+                if (svg) {
+                    svg.style.animation = 'none';
+                    setTimeout(() => {
+                        svg.style.animation = '';
+                    }, 10);
+                }
+            }
         },
 
         /**
@@ -398,19 +492,42 @@
         },
 
         /**
-         * Format message (convert links, sanitize HTML)
+         * Format message (render HTML from API, sanitize dangerous content)
          */
         formatMessage: function(text) {
-            // Sanitize HTML
-            let formatted = this.escapeHtml(text);
-
-            // Convert URLs to links
-            const urlRegex = /(https?:\/\/[^\s]+)/g;
-            formatted = formatted.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
-
-            // Convert newlines to <br>
-            formatted = formatted.replace(/\n/g, '<br>');
-
+            if (!text) return '';
+            
+            // The API returns HTML, so we need to render it properly
+            // But we still need to sanitize dangerous scripts and events
+            let formatted = text;
+            
+            // Create a temporary div to parse and sanitize HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = formatted;
+            
+            // Remove script tags and event handlers
+            const scripts = tempDiv.querySelectorAll('script');
+            scripts.forEach(script => script.remove());
+            
+            // Remove event handlers from all elements
+            const allElements = tempDiv.querySelectorAll('*');
+            allElements.forEach(el => {
+                // Remove all event handlers by cloning without attributes
+                Array.from(el.attributes).forEach(attr => {
+                    if (attr.name.startsWith('on')) {
+                        el.removeAttribute(attr.name);
+                    }
+                });
+            });
+            
+            // Get sanitized HTML
+            formatted = tempDiv.innerHTML;
+            
+            // If no HTML tags were present, convert newlines to <br> for plain text
+            if (!/<[^>]+>/.test(text)) {
+                formatted = formatted.replace(/\n/g, '<br>');
+            }
+            
             return formatted;
         },
 
@@ -421,6 +538,16 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        },
+
+        /**
+         * Extract plain text from HTML (for copy/speak functionality)
+         */
+        extractPlainText: function(html) {
+            if (!html) return '';
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            return tempDiv.textContent || tempDiv.innerText || '';
         },
 
         /**
