@@ -83,7 +83,7 @@
 /* Widget Window */
 .wwz-ivy-widget {
     position: absolute;
-    bottom: calc(var(--wwz-ivy-launcher-size, 65px) + 15px);
+    bottom: var(--wwz-ivy-position-bottom, 20px);
     right: 0;
     width: var(--wwz-ivy-widget-width, 400px);
     max-width: calc(100vw - 40px);
@@ -1199,7 +1199,7 @@
         height: calc(100vh - var(--wwz-ivy-launcher-size-mobile, 55px) - 35px);
         min-height: 500px;
         max-height: 90vh;
-        bottom: calc(var(--wwz-ivy-launcher-size-mobile, 55px) + 15px);
+        bottom: var(--wwz-ivy-position-bottom-mobile, 10px);
     }
 
     .wwz-ivy-rating {
