@@ -15,8 +15,8 @@
 
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
 const fetch = require('node-fetch');
+// Note: CORS is handled by nginx, not Express
 
 // Global config
 const config = {
@@ -63,8 +63,7 @@ const DEFAULTS = {
 
 const app = express();
 
-// Simple CORS - nginx handles the actual CORS headers
-app.use(cors());
+// CORS is handled entirely by nginx - no Express CORS middleware needed
 app.use(express.json());
 
 // Health check endpoint
