@@ -115,7 +115,7 @@ WWZIvy.Main.getState()         // Get current state
 ### CI/CD Pipeline
 
 On push to `main`, GitHub Actions will:
-1. SSH into production server
+1. SSH into production server.
 2. Pull latest code
 3. Run deployment script
 4. Reload nginx
