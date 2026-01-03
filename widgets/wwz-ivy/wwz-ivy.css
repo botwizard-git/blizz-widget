@@ -190,6 +190,11 @@
     height: 18px;
 }
 
+/* Hide fullscreen button - not needed for chat widget */
+#wwz-ivy-fullscreen-btn {
+    display: none;
+}
+
 /* Content */
 .wwz-ivy-content {
     flex: 1;
@@ -1275,12 +1280,17 @@
         right: var(--wwz-ivy-position-right-mobile, 10px);
     }
 
+    /* Auto-fullscreen widget on mobile for app-like experience */
     .wwz-ivy-widget {
-        width: calc(100vw - 20px);
-        height: calc(100vh - var(--wwz-ivy-launcher-size-mobile, 55px) - 35px);
-        min-height: 500px;
-        max-height: 90vh;
-        bottom: var(--wwz-ivy-position-bottom-mobile, 10px);
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 100vw;
+        height: 100vh;
+        max-width: 100vw;
+        max-height: 100vh;
+        min-height: unset;
+        border-radius: 0;
     }
 
     .wwz-ivy-rating {
