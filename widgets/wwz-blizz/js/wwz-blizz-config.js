@@ -17,12 +17,12 @@
         botName: 'Ivy',
         botAvatar: 'https://chatbot2go-hybrid.enterprisebot.co/assets/botForge/67031622bbfbfaaccecd88f0/wwz_rescaled_image.png',
 
-        // API endpoints (via proxy for security)
-        apiEndpoint: 'https://blizz-api.botwizard.ch/chat',
-        RATING_API: 'https://blizz-api.botwizard.ch/feedback',
-        CONTACT_FORM_API: 'https://blizz-api.botwizard.ch/contact',
-        BOTFLOW_API: 'https://blizz-api.botwizard.ch/botflow',
-        contactFormEndpoint: 'https://blizz-api.botwizard.ch/contact',
+        // API endpoints (via proxy for security) - per-widget routes
+        apiEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/chat',
+        RATING_API: 'https://blizz-api.botwizard.ch/wwz-blizz/feedback',
+        CONTACT_FORM_API: 'https://blizz-api.botwizard.ch/wwz-blizz/contact',
+        BOTFLOW_API: 'https://blizz-api.botwizard.ch/wwz-blizz/botflow',
+        contactFormEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/contact',
 
         // EB endpoint reference (for backend routing)
         EB_ENDPOINT_BASE: 'https://wwz-blitzico.enterprisebot.co',

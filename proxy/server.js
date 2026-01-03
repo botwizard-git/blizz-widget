@@ -4,6 +4,13 @@
  *
  * Configuration: Uses environment variables with built-in defaults
  * GitHub secrets override defaults when deployed via CI/CD
+ *
+ * Routes:
+ *   /:widgetId/chat     - Per-widget chat endpoint
+ *   /:widgetId/feedback - Per-widget feedback endpoint
+ *   /:widgetId/contact  - Per-widget contact form endpoint
+ *   /:widgetId/botflow  - Per-widget botflow endpoint
+ *   /chat, /feedback, /contact, /botflow - Legacy endpoints (backward compatible)
  */
 
 require('dotenv').config();
@@ -11,52 +18,53 @@ const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
 
-// Default endpoints (can be overridden by environment variables / GitHub secrets)
-const DEFAULTS = {
-    PORT: 3050,
-    CHAT_ENDPOINT: 'https://wwz-blitzico.enterprisebot.co/blitzef18241476b1474580d2f58390a9cbae',
-    FORM_ENDPOINT: 'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
-    FEEDBACK_ENDPOINT: 'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
-    BOTFLOW_ENDPOINT: 'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
-    ALLOWED_ORIGINS: 'https://blizz.botwizard.ch,https://www.wwz.ch'
+// Global config
+const config = {
+    PORT: process.env.PORT || 3050,
+    API_KEY: process.env.API_KEY || ''
 };
 
-// Use env vars if available (GitHub secrets), otherwise use defaults
-const config = {
-    PORT: process.env.PORT || DEFAULTS.PORT,
-    API_KEY: process.env.API_KEY || '',
-    CHAT_ENDPOINT: process.env.CHAT_ENDPOINT || DEFAULTS.CHAT_ENDPOINT,
-    FORM_ENDPOINT: process.env.FORM_ENDPOINT || DEFAULTS.FORM_ENDPOINT,
-    FEEDBACK_ENDPOINT: process.env.FEEDBACK_ENDPOINT || DEFAULTS.FEEDBACK_ENDPOINT,
-    BOTFLOW_ENDPOINT: process.env.BOTFLOW_ENDPOINT || DEFAULTS.BOTFLOW_ENDPOINT,
-    ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS || DEFAULTS.ALLOWED_ORIGINS
+// Per-widget endpoint configurations
+// Each widget can have its own backend endpoints (overridable via env vars)
+const WIDGETS = {
+    'wwz-blizz': {
+        CHAT_ENDPOINT: process.env.WWZ_BLIZZ_CHAT_ENDPOINT ||
+            'https://wwz-blitzico.enterprisebot.co/blitzef18241476b1474580d2f58390a9cbae',
+        FORM_ENDPOINT: process.env.WWZ_BLIZZ_FORM_ENDPOINT ||
+            'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
+        FEEDBACK_ENDPOINT: process.env.WWZ_BLIZZ_FEEDBACK_ENDPOINT ||
+            'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
+        BOTFLOW_ENDPOINT: process.env.WWZ_BLIZZ_BOTFLOW_ENDPOINT ||
+            'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f'
+    },
+    'wwz-ivy': {
+        CHAT_ENDPOINT: process.env.WWZ_IVY_CHAT_ENDPOINT ||
+            'https://wwz-blitzico.enterprisebot.co/blitzef18241476b1474580d2f58390a9cbae',
+        FORM_ENDPOINT: process.env.WWZ_IVY_FORM_ENDPOINT ||
+            'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
+        FEEDBACK_ENDPOINT: process.env.WWZ_IVY_FEEDBACK_ENDPOINT ||
+            'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
+        BOTFLOW_ENDPOINT: process.env.WWZ_IVY_BOTFLOW_ENDPOINT ||
+            'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f'
+    }
+};
+
+// Default endpoints for legacy routes (backward compatibility)
+const DEFAULTS = {
+    CHAT_ENDPOINT: process.env.CHAT_ENDPOINT ||
+        'https://wwz-blitzico.enterprisebot.co/blitzef18241476b1474580d2f58390a9cbae',
+    FORM_ENDPOINT: process.env.FORM_ENDPOINT ||
+        'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
+    FEEDBACK_ENDPOINT: process.env.FEEDBACK_ENDPOINT ||
+        'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
+    BOTFLOW_ENDPOINT: process.env.BOTFLOW_ENDPOINT ||
+        'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f'
 };
 
 const app = express();
 
-// Parse allowed origins from config
-const allowedOrigins = config.ALLOWED_ORIGINS.split(',').map(o => o.trim());
-
-// CORS configuration
-const corsOptions = {
-    origin: function(origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl)
-        if (!origin) return callback(null, true);
-
-        if (allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            console.log('[CORS] Blocked origin:', origin);
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Accept'],
-    credentials: true,
-    maxAge: 86400 // Preflight cache for 24 hours
-};
-
-app.use(cors(corsOptions));
+// Simple CORS - nginx handles the actual CORS headers
+app.use(cors());
 app.use(express.json());
 
 // Health check endpoint
@@ -64,17 +72,233 @@ app.get('/health', (req, res) => {
     res.json({
         status: 'ok',
         timestamp: new Date().toISOString(),
+        widgets: Object.keys(WIDGETS),
         endpoints: {
-            chat: !!config.CHAT_ENDPOINT,
-            contact: !!config.FORM_ENDPOINT,
-            feedback: !!config.FEEDBACK_ENDPOINT,
-            botflow: !!config.BOTFLOW_ENDPOINT
+            chat: true,
+            contact: true,
+            feedback: true,
+            botflow: true
         }
     });
 });
 
 /**
- * Chat endpoint - forwards messages to EnterpriseBot chat API
+ * Get widget configuration or return null if not found
+ */
+function getWidgetConfig(widgetId) {
+    return WIDGETS[widgetId] || null;
+}
+
+// =============================================================================
+// PER-WIDGET ROUTES: /:widgetId/chat, /:widgetId/feedback, etc.
+// =============================================================================
+
+/**
+ * Per-widget Chat endpoint
+ * POST /:widgetId/chat
+ */
+app.post('/:widgetId/chat', async (req, res) => {
+    try {
+        const { widgetId } = req.params;
+        const widgetConfig = getWidgetConfig(widgetId);
+
+        if (!widgetConfig) {
+            return res.status(404).json({ error: `Unknown widget: ${widgetId}` });
+        }
+
+        const { blizzUserMsg, blizzSessionId, blizzBotMessageId, clientUrl, agentId } = req.body;
+
+        if (!blizzUserMsg) {
+            return res.status(400).json({ error: 'blizzUserMsg is required' });
+        }
+
+        console.log(`[${widgetId}/Chat] Forwarding message:`, blizzUserMsg.substring(0, 50) + '...');
+
+        const response = await fetch(widgetConfig.CHAT_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, text/plain, */*',
+                'api-key': config.API_KEY
+            },
+            body: JSON.stringify({
+                blizzUserMsg,
+                blizzSessionId,
+                blizzBotMessageId,
+                clientUrl,
+                widgetId,
+                agentId
+            })
+        });
+
+        if (!response.ok) {
+            console.error(`[${widgetId}/Chat] API error:`, response.status);
+            return res.status(response.status).json({ error: 'API request failed' });
+        }
+
+        const data = await response.json();
+        console.log(`[${widgetId}/Chat] Response received`);
+        res.json(data);
+
+    } catch (error) {
+        console.error(`[Chat] Error:`, error.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+/**
+ * Per-widget Feedback endpoint
+ * POST /:widgetId/feedback
+ */
+app.post('/:widgetId/feedback', async (req, res) => {
+    try {
+        const { widgetId } = req.params;
+        const widgetConfig = getWidgetConfig(widgetId);
+
+        if (!widgetConfig) {
+            return res.status(404).json({ error: `Unknown widget: ${widgetId}` });
+        }
+
+        const { blizzSessionId, rating, ratingComment, agentId, timestamp } = req.body;
+
+        if (rating === undefined) {
+            return res.status(400).json({ error: 'rating is required' });
+        }
+
+        console.log(`[${widgetId}/Feedback] Submitting rating:`, rating);
+
+        const response = await fetch(widgetConfig.FEEDBACK_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, text/plain, */*',
+                'api-key': config.API_KEY
+            },
+            body: JSON.stringify({
+                type: 'simpleMessage',
+                message: JSON.stringify({
+                    rating,
+                    ratingComment,
+                    agentId,
+                    widgetId,
+                    blizzSessionId,
+                    timestamp
+                })
+            })
+        });
+
+        if (!response.ok) {
+            console.error(`[${widgetId}/Feedback] API error:`, response.status);
+            return res.status(response.status).json({ error: 'Feedback submission failed' });
+        }
+
+        const data = await response.json();
+        console.log(`[${widgetId}/Feedback] Rating submitted successfully`);
+        res.json(data);
+
+    } catch (error) {
+        console.error(`[Feedback] Error:`, error.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+/**
+ * Per-widget Contact form endpoint
+ * POST /:widgetId/contact
+ */
+app.post('/:widgetId/contact', async (req, res) => {
+    try {
+        const { widgetId } = req.params;
+        const widgetConfig = getWidgetConfig(widgetId);
+
+        if (!widgetConfig) {
+            return res.status(404).json({ error: `Unknown widget: ${widgetId}` });
+        }
+
+        const { type, message, formData, agentId, formpayload } = req.body;
+
+        let payload;
+        if (type === 'simpleMessage' && message) {
+            payload = { type, message, formData, widgetId, agentId };
+            console.log(`[${widgetId}/Contact] Submitting form (simpleMessage format)`);
+        } else if (formpayload) {
+            payload = { formpayload };
+            console.log(`[${widgetId}/Contact] Submitting form (legacy format)`);
+        } else {
+            return res.status(400).json({ error: 'Invalid payload format' });
+        }
+
+        const response = await fetch(widgetConfig.FORM_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, text/plain, */*',
+                'api-key': config.API_KEY
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            console.error(`[${widgetId}/Contact] API error:`, response.status);
+            return res.status(response.status).json({ error: 'Form submission failed' });
+        }
+
+        const data = await response.json();
+        console.log(`[${widgetId}/Contact] Form submitted successfully`);
+        res.json(data);
+
+    } catch (error) {
+        console.error(`[Contact] Error:`, error.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+/**
+ * Per-widget Botflow endpoint
+ * POST /:widgetId/botflow
+ */
+app.post('/:widgetId/botflow', async (req, res) => {
+    try {
+        const { widgetId } = req.params;
+        const widgetConfig = getWidgetConfig(widgetId);
+
+        if (!widgetConfig) {
+            return res.status(404).json({ error: `Unknown widget: ${widgetId}` });
+        }
+
+        console.log(`[${widgetId}/Botflow] Forwarding request`);
+
+        const response = await fetch(widgetConfig.BOTFLOW_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, text/plain, */*',
+                'api-key': config.API_KEY
+            },
+            body: JSON.stringify(req.body)
+        });
+
+        if (!response.ok) {
+            console.error(`[${widgetId}/Botflow] API error:`, response.status);
+            return res.status(response.status).json({ error: 'Botflow request failed' });
+        }
+
+        const data = await response.json();
+        console.log(`[${widgetId}/Botflow] Response received`);
+        res.json(data);
+
+    } catch (error) {
+        console.error(`[Botflow] Error:`, error.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// =============================================================================
+// LEGACY ROUTES: /chat, /feedback, /contact, /botflow (backward compatibility)
+// =============================================================================
+
+/**
+ * Legacy Chat endpoint
  * POST /chat
  */
 app.post('/chat', async (req, res) => {
@@ -87,7 +311,7 @@ app.post('/chat', async (req, res) => {
 
         console.log('[Chat] Forwarding message:', blizzUserMsg.substring(0, 50) + '...');
 
-        const response = await fetch(config.CHAT_ENDPOINT, {
+        const response = await fetch(DEFAULTS.CHAT_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -120,7 +344,7 @@ app.post('/chat', async (req, res) => {
 });
 
 /**
- * Feedback/Rating endpoint - forwards rating submissions
+ * Legacy Feedback endpoint
  * POST /feedback
  */
 app.post('/feedback', async (req, res) => {
@@ -131,10 +355,9 @@ app.post('/feedback', async (req, res) => {
             return res.status(400).json({ error: 'rating is required' });
         }
 
-        console.log('[Feedback] Submitting rating:', rating, 'for session:', blizzSessionId);
+        console.log('[Feedback] Submitting rating:', rating);
 
-        // Forward in simpleMessage format
-        const response = await fetch(config.FEEDBACK_ENDPOINT, {
+        const response = await fetch(DEFAULTS.FEEDBACK_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -170,28 +393,25 @@ app.post('/feedback', async (req, res) => {
 });
 
 /**
- * Contact form endpoint - forwards form submissions
+ * Legacy Contact form endpoint
  * POST /contact
  */
 app.post('/contact', async (req, res) => {
     try {
         const { type, message, formData, widgetId, agentId, formpayload } = req.body;
 
-        // Support both new format (type/message) and legacy format (formpayload)
         let payload;
         if (type === 'simpleMessage' && message) {
-            // New simpleMessage format
             payload = { type, message, formData, widgetId, agentId };
             console.log('[Contact] Submitting form (simpleMessage format)');
         } else if (formpayload) {
-            // Legacy format
             payload = { formpayload };
-            console.log('[Contact] Submitting form for:', formpayload.email || 'unknown');
+            console.log('[Contact] Submitting form (legacy format)');
         } else {
             return res.status(400).json({ error: 'Invalid payload format' });
         }
 
-        const response = await fetch(config.FORM_ENDPOINT, {
+        const response = await fetch(DEFAULTS.FORM_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -217,23 +437,21 @@ app.post('/contact', async (req, res) => {
 });
 
 /**
- * Botflow endpoint - forwards to aida flows API
+ * Legacy Botflow endpoint
  * POST /botflow
  */
 app.post('/botflow', async (req, res) => {
     try {
-        const payload = req.body;
-
         console.log('[Botflow] Forwarding request');
 
-        const response = await fetch(config.BOTFLOW_ENDPOINT, {
+        const response = await fetch(DEFAULTS.BOTFLOW_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json, text/plain, */*',
                 'api-key': config.API_KEY
             },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(req.body)
         });
 
         if (!response.ok) {
@@ -253,9 +471,6 @@ app.post('/botflow', async (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    if (err.message === 'Not allowed by CORS') {
-        return res.status(403).json({ error: 'CORS policy violation' });
-    }
     console.error('[Error]', err.message);
     res.status(500).json({ error: 'Internal server error' });
 });
@@ -263,10 +478,8 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(config.PORT, () => {
     console.log(`[Blizz Proxy] Server running on port ${config.PORT}`);
-    console.log(`[Blizz Proxy] Allowed origins:`, allowedOrigins);
-    console.log(`[Blizz Proxy] Endpoints configured:`);
-    console.log(`  - Chat: ${config.CHAT_ENDPOINT ? 'Yes' : 'No'}`);
-    console.log(`  - Contact: ${config.FORM_ENDPOINT ? 'Yes' : 'No'}`);
-    console.log(`  - Feedback: ${config.FEEDBACK_ENDPOINT ? 'Yes' : 'No'}`);
-    console.log(`  - Botflow: ${config.BOTFLOW_ENDPOINT ? 'Yes' : 'No'}`);
+    console.log(`[Blizz Proxy] Registered widgets:`, Object.keys(WIDGETS).join(', '));
+    console.log(`[Blizz Proxy] Routes available:`);
+    console.log(`  - Per-widget: /:widgetId/chat, /:widgetId/feedback, /:widgetId/contact, /:widgetId/botflow`);
+    console.log(`  - Legacy: /chat, /feedback, /contact, /botflow`);
 });
