@@ -103,6 +103,37 @@
                 }
             });
 
+            // Contact form - Close button
+            document.getElementById('wwz-blizz-contact-form-close').addEventListener('click', function() {
+                self.handleContactFormClose();
+            });
+
+            // Contact form - Submit
+            document.getElementById('wwz-blizz-contact-form-body').addEventListener('submit', function(e) {
+                e.preventDefault();
+                self.handleContactFormSubmit();
+            });
+
+            // Contact form success - Close button
+            document.getElementById('wwz-blizz-contact-success-close').addEventListener('click', function() {
+                self.handleContactSuccessClose();
+            });
+
+            // Privacy modal - Open button
+            document.getElementById('wwz-blizz-privacy-btn').addEventListener('click', function() {
+                self.showPrivacyModal();
+            });
+
+            // Privacy modal - Close button
+            document.getElementById('wwz-blizz-privacy-close').addEventListener('click', function() {
+                self.hidePrivacyModal();
+            });
+
+            // End chat & feedback button
+            document.getElementById('wwz-blizz-end-chat-btn').addEventListener('click', function() {
+                self.handleEndChatAndFeedback();
+            });
+
             console.log('[WWZBlizz] Events initialized');
         },
 
@@ -152,10 +183,18 @@
          */
         handleWelcomeSuggestionClick: function(text) {
             var self = this;
+            var CONFIG = EBB.CONFIG;
             var UI = EBB.UI;
             var StateManager = EBB.StateManager;
 
             if (StateManager.isLoading()) return;
+
+            // Check if this is the contact form trigger
+            if (text === CONFIG.contactFormTrigger) {
+                StateManager.setContactFormSource('welcome');
+                UI.showContactForm();
+                return;
+            }
 
             UI.showChatScreen();
             StateManager.setLastUserMessage(text);
@@ -196,10 +235,19 @@
          */
         handleSuggestionClick: function(text) {
             var self = this;
+            var CONFIG = EBB.CONFIG;
             var UI = EBB.UI;
             var StateManager = EBB.StateManager;
 
             if (StateManager.isLoading()) return;
+
+            // Check if this is the contact form trigger
+            if (text === CONFIG.contactFormTrigger) {
+                StateManager.setContactFormSource('chat');
+                UI.clearSuggestions();
+                UI.showContactForm();
+                return;
+            }
 
             StateManager.setLastUserMessage(text);
 
@@ -255,6 +303,64 @@
         },
 
         /**
+         * Handle YouTube request with video widget
+         */
+        handleYoutubeRequest: function(text) {
+            var CONFIG = EBB.CONFIG;
+            var UI = EBB.UI;
+            var StateManager = EBB.StateManager;
+
+            console.log('[EnterpriseBotBlizz] YouTube request detected:', text);
+
+            StateManager.setLoading(true);
+            UI.showTypingIndicator();
+
+            setTimeout(function() {
+                UI.hideTypingIndicator();
+                StateManager.setLoading(false);
+
+                var videoHtml = UI.createVideoWidget(CONFIG.dummyYoutubeVideo);
+                var botMessage = StateManager.addMessage(videoHtml, false, { isHtml: true });
+                UI.renderMessage(botMessage);
+
+                UI.renderSuggestions(CONFIG.defaultSuggestions);
+            }, 800);
+        },
+
+        /**
+         * Handle shop request with map widget
+         */
+        handleShopRequest: function(text, shop) {
+            var CONFIG = EBB.CONFIG;
+            var UI = EBB.UI;
+            var StateManager = EBB.StateManager;
+
+            console.log('[EnterpriseBotBlizz] Shop request detected:', shop.name);
+
+            StateManager.setLoading(true);
+            UI.showTypingIndicator();
+
+            setTimeout(function() {
+                UI.hideTypingIndicator();
+                StateManager.setLoading(false);
+
+                // First add a text response
+                var textResponse = 'Hier finden Sie Informationen zum ' + shop.name + ':';
+                var textMessage = StateManager.addMessage(textResponse, false);
+                UI.renderMessage(textMessage);
+
+                // Then add the map widget
+                setTimeout(function() {
+                    var mapHtml = UI.createMapWidget(shop);
+                    var mapMessage = StateManager.addMessage(mapHtml, false, { isHtml: true });
+                    UI.renderMessage(mapMessage);
+
+                    UI.renderSuggestions(CONFIG.defaultSuggestions);
+                }, 300);
+            }, 800);
+        },
+
+        /**
          * Send message to API
          */
         sendMessageToAPI: function(text) {
@@ -266,6 +372,19 @@
 
             if (self.isGreeting(text)) {
                 self.handleGreeting(text);
+                return;
+            }
+
+            // Check for YouTube keyword - show dummy video widget
+            if (text.toLowerCase().indexOf('youtube') !== -1) {
+                self.handleYoutubeRequest(text);
+                return;
+            }
+
+            // Check for shop mention - show map widget
+            var shop = UI.detectShopMention(text);
+            if (shop) {
+                self.handleShopRequest(text, shop);
                 return;
             }
 
@@ -441,8 +560,21 @@
          * Show thank you screen
          */
         showThankYou: function() {
+            var self = this;
+            var isEndChat = EBB.StateManager.isEndChatFeedback();
+
             EBB.UI.updateView('thankYou');
             EBB.StateManager.reset();
+
+            // If from end chat button, return to welcome screen after delay
+            if (isEndChat) {
+                setTimeout(function() {
+                    EBB.UI.updateView('chat');
+                    EBB.UI.clearMessages();
+                    EBB.UI.showWelcomeScreen();
+                    EBB.UI.renderWelcomeSuggestions(EBB.CONFIG.defaultSuggestions);
+                }, 2000);
+            }
         },
 
         /**
@@ -450,6 +582,91 @@
          */
         copyMessage: function(text) {
             EBB.UI.copyToClipboard(text);
+        },
+
+        /**
+         * Handle contact form close
+         */
+        handleContactFormClose: function() {
+            EBB.UI.hideContactForm();
+        },
+
+        /**
+         * Handle contact form submit
+         */
+        handleContactFormSubmit: function() {
+            var self = this;
+            var UI = EBB.UI;
+            var APIService = EBB.APIService;
+
+            // Validate form
+            var validation = UI.validateContactForm();
+            if (!validation.valid) {
+                UI.showNotification(validation.errors[0], 'error');
+                return;
+            }
+
+            // Get form data
+            var formData = UI.getContactFormData();
+
+            // Disable submit button
+            var submitBtn = document.getElementById('wwz-blizz-contact-submit');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Wird gesendet...';
+
+            // Submit form
+            APIService.submitContactForm(formData)
+                .then(function(result) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'ABSENDEN';
+
+                    if (result.success) {
+                        UI.showContactSuccess();
+                    } else {
+                        UI.showNotification('Fehler beim Senden. Bitte versuchen Sie es erneut.', 'error');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('[EnterpriseBotBlizz] Contact form error:', error);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'ABSENDEN';
+                    UI.showNotification('Fehler beim Senden. Bitte versuchen Sie es erneut.', 'error');
+                });
+        },
+
+        /**
+         * Handle contact success close
+         */
+        handleContactSuccessClose: function() {
+            var source = EBB.StateManager.getContactFormSource();
+            EBB.UI.updateView('chat'); // Hides overlay
+            if (source === 'welcome') {
+                EBB.UI.showWelcomeScreen();
+            }
+            EBB.UI.resetContactForm();
+        },
+
+        /**
+         * Show privacy modal
+         */
+        showPrivacyModal: function() {
+            EBB.UI.showPrivacyModal();
+        },
+
+        /**
+         * Hide privacy modal
+         */
+        hidePrivacyModal: function() {
+            EBB.UI.hidePrivacyModal();
+        },
+
+        /**
+         * Handle end chat and feedback button
+         */
+        handleEndChatAndFeedback: function() {
+            console.log('[EnterpriseBotBlizz] End chat and feedback clicked');
+            EBB.StateManager.setEndChatFeedback(true);
+            EBB.UI.updateView('feedback');
         }
     };
 

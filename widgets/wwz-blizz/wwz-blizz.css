@@ -48,6 +48,8 @@
     background: var(--eb-bg);
     width: 100%;
     height: 100%;
+    position: relative;
+    overflow: hidden;
 }
 
 /* Hidden utility */
@@ -829,5 +831,665 @@
         width: 40px;
         height: 40px;
         font-size: 0.875rem;
+    }
+}
+
+/* ========================================
+   CONTACT FORM
+   ======================================== */
+/* Override overlay-screen for contact form to allow scroll */
+#enterprisebot-blizz-contact-form {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
+.enterprisebot-blizz-contact-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--eb-bg);
+    border-bottom: 1px solid var(--eb-border-light);
+    min-height: 56px;
+    flex-shrink: 0;
+}
+
+.enterprisebot-blizz-contact-header-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--eb-text);
+}
+
+.enterprisebot-blizz-contact-close-btn {
+    padding: 8px;
+    background: transparent;
+    border: none;
+    color: var(--eb-text-muted);
+    cursor: pointer;
+    border-radius: var(--eb-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-contact-close-btn:hover {
+    background: var(--eb-bg-secondary);
+    color: var(--eb-text);
+}
+
+.enterprisebot-blizz-contact-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 20px;
+}
+
+.enterprisebot-blizz-contact-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.enterprisebot-blizz-contact-content::-webkit-scrollbar-thumb {
+    background: var(--eb-border);
+    border-radius: 3px;
+}
+
+.enterprisebot-blizz-contact-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.enterprisebot-blizz-contact-form-body {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.enterprisebot-blizz-form-group {
+    margin-bottom: 14px;
+}
+
+.enterprisebot-blizz-form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--eb-text);
+    margin-bottom: 6px;
+}
+
+.enterprisebot-blizz-form-group input,
+.enterprisebot-blizz-form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--eb-border);
+    border-radius: var(--eb-radius-sm);
+    font-size: 0.9375rem;
+    font-family: inherit;
+    background: var(--eb-bg);
+    color: var(--eb-text);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+.enterprisebot-blizz-form-group input:focus,
+.enterprisebot-blizz-form-group textarea:focus {
+    outline: none;
+    border-color: var(--eb-primary);
+    box-shadow: 0 0 0 3px rgba(20, 123, 209, 0.1);
+}
+
+.enterprisebot-blizz-form-group input::placeholder,
+.enterprisebot-blizz-form-group textarea::placeholder {
+    color: var(--eb-text-muted);
+}
+
+.enterprisebot-blizz-form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Time Range */
+.enterprisebot-blizz-time-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.enterprisebot-blizz-time-range input[type="time"] {
+    flex: 1;
+    padding: 10px 12px;
+}
+
+.enterprisebot-blizz-time-separator {
+    color: var(--eb-text-muted);
+    font-weight: 500;
+}
+
+/* Required Note */
+.enterprisebot-blizz-required-note {
+    font-size: 0.75rem;
+    color: var(--eb-text-muted);
+    text-align: right;
+    margin-bottom: 16px;
+}
+
+/* Submit Button */
+.enterprisebot-blizz-contact-submit-btn {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.enterprisebot-blizz-contact-submit-btn:disabled {
+    background: var(--eb-text-muted);
+    cursor: not-allowed;
+}
+
+/* Form Validation */
+.enterprisebot-blizz-form-group input:invalid:not(:placeholder-shown),
+.enterprisebot-blizz-form-group textarea:invalid:not(:placeholder-shown) {
+    border-color: #ef4444;
+}
+
+/* Contact Form Responsive */
+@media (max-width: 640px) {
+    .enterprisebot-blizz-contact-content {
+        padding: 20px 16px;
+    }
+
+    .enterprisebot-blizz-contact-header {
+        padding: 12px 16px;
+    }
+
+    .enterprisebot-blizz-time-range {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .enterprisebot-blizz-time-range input[type="time"] {
+        width: 100%;
+    }
+
+    .enterprisebot-blizz-time-separator {
+        display: none;
+    }
+}
+
+/* ========================================
+   INFO BUTTON & PRIVACY POPUP
+   ======================================== */
+.enterprisebot-blizz-info-btn {
+    color: var(--eb-primary);
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-info-btn:hover {
+    opacity: 1;
+    background: rgba(20, 123, 209, 0.1);
+}
+
+/* Privacy Popup - Enhanced Floating Card */
+.enterprisebot-blizz-privacy-popup {
+    position: absolute;
+    top: 70px;
+    right: 16px;
+    width: 320px;
+    max-width: calc(100% - 32px);
+    padding: 24px;
+    background: var(--eb-bg);
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border-left: 4px solid var(--eb-primary);
+    z-index: 100;
+    animation: enterprisebot-blizz-privacySlideIn 0.3s ease-out;
+}
+
+@keyframes enterprisebot-blizz-privacySlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header with avatar */
+.enterprisebot-blizz-privacy-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding-right: 30px;
+}
+
+.enterprisebot-blizz-privacy-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--eb-radius-full);
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.enterprisebot-blizz-privacy-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--eb-text);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Close button - subtle */
+.enterprisebot-blizz-privacy-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: var(--eb-radius-full);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--eb-text-light);
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-privacy-close-btn:hover {
+    background: var(--eb-bg-secondary);
+    color: var(--eb-text);
+}
+
+/* Text */
+.enterprisebot-blizz-privacy-text {
+    font-size: 0.8125rem;
+    color: var(--eb-text-muted);
+    line-height: 1.6;
+    margin: 0 0 18px 0;
+}
+
+/* Link button - pill style */
+.enterprisebot-blizz-privacy-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: var(--eb-bg-secondary);
+    border: none;
+    border-radius: 20px;
+    color: var(--eb-text);
+    text-decoration: none;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-privacy-link:hover {
+    background: var(--eb-primary);
+    color: white;
+}
+
+.enterprisebot-blizz-privacy-link svg {
+    transition: transform 0.2s ease;
+}
+
+.enterprisebot-blizz-privacy-link:hover svg {
+    transform: translateX(3px);
+}
+
+/* Privacy Popup Responsive */
+@media (max-width: 640px) {
+    .enterprisebot-blizz-privacy-popup {
+        top: 60px;
+        right: 8px;
+        left: 8px;
+        width: auto;
+        max-width: none;
+    }
+}
+
+/* ========================================
+   END CHAT BUTTON
+   ======================================== */
+.enterprisebot-blizz-end-chat-btn {
+    display: block;
+    width: 100%;
+    max-width: 800px;
+    margin: 12px auto 0;
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid var(--eb-border);
+    border-radius: var(--eb-radius-sm);
+    color: var(--eb-text-muted);
+    font-size: 0.875rem;
+    font-family: 'Albert Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-end-chat-btn:hover {
+    background: var(--eb-bg-secondary);
+    border-color: var(--eb-text-muted);
+    color: var(--eb-text);
+}
+
+/* ========================================
+   VIDEO WIDGET
+   ======================================== */
+.enterprisebot-blizz-video-widget {
+    margin-top: 8px;
+}
+
+.enterprisebot-blizz-video-widget p {
+    margin: 0 0 12px 0;
+    font-size: 0.9375rem;
+}
+
+.enterprisebot-blizz-video-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: var(--eb-radius-sm);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.enterprisebot-blizz-video-link:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--eb-shadow-lg);
+}
+
+.enterprisebot-blizz-video-thumbnail {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: var(--eb-radius-sm);
+    overflow: hidden;
+}
+
+.enterprisebot-blizz-video-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.enterprisebot-blizz-video-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 0, 0, 0.9);
+    border-radius: var(--eb-radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.enterprisebot-blizz-video-link:hover .enterprisebot-blizz-video-play-icon {
+    transform: translate(-50%, -50%) scale(1.1);
+    background: rgba(255, 0, 0, 1);
+}
+
+.enterprisebot-blizz-video-play-icon svg {
+    margin-left: 4px;
+}
+
+.enterprisebot-blizz-video-title {
+    margin-top: 10px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--eb-text);
+}
+
+/* ========================================
+   LOCATION CARD
+   ======================================== */
+.enterprisebot-blizz-location-card {
+    margin-top: 8px;
+    background: var(--eb-bg);
+    border: 1px solid var(--eb-border-light);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.enterprisebot-blizz-location-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--eb-bg-secondary);
+    border-bottom: 1px solid var(--eb-border-light);
+    flex-wrap: wrap;
+}
+
+.enterprisebot-blizz-location-icon {
+    color: var(--eb-primary);
+    flex-shrink: 0;
+}
+
+.enterprisebot-blizz-location-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--eb-text);
+    flex: 1;
+}
+
+/* Status Badge */
+.enterprisebot-blizz-location-status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.enterprisebot-blizz-status-open {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.enterprisebot-blizz-status-closed {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Body - side by side container */
+.enterprisebot-blizz-location-body {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.enterprisebot-blizz-location-map {
+    width: 100%;
+    height: 180px;
+    background: var(--eb-bg-secondary);
+    position: relative;
+}
+
+.enterprisebot-blizz-location-map iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Info Section */
+.enterprisebot-blizz-location-info {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid var(--eb-border-light);
+}
+
+/* Info Rows (address, phone, email) */
+.enterprisebot-blizz-location-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.8125rem;
+    color: var(--eb-text);
+    text-decoration: none;
+}
+
+.enterprisebot-blizz-location-row-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--eb-text-muted);
+    margin-top: 1px;
+}
+
+/* Clickable links (phone, email) */
+.enterprisebot-blizz-location-link {
+    color: var(--eb-primary);
+    cursor: pointer;
+}
+
+.enterprisebot-blizz-location-link:hover {
+    text-decoration: underline;
+}
+
+/* Opening Hours */
+.enterprisebot-blizz-location-hours {
+    margin-top: 4px;
+}
+
+.enterprisebot-blizz-location-hours-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--eb-text);
+    margin-bottom: 6px;
+}
+
+.enterprisebot-blizz-location-hours-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding-left: 26px;
+}
+
+.enterprisebot-blizz-hours-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--eb-text-muted);
+}
+
+.enterprisebot-blizz-hours-day {
+    min-width: 45px;
+    color: var(--eb-text);
+    font-weight: 500;
+}
+
+.enterprisebot-blizz-hours-time {
+    text-align: right;
+}
+
+.enterprisebot-blizz-hours-closed {
+    color: #ef4444;
+}
+
+/* Directions Button - floating on map */
+.enterprisebot-blizz-location-btn {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: var(--eb-primary) !important;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8125rem !important;
+    font-weight: 500;
+    font-family: 'Albert Sans', sans-serif;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    line-height: 1.2;
+}
+
+.enterprisebot-blizz-location-btn:hover {
+    background: var(--eb-primary-hover) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(20, 123, 209, 0.4);
+    color: #ffffff !important;
+}
+
+.enterprisebot-blizz-location-btn svg {
+    flex-shrink: 0;
+    display: inline-block;
+}
+
+.enterprisebot-blizz-location-btn span {
+    color: #ffffff !important;
+    display: inline;
+}
+
+/* Override link styles from message bubble */
+.enterprisebot-blizz-message-bubble .enterprisebot-blizz-location-btn,
+.enterprisebot-blizz-message-bubble .enterprisebot-blizz-location-btn:hover {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+/* Desktop: Side-by-side layout */
+@media (min-width: 500px) {
+    .enterprisebot-blizz-location-body {
+        flex-direction: row;
+    }
+
+    .enterprisebot-blizz-location-map {
+        width: 45%;
+        height: 240px;
+        flex-shrink: 0;
+    }
+
+    .enterprisebot-blizz-location-info {
+        width: 55%;
+        border-top: none;
+        border-left: 1px solid var(--eb-border-light);
+        padding: 14px 16px;
+    }
+}
+
+/* Responsive adjustments for widgets */
+@media (max-width: 640px) {
+    .enterprisebot-blizz-video-thumbnail {
+        max-width: 100%;
+    }
+
+    .enterprisebot-blizz-location-map {
+        height: 160px;
+    }
+
+    .enterprisebot-blizz-location-info {
+        padding: 14px;
+        gap: 8px;
+    }
+
+    .enterprisebot-blizz-location-btn {
+        bottom: 10px;
+        left: 10px;
+        padding: 8px 14px;
+        font-size: 0.75rem;
     }
 }

@@ -19,7 +19,9 @@
         feedbackText: '',
         lastError: null,
         retryCount: 0,
-        lastUserMessage: null
+        lastUserMessage: null,
+        contactFormSource: null,  // 'welcome' or 'chat'
+        endChatFeedback: false    // true when feedback from end chat button
     };
 
     EBB.StateManager = {
@@ -172,6 +174,34 @@
          */
         getLastUserMessageText: function() {
             return state.lastUserMessage;
+        },
+
+        /**
+         * Set contact form source (where it was opened from)
+         */
+        setContactFormSource: function(source) {
+            state.contactFormSource = source;
+        },
+
+        /**
+         * Get contact form source
+         */
+        getContactFormSource: function() {
+            return state.contactFormSource;
+        },
+
+        /**
+         * Set end chat feedback flag
+         */
+        setEndChatFeedback: function(value) {
+            state.endChatFeedback = value;
+        },
+
+        /**
+         * Get end chat feedback flag
+         */
+        isEndChatFeedback: function() {
+            return state.endChatFeedback;
         },
 
         /**

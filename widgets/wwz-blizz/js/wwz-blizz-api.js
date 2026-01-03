@@ -69,8 +69,7 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json, text/plain, */*',
-                    'api-key': CONFIG.apiKey
+                    'Accept': 'application/json, text/plain, */*'
                 },
                 body: JSON.stringify(payload)
             })
@@ -101,14 +100,13 @@
                 comment: comment || ''
             };
 
-            var feedbackEndpoint = CONFIG.apiEndpoint.replace(/\/blitz[^/]+$/, '/feedback');
+            var feedbackEndpoint = CONFIG.apiEndpoint.replace(/\/chat$/, '/feedback');
 
             return fetch(feedbackEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json, text/plain, */*',
-                    'api-key': CONFIG.apiKey
+                    'Accept': 'application/json, text/plain, */*'
                 },
                 body: JSON.stringify(payload)
             })
@@ -118,6 +116,49 @@
             .catch(function(error) {
                 console.error('[WWZBlizz] Feedback submission failed:', error);
                 return false;
+            });
+        },
+
+        /**
+         * Submit contact form
+         */
+        submitContactForm: function(formData) {
+            console.log('[EnterpriseBotBlizz] Submitting contact form');
+
+            var payload = {
+                formpayload: {
+                    name: formData.name,
+                    email: formData.email,
+                    phone: formData.phone,
+                    preferredTimeFrom: formData.timeFrom || '',
+                    preferredTimeTo: formData.timeTo || '',
+                    preferredDate: formData.date || '',
+                    comment: formData.comment,
+                    blizzSessionId: SessionService.getSessionId()
+                }
+            };
+
+            return fetch(CONFIG.contactFormEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json, text/plain, */*'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Form submission failed: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                console.log('[EnterpriseBotBlizz] Contact form submitted successfully');
+                return { success: true, data: data };
+            })
+            .catch(function(error) {
+                console.error('[EnterpriseBotBlizz] Contact form submission failed:', error);
+                return { success: false, error: error.message };
             });
         }
     };
