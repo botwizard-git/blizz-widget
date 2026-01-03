@@ -173,7 +173,6 @@
                             text: window.WWZIvy.Config.welcomeMessage
                         });
                         window.WWZIvy.UI.addMessage(welcomeMessage);
-                        window.WWZIvy.UI.renderSuggestions(window.WWZIvy.Config.suggestions);
                     }
                 } else {
                     window.WWZIvy.UI.showScreen('welcome');
@@ -188,15 +187,14 @@
             startNewSession: function() {
                 window.WWZIvy.State.startNewSession();
                 window.WWZIvy.UI.getElements().messages.innerHTML = '';
-                
+
                 // Add welcome message as first bot message
                 const welcomeMessage = window.WWZIvy.State.addMessage({
                     role: 'bot',
                     text: window.WWZIvy.Config.welcomeMessage
                 });
                 window.WWZIvy.UI.addMessage(welcomeMessage);
-                
-                window.WWZIvy.UI.renderSuggestions(window.WWZIvy.Config.suggestions);
+
                 window.WWZIvy.UI.showScreen('chat');
             },
 

@@ -107,7 +107,6 @@
                         text: Config.welcomeMessage
                     });
                     UI.addMessage(welcomeMessage);
-                    UI.renderSuggestions(Config.suggestions);
                 }
             } else {
                 UI.showScreen('welcome');
@@ -157,15 +156,13 @@
         handleAcceptTerms: function() {
             State.acceptTerms();
             UI.showScreen('chat');
-            
+
             // Add welcome message as first bot message from config
             const welcomeMessage = State.addMessage({
                 role: 'bot',
                 text: Config.welcomeMessage
             });
             UI.addMessage(welcomeMessage);
-            
-            UI.renderSuggestions(Config.suggestions);
         },
 
         /**
