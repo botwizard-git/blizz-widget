@@ -24,7 +24,9 @@
                 blizzUserMsg: message,
                 blizzSessionId: sessionId,
                 blizzBotMessageId: SessionService.generateUUID(),
-                clientUrl: window.location.href
+                clientUrl: window.location.href,
+                widgetId: CONFIG.widgetId,
+                agentId: CONFIG.AGENT_ID
             };
         },
 
@@ -97,12 +99,13 @@
             var payload = {
                 blizzSessionId: SessionService.getSessionId(),
                 rating: rating,
-                comment: comment || ''
+                ratingComment: comment || '',
+                agentId: CONFIG.AGENT_ID,
+                widgetId: CONFIG.widgetId,
+                timestamp: new Date().toISOString()
             };
 
-            var feedbackEndpoint = CONFIG.apiEndpoint.replace(/\/chat$/, '/feedback');
-
-            return fetch(feedbackEndpoint, {
+            return fetch(CONFIG.RATING_API, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -123,10 +126,23 @@
          * Submit contact form
          */
         submitContactForm: function(formData) {
-            console.log('[EnterpriseBotBlizz] Submitting contact form');
+            console.log('[WWZBlizz] Submitting contact form');
 
+            // Build contact form payload in required format
+            var contactFormPayload = {
+                "title": "Kontaktformular",
+                "fields": [
+                    {"name": "Message", "type": "string", "rules": [], "error message": "This field is mandatory"},
+                    {"name": "Telefon", "type": "string", "rules": [], "error message": "This field is mandatory"},
+                    {"name": "Date of callback", "type": "datetime", "rules": [], "error message": "This field is mandatory"}
+                ]
+            };
+
+            // Wrap in simpleMessage format to avoid 500 on EB side
             var payload = {
-                formpayload: {
+                type: "simpleMessage",
+                message: "CONTACTFORMPAYLOAD_" + JSON.stringify(contactFormPayload),
+                formData: {
                     name: formData.name,
                     email: formData.email,
                     phone: formData.phone,
@@ -135,10 +151,12 @@
                     preferredDate: formData.date || '',
                     comment: formData.comment,
                     blizzSessionId: SessionService.getSessionId()
-                }
+                },
+                widgetId: CONFIG.widgetId,
+                agentId: CONFIG.AGENT_ID
             };
 
-            return fetch(CONFIG.contactFormEndpoint, {
+            return fetch(CONFIG.CONTACT_FORM_API, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -153,11 +171,11 @@
                 return response.json();
             })
             .then(function(data) {
-                console.log('[EnterpriseBotBlizz] Contact form submitted successfully');
+                console.log('[WWZBlizz] Contact form submitted successfully');
                 return { success: true, data: data };
             })
             .catch(function(error) {
-                console.error('[EnterpriseBotBlizz] Contact form submission failed:', error);
+                console.error('[WWZBlizz] Contact form submission failed:', error);
                 return { success: false, error: error.message };
             });
         }

@@ -15,10 +15,14 @@ node_modules/
 dist/
 build/
 
-# Environment files
+# Environment files (secrets - never commit)
 .env
 .env.local
 .env.production
+proxy/.env
+
+# Proxy node_modules
+proxy/node_modules/
 
 # Logs
 *.log

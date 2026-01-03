@@ -7,13 +7,26 @@
     window.WWZBlizz = window.WWZBlizz || {};
 
     window.WWZBlizz.CONFIG = {
+        // Widget identifier
+        widgetId: 'wwz-blizz',
+
+        // Agent ID for rating/feedback (bot-specific)
+        AGENT_ID: 'blitz65aadf8a736349dd9ad6fd93ca69684f',
+
         // Bot display info
         botName: 'Ivy',
         botAvatar: 'https://chatbot2go-hybrid.enterprisebot.co/assets/botForge/67031622bbfbfaaccecd88f0/wwz_rescaled_image.png',
 
-        // API configuration (via proxy for security)
+        // API endpoints (via proxy for security)
         apiEndpoint: 'https://blizz-api.botwizard.ch/chat',
+        RATING_API: 'https://blizz-api.botwizard.ch/feedback',
+        CONTACT_FORM_API: 'https://blizz-api.botwizard.ch/contact',
+        BOTFLOW_API: 'https://blizz-api.botwizard.ch/botflow',
         contactFormEndpoint: 'https://blizz-api.botwizard.ch/contact',
+
+        // EB endpoint reference (for backend routing)
+        EB_ENDPOINT_BASE: 'https://wwz-blitzico.enterprisebot.co',
+        EB_AGENT_PATH: '/blitz65aadf8a736349dd9ad6fd93ca69684f',
 
         // Contact form trigger keyword
         contactFormTrigger: 'Kontaktformular',

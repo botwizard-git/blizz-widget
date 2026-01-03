@@ -20,8 +20,14 @@ jobs:
           ssh-keyscan -H ${{ secrets.PRODUCTION_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to production server
+        env:
+          PROXY_API_KEY: ${{ secrets.PROXY_API_KEY }}
+          PROXY_CHAT_ENDPOINT: ${{ secrets.PROXY_CHAT_ENDPOINT }}
+          PROXY_FORM_ENDPOINT: ${{ secrets.PROXY_FORM_ENDPOINT }}
+          PROXY_FEEDBACK_ENDPOINT: ${{ secrets.PROXY_FEEDBACK_ENDPOINT }}
+          PROXY_BOTFLOW_ENDPOINT: ${{ secrets.PROXY_BOTFLOW_ENDPOINT }}
         run: |
-          ssh -i ~/.ssh/id_rsa root@${{ secrets.PRODUCTION_HOST }} << 'EOF'
+          ssh -i ~/.ssh/id_rsa root@${{ secrets.PRODUCTION_HOST }} << EOF
             echo "Starting deployment..."
 
             # Navigate to project directory
@@ -38,6 +44,29 @@ jobs:
             # Run deployment script
             echo "Running deployment script..."
             ./scripts/server-deploy.sh
+
+            # Deploy proxy configuration
+            echo "Configuring proxy..."
+            cd /opt/blizz-widget/proxy
+
+            # Create .env from secrets (only set if secret exists)
+            cat > .env << 'ENVEOF'
+            API_KEY=${PROXY_API_KEY}
+            CHAT_ENDPOINT=${PROXY_CHAT_ENDPOINT}
+            FORM_ENDPOINT=${PROXY_FORM_ENDPOINT}
+            FEEDBACK_ENDPOINT=${PROXY_FEEDBACK_ENDPOINT}
+            BOTFLOW_ENDPOINT=${PROXY_BOTFLOW_ENDPOINT}
+            ENVEOF
+
+            # Install dependencies if needed
+            if [ ! -d "node_modules" ]; then
+              echo "Installing proxy dependencies..."
+              npm install --production
+            fi
+
+            # Restart proxy service
+            echo "Restarting proxy service..."
+            systemctl restart blizz-proxy || echo "Service restart failed - may need manual setup"
 
             echo "Deployment completed!"
           EOF
