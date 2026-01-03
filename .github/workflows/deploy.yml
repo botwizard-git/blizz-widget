@@ -27,7 +27,13 @@ jobs:
           PROXY_FEEDBACK_ENDPOINT: ${{ secrets.PROXY_FEEDBACK_ENDPOINT }}
           PROXY_BOTFLOW_ENDPOINT: ${{ secrets.PROXY_BOTFLOW_ENDPOINT }}
         run: |
-          ssh -i ~/.ssh/id_rsa root@${{ secrets.PRODUCTION_HOST }} << EOF
+          ssh -i ~/.ssh/id_rsa root@${{ secrets.PRODUCTION_HOST }} \
+            "PROXY_API_KEY='${PROXY_API_KEY}' \
+             PROXY_CHAT_ENDPOINT='${PROXY_CHAT_ENDPOINT}' \
+             PROXY_FORM_ENDPOINT='${PROXY_FORM_ENDPOINT}' \
+             PROXY_FEEDBACK_ENDPOINT='${PROXY_FEEDBACK_ENDPOINT}' \
+             PROXY_BOTFLOW_ENDPOINT='${PROXY_BOTFLOW_ENDPOINT}' \
+             bash -s" << 'EOF'
             echo "Starting deployment..."
 
             # Navigate to project directory
@@ -49,14 +55,33 @@ jobs:
             echo "Configuring proxy..."
             cd /opt/blizz-widget/proxy
 
-            # Create .env from secrets (only set if secret exists)
-            cat > .env << 'ENVEOF'
-            API_KEY=${PROXY_API_KEY}
-            CHAT_ENDPOINT=${PROXY_CHAT_ENDPOINT}
-            FORM_ENDPOINT=${PROXY_FORM_ENDPOINT}
-            FEEDBACK_ENDPOINT=${PROXY_FEEDBACK_ENDPOINT}
-            BOTFLOW_ENDPOINT=${PROXY_BOTFLOW_ENDPOINT}
-            ENVEOF
+            # Update .env only with non-empty values (preserve existing values)
+            ENV_FILE=".env"
+
+            # Create .env if it doesn't exist
+            touch "$ENV_FILE"
+
+            # Function to update or add env var only if value is not empty
+            update_env() {
+              local key="$1"
+              local value="$2"
+              if [ -n "$value" ]; then
+                # Remove existing line if present
+                sed -i "/^${key}=/d" "$ENV_FILE"
+                # Add new value
+                echo "${key}=${value}" >> "$ENV_FILE"
+                echo "  Updated ${key}"
+              else
+                echo "  Skipped ${key} (no value in secrets)"
+              fi
+            }
+
+            echo "Updating proxy environment variables..."
+            update_env "API_KEY" "$PROXY_API_KEY"
+            update_env "CHAT_ENDPOINT" "$PROXY_CHAT_ENDPOINT"
+            update_env "FORM_ENDPOINT" "$PROXY_FORM_ENDPOINT"
+            update_env "FEEDBACK_ENDPOINT" "$PROXY_FEEDBACK_ENDPOINT"
+            update_env "BOTFLOW_ENDPOINT" "$PROXY_BOTFLOW_ENDPOINT"
 
             # Install dependencies if needed
             if [ ! -d "node_modules" ]; then
@@ -64,9 +89,13 @@ jobs:
               npm install --production
             fi
 
-            # Restart proxy service
-            echo "Restarting proxy service..."
-            systemctl restart blizz-proxy || echo "Service restart failed - may need manual setup"
+            # Reload proxy service
+            echo "Reloading proxy service..."
+            if systemctl is-active --quiet blizz-proxy; then
+              systemctl restart blizz-proxy && echo "Proxy service restarted successfully"
+            else
+              systemctl start blizz-proxy && echo "Proxy service started"
+            fi
 
             echo "Deployment completed!"
           EOF
