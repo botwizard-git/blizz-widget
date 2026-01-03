@@ -82,23 +82,38 @@
                     <div class="wwz-ivy-content" id="wwz-ivy-content">
                         <!-- Welcome Screen -->
                         <div class="wwz-ivy-welcome" id="wwz-ivy-welcome">
-                            <div class="wwz-ivy-welcome-header">
-                                <h2 class="wwz-ivy-welcome-title">${Config.welcomeTitle}</h2>
-                                <p class="wwz-ivy-welcome-desc">${Config.welcomeDescription}</p>
-                            </div>
-                            <div class="wwz-ivy-terms">
-                                <h3 class="wwz-ivy-terms-title">${Config.termsTitle}</h3>
-                                <p class="wwz-ivy-terms-content">${Config.termsContent}</p>
-                            </div>
-                            <div class="wwz-ivy-terms-actions">
-                                <button class="wwz-ivy-btn wwz-ivy-btn-secondary" id="wwz-ivy-decline">
-                                    <span>${Config.declineButton}</span>
-                                    ${Icons.thumbDown}
-                                </button>
-                                <button class="wwz-ivy-btn wwz-ivy-btn-accept" id="wwz-ivy-accept">
-                                    <span>${Config.acceptButton}</span>
-                                    ${Icons.thumbUp}
-                                </button>
+                            <div class="wwz-ivy-disclaimer-message-wrapper">
+                                <div class="wwz-ivy-disclaimer-message">
+                                    <div class="wwz-ivy-disclaimer-text wwz-ivy-header-text">
+                                        <h1>${Config.welcomeTitle}</h1>
+                                    </div>
+                                    <div class="wwz-ivy-disclaimer-text wwz-ivy-welcome-text">
+                                        <p>${Config.welcomeDescription}</p>
+                                    </div>
+                                    <div class="wwz-ivy-disclaimer-terms-block">
+                                        <span class="wwz-ivy-accent-color-border"></span>
+                                        <div class="wwz-ivy-disclaimer-terms-details">
+                                            <h1>${Config.termsTitle}</h1>
+                                            <div class="wwz-ivy-disclaimer-text">
+                                                <p>${Config.termsContent}</p>
+                                            </div>
+                                        </div>
+                                        <div class="wwz-ivy-button-set">
+                                            <div class="wwz-ivy-disclaimer-buttons">
+                                                <button class="wwz-ivy-btn wwz-ivy-btn-secondary" id="wwz-ivy-decline">
+                                                    <span>${Config.declineButton}</span>
+                                                    ${Icons.thumbDown}
+                                                </button>
+                                            </div>
+                                            <div class="wwz-ivy-disclaimer-buttons">
+                                                <button class="wwz-ivy-btn wwz-ivy-btn-accept" id="wwz-ivy-accept">
+                                                    <span>${Config.acceptButton}</span>
+                                                    ${Icons.thumbUp}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -390,17 +405,12 @@
 
             // Show second question and options based on rating
             const ratingNum = parseInt(rating);
-            const isPositive = ratingNum >= 4;
-            
-            // Update second question
-            elements.feedbackSecondTitle.textContent = isPositive 
-                ? Config.feedback.positiveQuestion 
-                : Config.feedback.negativeQuestion;
-            
-            // Update options
-            const options = isPositive 
-                ? Config.feedback.positiveOptions 
-                : Config.feedback.negativeOptions;
+
+            // Update second question based on specific rating
+            elements.feedbackSecondTitle.textContent = Config.feedback.ratingQuestions[ratingNum];
+
+            // Update options based on specific rating
+            const options = Config.feedback.ratingOptions[ratingNum] || [];
             
             elements.feedbackOptions.innerHTML = options.map(option => 
                 `<button class="wwz-ivy-feedback-option" data-option="${this.escapeHtml(option)}">${this.escapeHtml(option)}</button>`

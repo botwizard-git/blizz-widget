@@ -53,23 +53,47 @@
                 4: 'Gut',
                 5: 'Sehr gut'
             },
-            // Second question based on rating (positive vs negative)
-            positiveQuestion: 'Was hat Ihnen gefallen?',
-            negativeQuestion: 'Was war das Problem?',
-            // Options for positive feedback
-            positiveOptions: [
-                'Schnelle Antworten',
-                'Einfach zu verwenden',
-                'Hat mein Problem gelöst',
-                'Sehr effizient'
-            ],
-            // Options for negative feedback
-            negativeOptions: [
-                'Dauerte zu lange',
-                'Verstand mich nicht',
-                'Problem wurde nicht gelöst',
-                'Technisches Problem'
-            ],
+            // Per-rating follow-up questions
+            ratingQuestions: {
+                1: 'Was war das Problem?',
+                2: 'Was war das Problem?',
+                3: 'Was können wir verbessern?',
+                4: 'Was hat Ihnen gefallen?',
+                5: 'Was hat Ihnen gefallen?'
+            },
+            // Per-rating options
+            ratingOptions: {
+                1: [
+                    'Falsche Antworten',
+                    'Verstand mich nicht',
+                    'Technisches Problem',
+                    'Zu langsam'
+                ],
+                2: [
+                    'Antworten nicht hilfreich',
+                    'Problem nicht gelöst',
+                    'Schwer zu bedienen',
+                    'Dauerte zu lange'
+                ],
+                3: [
+                    'Teilweise hilfreich',
+                    'Könnte schneller sein',
+                    'Mehr Details gewünscht',
+                    'Benutzerfreundlichkeit'
+                ],
+                4: [
+                    'Hilfreiche Antworten',
+                    'Einfach zu verwenden',
+                    'Schnelle Reaktion',
+                    'Fast alles gelöst'
+                ],
+                5: [
+                    'Sehr hilfreiche Antworten',
+                    'Einfach zu verwenden',
+                    'Hat mein Problem gelöst',
+                    'Sehr effizient'
+                ]
+            },
             // Text input configuration
             additionalFeedbackLabel: 'Zusätzliches Feedback geben',
             additionalFeedbackPlaceholder: 'Ihr Feedback hier eingeben...',
@@ -109,10 +133,10 @@
 
         // Widget dimensions
         widget: {
-            width: 400,
-            height: 650,
-            minHeight: 500,
-            maxHeight: '90vh'
+            width: 350,              // Desktop width in px
+            height: 700,             // Desktop height in px
+            minHeight: 500,          // Minimum height in px
+            maxHeight: '90vh'        // Maximum height (viewport relative)
         },
 
         // Launcher button configuration
