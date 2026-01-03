@@ -62,6 +62,25 @@
          * Parse API response
          */
         parseResponse: function(data) {
+            // Extract message from various response formats
+            let message = data.simpleMessage || data.message || data.text ||
+                         (data.replies && data.replies[0] && (data.replies[0].text || data.replies[0].message));
+
+            // Check for contact form payload prefix
+            if (message && message.startsWith('CONTACTFORMPAYLOAD_')) {
+                try {
+                    const jsonStr = message.substring('CONTACTFORMPAYLOAD_'.length);
+                    const formData = JSON.parse(jsonStr);
+                    return {
+                        type: 'contactForm',
+                        formData: formData,
+                        suggestions: data.suggestions || []
+                    };
+                } catch (e) {
+                    console.error('WWZIvy: Failed to parse contact form payload', e);
+                }
+            }
+
             // Handle simpleMessage format
             if (data.simpleMessage) {
                 return {
@@ -113,7 +132,7 @@
          * Submit feedback
          */
         submitFeedback: async function(feedbackData, sessionId) {
-            // Feedback endpoint (if available)
+            // Feedback endpoint - via blizz-proxy
             const feedbackEndpoint = Config.apiEndpoint.replace('/chat', '/feedback');
 
             try {
@@ -143,6 +162,37 @@
                 return response.ok;
             } catch (error) {
                 console.warn('WWZIvy: Feedback submission failed', error);
+                return false;
+            }
+        },
+
+        /**
+         * Submit contact form
+         */
+        submitContactForm: async function(formData) {
+            const contactEndpoint = Config.contactEndpoint;
+
+            // Format payload as expected by blizz-proxy
+            const payload = {
+                type: 'simpleMessage',
+                message: JSON.stringify(formData),
+                formData: formData,
+                sessionId: Storage.getSessionId(),
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch(contactEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                return response.ok;
+            } catch (error) {
+                console.error('WWZIvy: Contact form submission failed', error);
                 return false;
             }
         }

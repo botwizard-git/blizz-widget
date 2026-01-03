@@ -299,6 +299,11 @@
          * Add message to chat
          */
         addMessage: function(message) {
+            // Check if this is a contact form response
+            if (message.type === 'contactForm') {
+                return this.addContactFormMessage(message);
+            }
+
             const messageEl = document.createElement('div');
             messageEl.className = `wwz-ivy-message wwz-ivy-message-${message.role}`;
             messageEl.dataset.id = message.id;
@@ -336,6 +341,105 @@
             this.scrollToBottom();
 
             return messageEl;
+        },
+
+        /**
+         * Render contact form field
+         */
+        renderFormField: function(field) {
+            const inputType = field.type === 'datetime' ? 'datetime-local' : 'text';
+            const isRequired = field['error message'] ? true : false;
+            const errorMsg = field['error message'] || 'Dieses Feld ist erforderlich';
+
+            return `
+                <div class="wwz-ivy-form-field">
+                    <label class="wwz-ivy-form-label">${this.escapeHtml(field.name)}</label>
+                    <input
+                        type="${inputType}"
+                        name="${this.escapeHtml(field.name)}"
+                        class="wwz-ivy-form-input"
+                        ${isRequired ? 'required' : ''}
+                        data-error="${this.escapeHtml(errorMsg)}"
+                    />
+                    <span class="wwz-ivy-form-error"></span>
+                </div>
+            `;
+        },
+
+        /**
+         * Render contact form
+         */
+        renderContactForm: function(formData) {
+            const fieldsHtml = formData.fields.map(field => this.renderFormField(field)).join('');
+
+            return `
+                <div class="wwz-ivy-contact-form">
+                    <h3 class="wwz-ivy-form-title">${this.escapeHtml(formData.title)}</h3>
+                    <form id="wwz-ivy-contact-form-element">
+                        ${fieldsHtml}
+                        <button type="submit" class="wwz-ivy-btn wwz-ivy-btn-primary wwz-ivy-form-submit">
+                            Absenden
+                        </button>
+                    </form>
+                </div>
+            `;
+        },
+
+        /**
+         * Add contact form message
+         */
+        addContactFormMessage: function(message) {
+            const messageEl = document.createElement('div');
+            messageEl.className = 'wwz-ivy-message wwz-ivy-message-bot';
+
+            messageEl.innerHTML = `
+                <div class="wwz-ivy-message-bubble wwz-ivy-form-bubble">
+                    ${this.renderContactForm(message.formData)}
+                </div>
+                <div class="wwz-ivy-message-footer">
+                    <div class="wwz-ivy-message-avatar">
+                        <img src="${Config.botAvatar}" alt="${Config.botName}">
+                    </div>
+                </div>
+            `;
+
+            elements.messages.appendChild(messageEl);
+            this.scrollToBottom();
+
+            return messageEl;
+        },
+
+        /**
+         * Show contact form success message
+         */
+        showFormSuccess: function() {
+            const successEl = document.createElement('div');
+            successEl.className = 'wwz-ivy-message wwz-ivy-message-bot';
+            successEl.innerHTML = `
+                <div class="wwz-ivy-message-bubble">
+                    Vielen Dank! Ihre Anfrage wurde erfolgreich übermittelt. Wir werden uns in Kürze bei Ihnen melden.
+                </div>
+                <div class="wwz-ivy-message-footer">
+                    <div class="wwz-ivy-message-avatar">
+                        <img src="${Config.botAvatar}" alt="${Config.botName}">
+                    </div>
+                </div>
+            `;
+            elements.messages.appendChild(successEl);
+            this.scrollToBottom();
+        },
+
+        /**
+         * Disable submitted form
+         */
+        disableContactForm: function() {
+            const form = document.getElementById('wwz-ivy-contact-form-element');
+            if (form) {
+                form.querySelectorAll('input, button').forEach(el => {
+                    el.disabled = true;
+                });
+                form.classList.add('wwz-ivy-form-submitted');
+            }
         },
 
         /**

@@ -232,17 +232,24 @@
                 UI.hideTyping();
                 State.setLoading(false);
 
-                // Add bot response
-                const botMessage = State.addMessage({
-                    role: 'bot',
-                    text: response.message
-                });
-                UI.addMessage(botMessage);
+                // Check if this is a contact form response
+                if (response.type === 'contactForm') {
+                    UI.addMessage(response);
+                    // Setup form event listeners after rendering
+                    this.setupContactFormListeners();
+                } else {
+                    // Add bot response
+                    const botMessage = State.addMessage({
+                        role: 'bot',
+                        text: response.message
+                    });
+                    UI.addMessage(botMessage);
 
-                // Show suggestions
-                if (response.suggestions && response.suggestions.length > 0) {
-                    UI.renderSuggestions(response.suggestions);
-                    State.setSuggestions(response.suggestions);
+                    // Show suggestions
+                    if (response.suggestions && response.suggestions.length > 0) {
+                        UI.renderSuggestions(response.suggestions);
+                        State.setSuggestions(response.suggestions);
+                    }
                 }
 
             } catch (error) {
@@ -405,6 +412,83 @@
             State.setScreen('launcher');
             UI.getElements().messages.innerHTML = '';
             UI.hideWidget();
+        },
+
+        /**
+         * Setup contact form event listeners
+         */
+        setupContactFormListeners: function() {
+            const form = document.getElementById('wwz-ivy-contact-form-element');
+            if (form) {
+                form.addEventListener('submit', (e) => this.handleContactFormSubmit(e));
+            }
+        },
+
+        /**
+         * Handle contact form submission
+         */
+        handleContactFormSubmit: async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            // Validate all fields
+            let isValid = true;
+            form.querySelectorAll('.wwz-ivy-form-input').forEach(input => {
+                const errorSpan = input.nextElementSibling;
+                if (input.required && !input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('wwz-ivy-invalid');
+                    if (errorSpan) {
+                        errorSpan.textContent = input.dataset.error || 'Dieses Feld ist erforderlich';
+                    }
+                } else {
+                    input.classList.remove('wwz-ivy-invalid');
+                    if (errorSpan) {
+                        errorSpan.textContent = '';
+                    }
+                }
+            });
+
+            if (!isValid) return;
+
+            // Disable form while submitting
+            const submitBtn = form.querySelector('.wwz-ivy-form-submit');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Wird gesendet...';
+            }
+
+            try {
+                // Submit form data to API
+                const success = await API.submitContactForm(data);
+
+                if (success) {
+                    // Disable the form
+                    UI.disableContactForm();
+                    // Show success message
+                    UI.showFormSuccess();
+                } else {
+                    // Re-enable submit button on failure
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Absenden';
+                    }
+                    // Show error message
+                    const errorMessage = State.addMessage({
+                        role: 'bot',
+                        text: 'Es tut mir leid, das Formular konnte nicht gesendet werden. Bitte versuchen Sie es erneut.'
+                    });
+                    UI.addMessage(errorMessage);
+                }
+            } catch (error) {
+                console.error('WWZIvy: Contact form submission error', error);
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Absenden';
+                }
+            }
         }
     };
 })();

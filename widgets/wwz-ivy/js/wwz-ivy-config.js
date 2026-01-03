@@ -11,8 +11,9 @@
         botName: 'Ivy',
         botTitle: 'Chatbot - Ivy',
 
-        // API Configuration - per-widget routes
+        // API Configuration - all calls go through blizz-proxy
         apiEndpoint: 'https://blizz-api.botwizard.ch/wwz-ivy/chat',
+        contactEndpoint: 'https://blizz-api.botwizard.ch/wwz-ivy/contact',
 
         // Assets
         botAvatar: 'https://chatbot2go-hybrid.enterprisebot.co/assets/botForge/67031622bbfbfaaccecd88f0/wwz_rescaled_image.png',
