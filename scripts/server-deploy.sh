@@ -32,6 +32,6 @@ if [ $? -eq 0 ]; then
     echo "  - https://blizz.botwizard.ch/wwz-ivy/wwz-ivy.js"
     echo ""
 else
-    echo "ERROR: Nginx configuration test failed!"
+    echo "ERROR: Nginx configuration test failed!!"
     exit 1
 fi
