@@ -1,6 +1,6 @@
 # WWZ Widgets
 
-A collection of embeddable chatbot widgets for WWZ.
+A collection of embeddable chatbot widgets for WWZ
 
 ## Available Widgets
 
