@@ -76,7 +76,12 @@
             if (elements.feedbackSend) {
                 elements.feedbackSend.addEventListener('click', () => this.handleFeedbackSend());
             }
-            
+
+            // Feedback text toggle button
+            if (elements.feedbackTextToggle) {
+                elements.feedbackTextToggle.addEventListener('click', () => UI.toggleFeedbackTextPanel());
+            }
+
             elements.feedbackContinue.addEventListener('click', () => this.handleFeedbackContinue());
             elements.downloadTranscript.addEventListener('click', () => UI.downloadTranscript());
 

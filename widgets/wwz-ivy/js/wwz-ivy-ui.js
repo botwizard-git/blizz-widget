@@ -28,7 +28,8 @@
             <circle class="wwz-ivy-success-circle" cx="12" cy="12" r="10" fill="none"/>
             <polyline class="wwz-ivy-success-check" points="9 12 11 14 15 10"/>
         </svg>`,
-        user: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>'
+        user: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>',
+        comment: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>'
     };
 
     // DOM element cache
@@ -82,37 +83,29 @@
                     <div class="wwz-ivy-content" id="wwz-ivy-content">
                         <!-- Welcome Screen -->
                         <div class="wwz-ivy-welcome" id="wwz-ivy-welcome">
-                            <div class="wwz-ivy-disclaimer-message-wrapper">
-                                <div class="wwz-ivy-disclaimer-message">
-                                    <div class="wwz-ivy-disclaimer-text wwz-ivy-header-text">
-                                        <h1>${Config.welcomeTitle}</h1>
+                            <!-- Blue header section with greeting -->
+                            <div class="wwz-ivy-welcome-header">
+                                <h1 class="wwz-ivy-welcome-title">${Config.welcomeTitle}</h1>
+                                <p class="wwz-ivy-welcome-desc">${Config.welcomeDescription}</p>
+                            </div>
+                            <!-- White terms card -->
+                            <div class="wwz-ivy-terms">
+                                <div class="wwz-ivy-terms-block">
+                                    <span class="wwz-ivy-terms-accent"></span>
+                                    <div class="wwz-ivy-terms-content-wrapper">
+                                        <h2 class="wwz-ivy-terms-title">${Config.termsTitle}</h2>
+                                        <div class="wwz-ivy-terms-text">${Config.termsContent}</div>
                                     </div>
-                                    <div class="wwz-ivy-disclaimer-text wwz-ivy-welcome-text">
-                                        <p>${Config.welcomeDescription}</p>
-                                    </div>
-                                    <div class="wwz-ivy-disclaimer-terms-block">
-                                        <span class="wwz-ivy-accent-color-border"></span>
-                                        <div class="wwz-ivy-disclaimer-terms-details">
-                                            <h1>${Config.termsTitle}</h1>
-                                            <div class="wwz-ivy-disclaimer-text">
-                                                <p>${Config.termsContent}</p>
-                                            </div>
-                                        </div>
-                                        <div class="wwz-ivy-button-set">
-                                            <div class="wwz-ivy-disclaimer-buttons">
-                                                <button class="wwz-ivy-btn wwz-ivy-btn-secondary" id="wwz-ivy-decline">
-                                                    <span>${Config.declineButton}</span>
-                                                    ${Icons.thumbDown}
-                                                </button>
-                                            </div>
-                                            <div class="wwz-ivy-disclaimer-buttons">
-                                                <button class="wwz-ivy-btn wwz-ivy-btn-accept" id="wwz-ivy-accept">
-                                                    <span>${Config.acceptButton}</span>
-                                                    ${Icons.thumbUp}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                </div>
+                                <div class="wwz-ivy-terms-actions">
+                                    <button class="wwz-ivy-btn wwz-ivy-btn-secondary" id="wwz-ivy-decline">
+                                        <span>${Config.declineButton}</span>
+                                        ${Icons.thumbDown}
+                                    </button>
+                                    <button class="wwz-ivy-btn wwz-ivy-btn-accept" id="wwz-ivy-accept">
+                                        <span>${Config.acceptButton}</span>
+                                        ${Icons.thumbUp}
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -155,10 +148,15 @@
                                     <h3 class="wwz-ivy-feedback-second-title" id="wwz-ivy-feedback-second-title"></h3>
                                     <div class="wwz-ivy-feedback-options" id="wwz-ivy-feedback-options"></div>
                                 </div>
-                                <div class="wwz-ivy-feedback-text-panel wwz-ivy-hidden" id="wwz-ivy-feedback-text-panel">
-                                    <label class="wwz-ivy-feedback-text-label">${Config.feedback.additionalFeedbackLabel}</label>
-                                    <textarea 
-                                        class="wwz-ivy-feedback-text-input" 
+                                <div class="wwz-ivy-feedback-text-toggle-wrapper wwz-ivy-hidden" id="wwz-ivy-feedback-text-toggle-wrapper">
+                                    <button class="wwz-ivy-btn wwz-ivy-btn-outline" id="wwz-ivy-feedback-text-toggle">
+                                        <span>${Config.feedback.additionalFeedbackLabel}</span>
+                                        ${Icons.comment}
+                                    </button>
+                                </div>
+                                <div class="wwz-ivy-feedback-text-panel" id="wwz-ivy-feedback-text-panel">
+                                    <textarea
+                                        class="wwz-ivy-feedback-text-input"
                                         id="wwz-ivy-feedback-text-input"
                                         placeholder="${Config.feedback.additionalFeedbackPlaceholder}"
                                         rows="3"
@@ -223,6 +221,8 @@
                 feedbackSecondQuestion: document.getElementById('wwz-ivy-feedback-second-question'),
                 feedbackSecondTitle: document.getElementById('wwz-ivy-feedback-second-title'),
                 feedbackOptions: document.getElementById('wwz-ivy-feedback-options'),
+                feedbackTextToggleWrapper: document.getElementById('wwz-ivy-feedback-text-toggle-wrapper'),
+                feedbackTextToggle: document.getElementById('wwz-ivy-feedback-text-toggle'),
                 feedbackTextPanel: document.getElementById('wwz-ivy-feedback-text-panel'),
                 feedbackTextInput: document.getElementById('wwz-ivy-feedback-text-input'),
                 feedbackSend: document.getElementById('wwz-ivy-feedback-send'),
@@ -416,9 +416,17 @@
                 `<button class="wwz-ivy-feedback-option" data-option="${this.escapeHtml(option)}">${this.escapeHtml(option)}</button>`
             ).join('');
             
-            // Show second question and text panel
+            // Show second question and text toggle button
             elements.feedbackSecondQuestion.classList.remove('wwz-ivy-hidden');
-            elements.feedbackTextPanel.classList.remove('wwz-ivy-hidden');
+            elements.feedbackTextToggleWrapper.classList.remove('wwz-ivy-hidden');
+        },
+
+        /**
+         * Toggle feedback text panel visibility
+         */
+        toggleFeedbackTextPanel: function() {
+            elements.feedbackTextPanel.classList.toggle('wwz-ivy-expanded');
+            elements.feedbackTextToggleWrapper.classList.add('wwz-ivy-hidden');
         },
 
         /**
@@ -432,8 +440,11 @@
             if (elements.feedbackSecondQuestion) {
                 elements.feedbackSecondQuestion.classList.add('wwz-ivy-hidden');
             }
+            if (elements.feedbackTextToggleWrapper) {
+                elements.feedbackTextToggleWrapper.classList.add('wwz-ivy-hidden');
+            }
             if (elements.feedbackTextPanel) {
-                elements.feedbackTextPanel.classList.add('wwz-ivy-hidden');
+                elements.feedbackTextPanel.classList.remove('wwz-ivy-expanded');
             }
             if (elements.feedbackTextInput) {
                 elements.feedbackTextInput.value = '';
