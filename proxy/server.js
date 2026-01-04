@@ -16,7 +16,6 @@
 require('dotenv').config();
 const express = require('express');
 const fetch = require('node-fetch');
-const AbortController = require('abort-controller');
 // Note: CORS is handled by nginx, not Express
 
 // Global config
@@ -25,6 +24,18 @@ const config = {
     API_KEY: process.env.API_KEY || '',
     REQUEST_TIMEOUT: 120000 // 2 minutes in milliseconds
 };
+
+/**
+ * Fetch with timeout wrapper
+ */
+async function fetchWithTimeout(url, options = {}) {
+    return Promise.race([
+        fetch(url, options),
+        new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Request timeout')), config.REQUEST_TIMEOUT)
+        )
+    ]);
+}
 
 // Per-widget endpoint configurations
 // Each widget can have its own backend endpoints (overridable via env vars)
@@ -115,10 +126,7 @@ app.post('/:widgetId/chat', async (req, res) => {
 
         console.log(`[${widgetId}/Chat] Forwarding message:`, blizzUserMsg.substring(0, 50) + '...');
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), config.REQUEST_TIMEOUT);
-
-        const response = await fetch(widgetConfig.CHAT_ENDPOINT, {
+        const response = await fetchWithTimeout(widgetConfig.CHAT_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -132,11 +140,8 @@ app.post('/:widgetId/chat', async (req, res) => {
                 clientUrl,
                 widgetId,
                 agentId
-            }),
-            signal: controller.signal
+            })
         });
-
-        clearTimeout(timeout);
 
         if (!response.ok) {
             console.error(`[${widgetId}/Chat] API error:`, response.status);
@@ -174,10 +179,7 @@ app.post('/:widgetId/feedback', async (req, res) => {
 
         console.log(`[${widgetId}/Feedback] Submitting rating:`, rating);
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), config.REQUEST_TIMEOUT);
-
-        const response = await fetch(widgetConfig.FEEDBACK_ENDPOINT, {
+        const response = await fetchWithTimeout(widgetConfig.FEEDBACK_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -194,11 +196,8 @@ app.post('/:widgetId/feedback', async (req, res) => {
                     blizzSessionId,
                     timestamp
                 })
-            }),
-            signal: controller.signal
+            })
         });
-
-        clearTimeout(timeout);
 
         if (!response.ok) {
             console.error(`[${widgetId}/Feedback] API error:`, response.status);
@@ -241,21 +240,15 @@ app.post('/:widgetId/contact', async (req, res) => {
             return res.status(400).json({ error: 'Invalid payload format' });
         }
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), config.REQUEST_TIMEOUT);
-
-        const response = await fetch(widgetConfig.FORM_ENDPOINT, {
+        const response = await fetchWithTimeout(widgetConfig.FORM_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json, text/plain, */*',
                 'api-key': config.API_KEY
             },
-            body: JSON.stringify(payload),
-            signal: controller.signal
+            body: JSON.stringify(payload)
         });
-
-        clearTimeout(timeout);
 
         if (!response.ok) {
             console.error(`[${widgetId}/Contact] API error:`, response.status);
@@ -287,21 +280,15 @@ app.post('/:widgetId/botflow', async (req, res) => {
 
         console.log(`[${widgetId}/Botflow] Forwarding request`);
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), config.REQUEST_TIMEOUT);
-
-        const response = await fetch(widgetConfig.BOTFLOW_ENDPOINT, {
+        const response = await fetchWithTimeout(widgetConfig.BOTFLOW_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json, text/plain, */*',
                 'api-key': config.API_KEY
             },
-            body: JSON.stringify(req.body),
-            signal: controller.signal
+            body: JSON.stringify(req.body)
         });
-
-        clearTimeout(timeout);
 
         if (!response.ok) {
             console.error(`[${widgetId}/Botflow] API error:`, response.status);
@@ -336,10 +323,7 @@ app.post('/chat', async (req, res) => {
 
         console.log('[Chat] Forwarding message:', blizzUserMsg.substring(0, 50) + '...');
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), config.REQUEST_TIMEOUT);
-
-        const response = await fetch(DEFAULTS.CHAT_ENDPOINT, {
+        const response = await fetchWithTimeout(DEFAULTS.CHAT_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -353,11 +337,8 @@ app.post('/chat', async (req, res) => {
                 clientUrl,
                 widgetId,
                 agentId
-            }),
-            signal: controller.signal
+            })
         });
-
-        clearTimeout(timeout);
 
         if (!response.ok) {
             console.error('[Chat] API error:', response.status);
@@ -388,10 +369,7 @@ app.post('/feedback', async (req, res) => {
 
         console.log('[Feedback] Submitting rating:', rating);
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), config.REQUEST_TIMEOUT);
-
-        const response = await fetch(DEFAULTS.FEEDBACK_ENDPOINT, {
+        const response = await fetchWithTimeout(DEFAULTS.FEEDBACK_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -408,11 +386,8 @@ app.post('/feedback', async (req, res) => {
                     blizzSessionId,
                     timestamp
                 })
-            }),
-            signal: controller.signal
+            })
         });
-
-        clearTimeout(timeout);
 
         if (!response.ok) {
             console.error('[Feedback] API error:', response.status);
@@ -448,21 +423,15 @@ app.post('/contact', async (req, res) => {
             return res.status(400).json({ error: 'Invalid payload format' });
         }
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), config.REQUEST_TIMEOUT);
-
-        const response = await fetch(DEFAULTS.FORM_ENDPOINT, {
+        const response = await fetchWithTimeout(DEFAULTS.FORM_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json, text/plain, */*',
                 'api-key': config.API_KEY
             },
-            body: JSON.stringify(payload),
-            signal: controller.signal
+            body: JSON.stringify(payload)
         });
-
-        clearTimeout(timeout);
 
         if (!response.ok) {
             console.error('[Contact] API error:', response.status);
@@ -487,21 +456,15 @@ app.post('/botflow', async (req, res) => {
     try {
         console.log('[Botflow] Forwarding request');
 
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), config.REQUEST_TIMEOUT);
-
-        const response = await fetch(DEFAULTS.BOTFLOW_ENDPOINT, {
+        const response = await fetchWithTimeout(DEFAULTS.BOTFLOW_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json, text/plain, */*',
                 'api-key': config.API_KEY
             },
-            body: JSON.stringify(req.body),
-            signal: controller.signal
+            body: JSON.stringify(req.body)
         });
-
-        clearTimeout(timeout);
 
         if (!response.ok) {
             console.error('[Botflow] API error:', response.status);
