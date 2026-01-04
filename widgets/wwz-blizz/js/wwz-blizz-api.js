@@ -116,12 +116,13 @@
          */
         submitFeedback: function(rating, comment) {
             var payload = {
-                blizzSessionId: SessionService.getSessionId(),
+                sessionId: SessionService.getSessionId(),
                 rating: rating,
-                ratingComment: comment || '',
+                additionalFeedback: comment || '',
                 agentId: CONFIG.AGENT_ID,
                 widgetId: CONFIG.widgetId,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                botName: "BLIZZ"
             };
 
             return fetch(CONFIG.RATING_API, {
