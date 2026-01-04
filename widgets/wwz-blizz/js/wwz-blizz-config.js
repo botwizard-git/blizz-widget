@@ -58,6 +58,73 @@
             ]
         },
 
+        // Feedback screen configuration
+        feedback: {
+            question: 'Wie war Ihre Erfahrung mit unserem digitalen Assistenten?',
+            ratingLabels: {
+                1: 'Sehr mangelhaft',
+                2: 'Mangelhaft',
+                3: 'Befriedigend',
+                4: 'Gut',
+                5: 'Sehr gut'
+            },
+            // Per-rating follow-up questions
+            ratingQuestions: {
+                1: 'Was war das Problem?',
+                2: 'Was war das Problem?',
+                3: 'Was können wir verbessern?',
+                4: 'Was hat Ihnen gefallen?',
+                5: 'Was hat Ihnen gefallen?'
+            },
+            // Per-rating options
+            ratingOptions: {
+                1: [
+                    'Falsche Antworten',
+                    'Verstand mich nicht',
+                    'Technisches Problem',
+                    'Zu langsam'
+                ],
+                2: [
+                    'Antworten nicht hilfreich',
+                    'Problem nicht gelöst',
+                    'Schwer zu bedienen',
+                    'Dauerte zu lange'
+                ],
+                3: [
+                    'Teilweise hilfreich',
+                    'Könnte schneller sein',
+                    'Mehr Details gewünscht',
+                    'Benutzerfreundlichkeit'
+                ],
+                4: [
+                    'Hilfreiche Antworten',
+                    'Einfach zu verwenden',
+                    'Schnelle Reaktion',
+                    'Fast alles gelöst'
+                ],
+                5: [
+                    'Sehr hilfreiche Antworten',
+                    'Einfach zu verwenden',
+                    'Hat mein Problem gelöst',
+                    'Sehr effizient'
+                ]
+            },
+            // Text input configuration
+            additionalFeedbackLabel: 'Zusätzliches Feedback geben',
+            additionalFeedbackPlaceholder: 'Ihr Feedback hier eingeben...',
+            sendButton: 'Feedback senden',
+            continueButton: 'Weiter',
+            downloadButton: 'Chat-Transkript',
+            skipButton: 'Feedback überspringen'
+        },
+
+        // Thank you screen
+        thankyou: {
+            title: 'Vielen Dank!',
+            description: 'Ihr Feedback hilft uns, unseren Service zu verbessern.',
+            closeButton: 'Schliessen'
+        },
+
         // Error handling
         maxRetries: 3,
         retryDelay: 2000,

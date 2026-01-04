@@ -645,11 +645,295 @@
         },
 
         /**
+         * Render contact form field
+         */
+        renderFormField: function(field) {
+            // Map field type to HTML input type
+            var inputType = 'text';
+            var fieldId = field.id;
+            var fieldType = (field.type || '').toLowerCase();
+
+            if (fieldType === 'datetime') {
+                inputType = 'datetime-local';
+            } else if (fieldType === 'email') {
+                inputType = 'email';
+            } else if (fieldType === 'tel' || fieldType === 'phone' || fieldType === 'telephone') {
+                inputType = 'tel';
+            } else if (fieldType === 'time') {
+                inputType = 'time';
+            }
+
+            var isRequired = field['required'];
+            var errorMsg = field['error message'] || 'Dieses Feld ist erforderlich';
+
+            return '<div class="wwz-blizz-form-field">' +
+                '<label class="wwz-blizz-form-label">' + this.escapeHtml(field.name) + '</label>' +
+                '<input ' +
+                    'id="' + fieldId + '" ' +
+                    'type="' + inputType + '" ' +
+                    'name="' + this.escapeHtml(field.name) + '" ' +
+                    'class="wwz-blizz-form-input" ' +
+                    (isRequired ? 'required ' : '') +
+                    'data-error="' + this.escapeHtml(errorMsg) + '" ' +
+                '/>' +
+                '<span class="wwz-blizz-form-error"></span>' +
+                '</div>';
+        },
+
+        /**
+         * Render contact form
+         */
+        renderContactForm: function(formData) {
+            var self = this;
+            var fieldsHtml = '';
+            for (var i = 0; i < formData.fields.length; i++) {
+                fieldsHtml += self.renderFormField(formData.fields[i]);
+            }
+
+            return '<div class="wwz-blizz-contact-form">' +
+                '<h3 class="wwz-blizz-form-title">' + this.escapeHtml(formData.title) + '</h3>' +
+                '<form id="wwz-blizz-contact-form-element">' +
+                    fieldsHtml +
+                    '<button type="submit" class="wwz-blizz-btn wwz-blizz-btn-primary wwz-blizz-form-submit">' +
+                        'Absenden' +
+                    '</button>' +
+                '</form>' +
+                '</div>';
+        },
+
+        /**
+         * Add contact form message
+         */
+        addContactFormMessage: function(response) {
+            var container = this.elements.messagesContainer;
+            var messageDiv = document.createElement('div');
+            messageDiv.className = 'wwz-blizz-message wwz-blizz-message-bot';
+
+            messageDiv.innerHTML =
+                '<div class="wwz-blizz-message-avatar">' +
+                    '<img src="' + CONFIG.botAvatar + '" alt="' + CONFIG.botName + '">' +
+                '</div>' +
+                '<div class="wwz-blizz-message-content">' +
+                    '<div class="wwz-blizz-message-bubble wwz-blizz-form-bubble">' +
+                        this.renderContactForm(response.formData) +
+                    '</div>' +
+                '</div>';
+
+            container.appendChild(messageDiv);
+            this.scrollToBottom();
+        },
+
+        /**
+         * Disable submitted form
+         */
+        disableContactForm: function() {
+            var form = document.getElementById('wwz-blizz-contact-form-element');
+            if (form) {
+                var inputs = form.querySelectorAll('input, button');
+                for (var i = 0; i < inputs.length; i++) {
+                    inputs[i].disabled = true;
+                }
+                form.classList.add('wwz-blizz-form-submitted');
+            }
+        },
+
+        /**
+         * Show form success message
+         */
+        showFormSuccess: function() {
+            var successDiv = document.createElement('div');
+            successDiv.className = 'wwz-blizz-form-success-message';
+            successDiv.innerHTML = '<span>✓ Formular erfolgreich gesendet</span>';
+
+            var form = document.getElementById('wwz-blizz-contact-form-element');
+            if (form && form.parentNode) {
+                form.parentNode.appendChild(successDiv);
+            }
+        },
+
+        /**
          * Show contact form
          */
         showContactForm: function() {
             this.updateView('contactForm');
             this.resetContactForm();
+        },
+
+        /**
+         * Show feedback screen
+         */
+        showFeedbackScreen: function() {
+            var feedbackScreen = document.getElementById('wwz-blizz-feedback-screen');
+            var chatScreen = document.getElementById('wwz-blizz-chat-screen');
+
+            if (feedbackScreen && chatScreen) {
+                chatScreen.classList.add('wwz-blizz-hidden');
+                feedbackScreen.classList.remove('wwz-blizz-hidden');
+            }
+        },
+
+        /**
+         * Hide feedback screen
+         */
+        hideFeedbackScreen: function() {
+            var feedbackScreen = document.getElementById('wwz-blizz-feedback-screen');
+            var chatScreen = document.getElementById('wwz-blizz-chat-screen');
+
+            if (feedbackScreen && chatScreen) {
+                feedbackScreen.classList.add('wwz-blizz-hidden');
+                chatScreen.classList.remove('wwz-blizz-hidden');
+            }
+        },
+
+        /**
+         * Select rating
+         */
+        selectRating: function(rating) {
+            var CONFIG = EBB.CONFIG;
+            var ratingButtons = document.querySelectorAll('.wwz-blizz-rating-btn');
+
+            // Remove selected class from all buttons
+            for (var i = 0; i < ratingButtons.length; i++) {
+                ratingButtons[i].classList.remove('wwz-blizz-selected');
+            }
+
+            // Add selected class to clicked button
+            var selectedBtn = document.querySelector('.wwz-blizz-rating-btn[data-rating="' + rating + '"]');
+            if (selectedBtn) {
+                selectedBtn.classList.add('wwz-blizz-selected');
+            }
+
+            var ratingNum = parseInt(rating);
+
+            // Update second question
+            var secondTitle = document.getElementById('wwz-blizz-feedback-second-title');
+            if (secondTitle) {
+                secondTitle.textContent = CONFIG.feedback.ratingQuestions[ratingNum];
+            }
+
+            // Update options
+            var options = CONFIG.feedback.ratingOptions[ratingNum] || [];
+            var optionsContainer = document.getElementById('wwz-blizz-feedback-options');
+            if (optionsContainer) {
+                optionsContainer.innerHTML = options.map(function(option) {
+                    return '<button class="wwz-blizz-feedback-option" data-option="' +
+                           EBB.UI.escapeHtml(option) + '">' +
+                           EBB.UI.escapeHtml(option) + '</button>';
+                }).join('');
+            }
+
+            // Show second question and text toggle
+            var secondQuestion = document.getElementById('wwz-blizz-feedback-second-question');
+            var textToggleWrapper = document.getElementById('wwz-blizz-feedback-text-toggle-wrapper');
+
+            if (secondQuestion) {
+                secondQuestion.classList.remove('wwz-blizz-hidden');
+            }
+            if (textToggleWrapper) {
+                textToggleWrapper.classList.remove('wwz-blizz-hidden');
+            }
+        },
+
+        /**
+         * Toggle feedback text panel
+         */
+        toggleFeedbackTextPanel: function() {
+            var textPanel = document.getElementById('wwz-blizz-feedback-text-panel');
+            var textToggleWrapper = document.getElementById('wwz-blizz-feedback-text-toggle-wrapper');
+
+            if (textPanel) {
+                textPanel.classList.toggle('wwz-blizz-expanded');
+            }
+            if (textToggleWrapper) {
+                textToggleWrapper.classList.add('wwz-blizz-hidden');
+            }
+        },
+
+        /**
+         * Reset feedback form
+         */
+        resetFeedbackForm: function() {
+            var ratingButtons = document.querySelectorAll('.wwz-blizz-rating-btn');
+            for (var i = 0; i < ratingButtons.length; i++) {
+                ratingButtons[i].classList.remove('wwz-blizz-selected');
+            }
+
+            var secondQuestion = document.getElementById('wwz-blizz-feedback-second-question');
+            if (secondQuestion) {
+                secondQuestion.classList.add('wwz-blizz-hidden');
+            }
+
+            var textToggleWrapper = document.getElementById('wwz-blizz-feedback-text-toggle-wrapper');
+            if (textToggleWrapper) {
+                textToggleWrapper.classList.add('wwz-blizz-hidden');
+            }
+
+            var textPanel = document.getElementById('wwz-blizz-feedback-text-panel');
+            if (textPanel) {
+                textPanel.classList.remove('wwz-blizz-expanded');
+            }
+
+            var textInput = document.getElementById('wwz-blizz-feedback-text-input');
+            if (textInput) {
+                textInput.value = '';
+            }
+
+            var optionButtons = document.querySelectorAll('.wwz-blizz-feedback-option');
+            for (var i = 0; i < optionButtons.length; i++) {
+                optionButtons[i].classList.remove('wwz-blizz-selected');
+            }
+
+            // Reset state
+            EBB.StateManager.setFeedbackRating(null);
+        },
+
+        /**
+         * Show thank you screen
+         */
+        showThankYou: function() {
+            var feedbackScreen = document.getElementById('wwz-blizz-feedback-screen');
+            var thankYouScreen = document.getElementById('wwz-blizz-thank-you');
+
+            if (feedbackScreen) {
+                feedbackScreen.classList.add('wwz-blizz-hidden');
+            }
+            if (thankYouScreen) {
+                thankYouScreen.classList.remove('wwz-blizz-hidden');
+            }
+        },
+
+        /**
+         * Download transcript
+         */
+        downloadTranscript: function() {
+            var StateManager = EBB.StateManager;
+            var messages = StateManager.getMessages();
+
+            if (!messages || messages.length === 0) {
+                console.log('[WWZBlizz] No messages to download');
+                return;
+            }
+
+            var transcript = '=== WWZ Chat Transcript ===\n';
+            transcript += 'Datum: ' + new Date().toLocaleString('de-DE') + '\n\n';
+
+            for (var i = 0; i < messages.length; i++) {
+                var msg = messages[i];
+                var sender = msg.isUser ? 'Sie' : 'Ivy';
+                var time = new Date(msg.timestamp).toLocaleTimeString('de-DE');
+                transcript += '[' + time + '] ' + sender + ': ' + msg.text + '\n\n';
+            }
+
+            // Create download
+            var blob = new Blob([transcript], { type: 'text/plain;charset=utf-8' });
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'wwz-chat-transcript-' + new Date().getTime() + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
         },
 
         /**

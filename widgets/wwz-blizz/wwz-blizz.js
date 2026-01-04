@@ -157,6 +157,7 @@
                                 </div>\
                                 \
                                 <p class="wwz-blizz-disclaimer">Der Chatbot kann Fehler machen. Bitte uberprufen Sie wichtige Informationen.</p>\
+                                <button class="wwz-blizz-feedback-trigger-btn" id="wwz-blizz-feedback-trigger-btn">Feedback geben</button>\
                             </div>\
                         </div>\
                     </div>\
@@ -169,39 +170,64 @@
                         </div>\
                     </div>\
                     \
-                    <!-- Feedback Form -->\
-                    <div class="wwz-blizz-overlay-screen wwz-blizz-hidden" id="wwz-blizz-feedback-container">\
+                    <!-- Feedback Screen -->\
+                    <div class="wwz-blizz-overlay-screen wwz-blizz-hidden" id="wwz-blizz-feedback-screen">\
                         <div class="wwz-blizz-overlay-content wwz-blizz-feedback-content">\
-                            <h3 class="wwz-blizz-feedback-title">Wie war Ihre Erfahrung?</h3>\
-                            \
-                            <div class="wwz-blizz-feedback-smileys" id="wwz-blizz-feedback-smileys">\
-                                <div class="wwz-blizz-smiley-wrapper" data-rating="1">\
-                                    <button class="wwz-blizz-smiley-btn" title="Sehr mangelhaft">1</button>\
-                                    <span class="wwz-blizz-smiley-label">Sehr mangelhaft</span>\
+                            <h2 class="wwz-blizz-feedback-question">' + CONFIG.feedback.question + '</h2>\
+                            <div class="wwz-blizz-rating" id="wwz-blizz-rating">\
+                                <div class="wwz-blizz-rating-item">\
+                                    <button class="wwz-blizz-rating-btn wwz-blizz-rating-1" data-rating="1">1</button>\
+                                    <span class="wwz-blizz-rating-label">' + CONFIG.feedback.ratingLabels[1] + '</span>\
                                 </div>\
-                                <div class="wwz-blizz-smiley-wrapper" data-rating="2">\
-                                    <button class="wwz-blizz-smiley-btn" title="Mangelhaft">2</button>\
-                                    <span class="wwz-blizz-smiley-label">Mangelhaft</span>\
+                                <div class="wwz-blizz-rating-item">\
+                                    <button class="wwz-blizz-rating-btn wwz-blizz-rating-2" data-rating="2">2</button>\
+                                    <span class="wwz-blizz-rating-label">' + CONFIG.feedback.ratingLabels[2] + '</span>\
                                 </div>\
-                                <div class="wwz-blizz-smiley-wrapper" data-rating="3">\
-                                    <button class="wwz-blizz-smiley-btn" title="Befriedigend">3</button>\
-                                    <span class="wwz-blizz-smiley-label">Befriedigend</span>\
+                                <div class="wwz-blizz-rating-item">\
+                                    <button class="wwz-blizz-rating-btn wwz-blizz-rating-3" data-rating="3">3</button>\
+                                    <span class="wwz-blizz-rating-label">' + CONFIG.feedback.ratingLabels[3] + '</span>\
                                 </div>\
-                                <div class="wwz-blizz-smiley-wrapper" data-rating="4">\
-                                    <button class="wwz-blizz-smiley-btn" title="Gut">4</button>\
-                                    <span class="wwz-blizz-smiley-label">Gut</span>\
+                                <div class="wwz-blizz-rating-item">\
+                                    <button class="wwz-blizz-rating-btn wwz-blizz-rating-4" data-rating="4">4</button>\
+                                    <span class="wwz-blizz-rating-label">' + CONFIG.feedback.ratingLabels[4] + '</span>\
                                 </div>\
-                                <div class="wwz-blizz-smiley-wrapper" data-rating="5">\
-                                    <button class="wwz-blizz-smiley-btn" title="Sehr gut">5</button>\
-                                    <span class="wwz-blizz-smiley-label">Sehr gut</span>\
+                                <div class="wwz-blizz-rating-item">\
+                                    <button class="wwz-blizz-rating-btn wwz-blizz-rating-5" data-rating="5">5</button>\
+                                    <span class="wwz-blizz-rating-label">' + CONFIG.feedback.ratingLabels[5] + '</span>\
                                 </div>\
                             </div>\
-                            \
-                            <textarea class="wwz-blizz-feedback-textarea" id="wwz-blizz-feedback-text" placeholder="Kommentar (optional)"></textarea>\
-                            \
-                            <div class="wwz-blizz-feedback-buttons">\
-                                <button class="wwz-blizz-secondary-btn" id="wwz-blizz-feedback-skip-btn">Uberspringen</button>\
-                                <button class="wwz-blizz-primary-btn" id="wwz-blizz-submit-feedback-btn">Feedback senden</button>\
+                            <div class="wwz-blizz-feedback-second-question wwz-blizz-hidden" id="wwz-blizz-feedback-second-question">\
+                                <h3 class="wwz-blizz-feedback-second-title" id="wwz-blizz-feedback-second-title"></h3>\
+                                <div class="wwz-blizz-feedback-options" id="wwz-blizz-feedback-options"></div>\
+                            </div>\
+                            <div class="wwz-blizz-feedback-text-toggle-wrapper wwz-blizz-hidden" id="wwz-blizz-feedback-text-toggle-wrapper">\
+                                <button class="wwz-blizz-btn wwz-blizz-btn-outline" id="wwz-blizz-feedback-text-toggle">\
+                                    <span>' + CONFIG.feedback.additionalFeedbackLabel + '</span>\
+                                </button>\
+                            </div>\
+                            <div class="wwz-blizz-feedback-text-panel" id="wwz-blizz-feedback-text-panel">\
+                                <textarea\
+                                    class="wwz-blizz-feedback-text-input"\
+                                    id="wwz-blizz-feedback-text-input"\
+                                    placeholder="' + CONFIG.feedback.additionalFeedbackPlaceholder + '"\
+                                    rows="3"\
+                                ></textarea>\
+                            </div>\
+                            <div class="wwz-blizz-feedback-actions">\
+                                <button class="wwz-blizz-btn wwz-blizz-btn-primary" id="wwz-blizz-feedback-send">\
+                                    ' + CONFIG.feedback.sendButton + '\
+                                </button>\
+                                <button class="wwz-blizz-feedback-btn wwz-blizz-feedback-continue" id="wwz-blizz-feedback-continue">\
+                                    <span>' + CONFIG.feedback.continueButton + '</span>\
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>\
+                                </button>\
+                                <button class="wwz-blizz-feedback-btn" id="wwz-blizz-download-transcript">\
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>\
+                                    <span>' + CONFIG.feedback.downloadButton + '</span>\
+                                </button>\
+                                <button class="wwz-blizz-feedback-btn" id="wwz-blizz-feedback-skip">\
+                                    <span>' + CONFIG.feedback.skipButton + '</span>\
+                                </button>\
                             </div>\
                         </div>\
                     </div>\
@@ -210,13 +236,15 @@
                     <div class="wwz-blizz-overlay-screen wwz-blizz-hidden" id="wwz-blizz-thank-you">\
                         <div class="wwz-blizz-overlay-content">\
                             <div class="wwz-blizz-thank-you-icon">\
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#147bd1" stroke-width="2">\
-                                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>\
-                                    <polyline points="22 4 12 14.01 9 11.01"/>\
+                                <svg class="wwz-blizz-success-animation" xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\
+                                    <circle cx="12" cy="12" r="10"></circle>\
+                                    <polyline points="16 12 12 8 8 12"></polyline>\
+                                    <line x1="12" y1="16" x2="12" y2="8"></line>\
                                 </svg>\
                             </div>\
-                            <h2>Vielen Dank!</h2>\
-                            <p>Ihr Feedback wurde ubermittelt.</p>\
+                            <h2 class="wwz-blizz-thankyou-title">' + CONFIG.thankyou.title + '</h2>\
+                            <p class="wwz-blizz-thankyou-desc">' + CONFIG.thankyou.description + '</p>\
+                            <button class="wwz-blizz-btn wwz-blizz-btn-primary" id="wwz-blizz-thankyou-close">' + CONFIG.thankyou.closeButton + '</button>\
                         </div>\
                     </div>\
                 </main>\

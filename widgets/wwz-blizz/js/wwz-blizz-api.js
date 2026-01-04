@@ -34,6 +34,25 @@
          * Parse API response
          */
         parseResponse: function(data) {
+            // Extract message from various response formats
+            var message = data.simpleMessage || data.message || data.text ||
+                         (data.replies && data.replies[0] && (data.replies[0].text || data.replies[0].message));
+
+            // Check for contact form payload prefix
+            if (message && message.indexOf('CONTACTFORMPAYLOAD_') === 0) {
+                try {
+                    var jsonStr = message.substring('CONTACTFORMPAYLOAD_'.length);
+                    var formData = JSON.parse(jsonStr);
+                    return {
+                        type: 'contactForm',
+                        formData: formData,
+                        suggestions: data.suggestions || []
+                    };
+                } catch (e) {
+                    console.error('[WWZBlizz] Failed to parse contact form payload', e);
+                }
+            }
+
             // Handle simpleMessage format
             if (data && data.type === 'simpleMessage') {
                 return {
@@ -128,30 +147,13 @@
         submitContactForm: function(formData) {
             console.log('[WWZBlizz] Submitting contact form');
 
-            // Build contact form payload in required format
-            var contactFormPayload = {
-                "title": "Kontaktformular",
-                "fields": [
-                    {"name": "Message", "type": "string", "rules": [], "error message": "This field is mandatory"},
-                    {"name": "Telefon", "type": "string", "rules": [], "error message": "This field is mandatory"},
-                    {"name": "Date of callback", "type": "datetime", "rules": [], "error message": "This field is mandatory"}
-                ]
-            };
-
-            // Wrap in simpleMessage format to avoid 500 on EB side
+            // Format payload as expected by blizz-proxy
             var payload = {
-                type: "simpleMessage",
-                message: "CONTACTFORMPAYLOAD_" + JSON.stringify(contactFormPayload),
-                formData: {
-                    name: formData.name,
-                    email: formData.email,
-                    phone: formData.phone,
-                    preferredTimeFrom: formData.timeFrom || '',
-                    preferredTimeTo: formData.timeTo || '',
-                    preferredDate: formData.date || '',
-                    comment: formData.comment,
-                    blizzSessionId: SessionService.getSessionId()
-                },
+                type: 'simpleMessage',
+                message: JSON.stringify(formData),
+                formData: formData,
+                sessionId: SessionService.getSessionId(),
+                timestamp: new Date().toISOString(),
                 widgetId: CONFIG.widgetId,
                 agentId: CONFIG.AGENT_ID
             };

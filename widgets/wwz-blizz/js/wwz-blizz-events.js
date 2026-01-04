@@ -74,25 +74,67 @@
                 self.endConversation();
             });
 
-            // Feedback smileys
-            var smileys = document.querySelectorAll('.wwz-blizz-smiley-wrapper');
-            for (var i = 0; i < smileys.length; i++) {
-                (function(wrapper) {
-                    wrapper.addEventListener('click', function() {
-                        var rating = parseInt(wrapper.getAttribute('data-rating'));
-                        self.handleSmileyClick(rating);
-                    });
-                })(smileys[i]);
+            // Feedback trigger button
+            document.getElementById('wwz-blizz-feedback-trigger-btn').addEventListener('click', function() {
+                self.handleFeedbackTrigger();
+            });
+
+            // Feedback rating buttons (event delegation)
+            document.getElementById('wwz-blizz-feedback-screen').addEventListener('click', function(e) {
+                if (e.target.classList.contains('wwz-blizz-rating-btn')) {
+                    self.handleRatingSelect(parseInt(e.target.dataset.rating));
+                }
+            });
+
+            // Feedback options (event delegation)
+            var feedbackOptions = document.getElementById('wwz-blizz-feedback-options');
+            if (feedbackOptions) {
+                feedbackOptions.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('wwz-blizz-feedback-option')) {
+                        e.target.classList.toggle('wwz-blizz-selected');
+                    }
+                });
             }
 
-            // Feedback buttons
-            document.getElementById('wwz-blizz-submit-feedback-btn').addEventListener('click', function() {
-                self.submitFeedback();
-            });
+            // Feedback text panel toggle
+            var textToggle = document.getElementById('wwz-blizz-feedback-text-toggle');
+            if (textToggle) {
+                textToggle.addEventListener('click', function() {
+                    self.toggleFeedbackText();
+                });
+            }
 
-            document.getElementById('wwz-blizz-feedback-skip-btn').addEventListener('click', function() {
-                self.skipFeedback();
-            });
+            // Feedback send button
+            var sendBtn = document.getElementById('wwz-blizz-feedback-send-btn');
+            if (sendBtn) {
+                sendBtn.addEventListener('click', function() {
+                    self.submitNewFeedback();
+                });
+            }
+
+            // Feedback skip button
+            var skipBtn = document.getElementById('wwz-blizz-feedback-skip-btn');
+            if (skipBtn) {
+                skipBtn.addEventListener('click', function() {
+                    self.skipNewFeedback();
+                });
+            }
+
+            // Feedback download button
+            var downloadBtn = document.getElementById('wwz-blizz-feedback-download-btn');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', function() {
+                    self.downloadTranscript();
+                });
+            }
+
+            // Feedback close button
+            var feedbackClose = document.getElementById('wwz-blizz-feedback-close-btn');
+            if (feedbackClose) {
+                feedbackClose.addEventListener('click', function() {
+                    self.closeFeedbackScreen();
+                });
+            }
 
             // Copy message (event delegation)
             document.getElementById('wwz-blizz-messages-container').addEventListener('click', function(e) {
@@ -401,6 +443,16 @@
                         StateManager.setSessionId(response.sessionId);
                     }
 
+                    // Check if this is a contact form response
+                    if (response.type === 'contactForm') {
+                        UI.addContactFormMessage(response);
+                        // Setup form event listeners after rendering
+                        setTimeout(function() {
+                            self.setupContactFormListeners();
+                        }, 100);
+                        return;
+                    }
+
                     var isHtml = response.isHtml || false;
 
                     if (response.replies && response.replies.length > 0) {
@@ -585,53 +637,144 @@
         },
 
         /**
+         * Setup contact form event listeners
+         */
+        setupContactFormListeners: function() {
+            var self = this;
+            var form = document.getElementById('wwz-blizz-contact-form-element');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    self.handleContactFormSubmit(e);
+                });
+            }
+        },
+
+        /**
+         * Handle contact form submission
+         */
+        handleContactFormSubmit: function(e) {
+            e.preventDefault();
+            var self = this;
+            var UI = EBB.UI;
+            var APIService = EBB.APIService;
+            var StateManager = EBB.StateManager;
+
+            var form = e.target;
+            var formData = new FormData(form);
+            var data = {};
+            formData.forEach(function(value, key) {
+                data[key] = value;
+            });
+
+            // Validate all fields
+            var isValid = true;
+            var inputs = form.querySelectorAll('.wwz-blizz-form-input');
+            for (var i = 0; i < inputs.length; i++) {
+                var input = inputs[i];
+                var errorSpan = input.nextElementSibling;
+
+                // Required field validation
+                if (input.required && !input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('wwz-blizz-invalid');
+                    if (errorSpan) {
+                        errorSpan.textContent = input.dataset.error || 'Dieses Feld ist erforderlich';
+                    }
+                    continue;
+                }
+
+                // Custom validation for callback datetime
+                if (input.id === 'blizzCallbackDatetimeStart' && input.value) {
+                    var selectedDate = new Date(input.value);
+                    var now = new Date();
+                    var minDate = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+                    var hours = selectedDate.getHours();
+                    var dayOfWeek = selectedDate.getDay(); // 0 = Sunday, 6 = Saturday
+
+                    var errorMessage = '';
+
+                    // Check if at least 24 hours in the future
+                    if (selectedDate < minDate) {
+                        errorMessage = 'Der Termin muss mindestens 24 Stunden in der Zukunft liegen';
+                    }
+                    // Check if weekend
+                    else if (dayOfWeek === 0 || dayOfWeek === 6) {
+                        errorMessage = 'Termine sind nur an Werktagen moglich';
+                    }
+                    // Check if time is between 07:00 and 17:00
+                    else if (hours < 7 || hours >= 17) {
+                        errorMessage = 'Termine sind nur zwischen 07:00 und 17:00 Uhr moglich';
+                    }
+
+                    if (errorMessage) {
+                        isValid = false;
+                        input.classList.add('wwz-blizz-invalid');
+                        if (errorSpan) {
+                            errorSpan.textContent = errorMessage;
+                        }
+                        continue;
+                    }
+                }
+
+                // Clear error if valid
+                input.classList.remove('wwz-blizz-invalid');
+                if (errorSpan) {
+                    errorSpan.textContent = '';
+                }
+            }
+
+            if (!isValid) return;
+
+            // Disable form while submitting
+            var submitBtn = form.querySelector('.wwz-blizz-form-submit');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Wird gesendet...';
+            }
+
+            // Submit form data to API
+            APIService.submitContactForm(data)
+                .then(function(result) {
+                    if (result.success) {
+                        // Disable the form
+                        UI.disableContactForm();
+                        // Show success message
+                        UI.showFormSuccess();
+                    } else {
+                        // Re-enable submit button on failure
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = 'Absenden';
+                        }
+                        // Show error message
+                        var errorMessage = StateManager.addMessage(
+                            'Es tut mir leid, das Formular konnte nicht gesendet werden. Bitte versuchen Sie es erneut.',
+                            false
+                        );
+                        UI.renderMessage(errorMessage);
+                    }
+                })
+                .catch(function(error) {
+                    console.error('[WWZBlizz] Contact form submission error', error);
+                    // Re-enable submit button on error
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Absenden';
+                    }
+                    // Show error message
+                    var errorMessage = StateManager.addMessage(
+                        'Es tut mir leid, das Formular konnte nicht gesendet werden. Bitte versuchen Sie es erneut.',
+                        false
+                    );
+                    UI.renderMessage(errorMessage);
+                });
+        },
+
+        /**
          * Handle contact form close
          */
         handleContactFormClose: function() {
             EBB.UI.hideContactForm();
-        },
-
-        /**
-         * Handle contact form submit
-         */
-        handleContactFormSubmit: function() {
-            var self = this;
-            var UI = EBB.UI;
-            var APIService = EBB.APIService;
-
-            // Validate form
-            var validation = UI.validateContactForm();
-            if (!validation.valid) {
-                UI.showNotification(validation.errors[0], 'error');
-                return;
-            }
-
-            // Get form data
-            var formData = UI.getContactFormData();
-
-            // Disable submit button
-            var submitBtn = document.getElementById('wwz-blizz-contact-submit');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Wird gesendet...';
-
-            // Submit form
-            APIService.submitContactForm(formData)
-                .then(function(result) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'ABSENDEN';
-
-                    if (result.success) {
-                        UI.showContactSuccess();
-                    } else {
-                        UI.showNotification('Fehler beim Senden. Bitte versuchen Sie es erneut.', 'error');
-                    }
-                })
-                .catch(function(error) {
-                    console.error('[EnterpriseBotBlizz] Contact form error:', error);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'ABSENDEN';
-                    UI.showNotification('Fehler beim Senden. Bitte versuchen Sie es erneut.', 'error');
-                });
         },
 
         /**
@@ -667,6 +810,119 @@
             console.log('[EnterpriseBotBlizz] End chat and feedback clicked');
             EBB.StateManager.setEndChatFeedback(true);
             EBB.UI.updateView('feedback');
+        },
+
+        /**
+         * Handle feedback trigger button
+         */
+        handleFeedbackTrigger: function() {
+            console.log('[WWZBlizz] Opening feedback screen');
+            EBB.UI.showFeedbackScreen();
+        },
+
+        /**
+         * Handle rating selection
+         */
+        handleRatingSelect: function(rating) {
+            var UI = EBB.UI;
+            var StateManager = EBB.StateManager;
+
+            console.log('[WWZBlizz] Rating selected:', rating);
+
+            StateManager.setFeedbackRating(rating);
+            UI.selectRating(rating);
+        },
+
+        /**
+         * Toggle feedback text panel
+         */
+        toggleFeedbackText: function() {
+            EBB.UI.toggleFeedbackTextPanel();
+        },
+
+        /**
+         * Submit new feedback
+         */
+        submitNewFeedback: function() {
+            var StateManager = EBB.StateManager;
+            var APIService = EBB.APIService;
+            var UI = EBB.UI;
+
+            var rating = StateManager.getFeedbackRating();
+
+            if (!rating) {
+                console.log('[WWZBlizz] No rating selected');
+                return;
+            }
+
+            // Collect selected options
+            var selectedOptions = [];
+            var feedbackOptions = document.getElementById('wwz-blizz-feedback-options');
+            if (feedbackOptions) {
+                var selected = feedbackOptions.querySelectorAll('.wwz-blizz-feedback-option.wwz-blizz-selected');
+                selected.forEach(function(btn) {
+                    selectedOptions.push(btn.dataset.option);
+                });
+            }
+
+            // Get additional text
+            var feedbackTextarea = document.getElementById('wwz-blizz-feedback-text');
+            var additionalText = feedbackTextarea ? feedbackTextarea.value.trim() : '';
+
+            // Build comment
+            var comment = '';
+            if (selectedOptions.length > 0) {
+                comment = selectedOptions.join(', ');
+            }
+            if (additionalText) {
+                comment = comment ? comment + '. ' + additionalText : additionalText;
+            }
+
+            console.log('[WWZBlizz] Submitting feedback:', { rating: rating, comment: comment });
+
+            // Submit to API
+            APIService.submitFeedback(rating, comment)
+                .then(function() {
+                    UI.showThankYou();
+                    setTimeout(function() {
+                        UI.hideFeedbackScreen();
+                        UI.resetFeedbackForm();
+                    }, 2000);
+                })
+                .catch(function(error) {
+                    console.error('[WWZBlizz] Feedback submission failed:', error);
+                    UI.showThankYou();
+                    setTimeout(function() {
+                        UI.hideFeedbackScreen();
+                        UI.resetFeedbackForm();
+                    }, 2000);
+                });
+        },
+
+        /**
+         * Skip new feedback
+         */
+        skipNewFeedback: function() {
+            console.log('[WWZBlizz] Skipping feedback');
+            EBB.UI.hideFeedbackScreen();
+            EBB.UI.resetFeedbackForm();
+        },
+
+        /**
+         * Download transcript
+         */
+        downloadTranscript: function() {
+            console.log('[WWZBlizz] Downloading transcript');
+            EBB.UI.downloadTranscript();
+        },
+
+        /**
+         * Close feedback screen
+         */
+        closeFeedbackScreen: function() {
+            console.log('[WWZBlizz] Closing feedback screen');
+            EBB.UI.hideFeedbackScreen();
+            EBB.UI.resetFeedbackForm();
         }
     };
 

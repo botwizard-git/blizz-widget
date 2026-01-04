@@ -198,6 +198,34 @@
         },
 
         /**
+         * Set feedback rating
+         */
+        setFeedbackRating: function(rating) {
+            state.selectedRating = rating;
+        },
+
+        /**
+         * Get feedback rating
+         */
+        getFeedbackRating: function() {
+            return state.selectedRating;
+        },
+
+        /**
+         * Set feedback text
+         */
+        setFeedbackText: function(text) {
+            state.feedbackText = text;
+        },
+
+        /**
+         * Get feedback text
+         */
+        getFeedbackText: function() {
+            return state.feedbackText;
+        },
+
+        /**
          * Get end chat feedback flag
          */
         isEndChatFeedback: function() {
