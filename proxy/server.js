@@ -29,9 +29,9 @@ const config = {
 const WIDGETS = {
     'wwz-blizz': {
         CHAT_ENDPOINT: process.env.WWZ_BLIZZ_CHAT_ENDPOINT ||
-            'https://wwz-blitzico.enterprisebot.co/blitzef18241476b1474580d2f58390a9cbae',
+            'https://wwz-blitzico.enterprisebot.co/blitzdcbd6ccec92246ca8120ea00deabe70d',
         FORM_ENDPOINT: process.env.WWZ_BLIZZ_FORM_ENDPOINT ||
-            'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
+            'https://wwz-blitzico.enterprisebot.co/blitze1ffae2f9a274b39b5f39e0f34dcadd2',
         FEEDBACK_ENDPOINT: process.env.WWZ_BLIZZ_FEEDBACK_ENDPOINT ||
             'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
         BOTFLOW_ENDPOINT: process.env.WWZ_BLIZZ_BOTFLOW_ENDPOINT ||
@@ -39,9 +39,9 @@ const WIDGETS = {
     },
     'wwz-ivy': {
         CHAT_ENDPOINT: process.env.WWZ_IVY_CHAT_ENDPOINT ||
-            'https://wwz-blitzico.enterprisebot.co/blitzef18241476b1474580d2f58390a9cbae',
+            'https://wwz-blitzico.enterprisebot.co/blitz03429bf6c88d45dbbf47e3892e5c8e89',
         FORM_ENDPOINT: process.env.WWZ_IVY_FORM_ENDPOINT ||
-            'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
+            'https://wwz-blitzico.enterprisebot.co/blitze1ffae2f9a274b39b5f39e0f34dcadd2',
         FEEDBACK_ENDPOINT: process.env.WWZ_IVY_FEEDBACK_ENDPOINT ||
             'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
         BOTFLOW_ENDPOINT: process.env.WWZ_IVY_BOTFLOW_ENDPOINT ||
