@@ -85,6 +85,11 @@
             elements.feedbackContinue.addEventListener('click', () => this.handleFeedbackContinue());
             elements.downloadTranscript.addEventListener('click', () => UI.downloadTranscript());
 
+            // Feedback skip button
+            if (elements.feedbackSkip) {
+                elements.feedbackSkip.addEventListener('click', () => this.handleFeedbackSkip());
+            }
+
             // Thank you screen
             elements.thankyouClose.addEventListener('click', () => this.handleThankyouClose());
 
@@ -415,6 +420,18 @@
         },
 
         /**
+         * Handle feedback skip
+         */
+        handleFeedbackSkip: function() {
+            // Skip feedback and start new session
+            State.startNewSession();
+            State.set({ isCollapsed: true, feedbackRating: null });
+            State.setScreen('launcher');
+            UI.getElements().messages.innerHTML = '';
+            UI.hideWidget();
+        },
+
+        /**
          * Setup contact form event listeners
          */
         setupContactFormListeners: function() {
@@ -437,17 +454,54 @@
             let isValid = true;
             form.querySelectorAll('.wwz-ivy-form-input').forEach(input => {
                 const errorSpan = input.nextElementSibling;
+
+                // Required field validation
                 if (input.required && !input.value.trim()) {
                     isValid = false;
                     input.classList.add('wwz-ivy-invalid');
                     if (errorSpan) {
                         errorSpan.textContent = input.dataset.error || 'Dieses Feld ist erforderlich';
                     }
-                } else {
-                    input.classList.remove('wwz-ivy-invalid');
-                    if (errorSpan) {
-                        errorSpan.textContent = '';
+                    return;
+                }
+
+                // Custom validation for ivyCallbackDatetimeStart
+                if (input.id === 'ivyCallbackDatetimeStart' && input.value) {
+                    const selectedDate = new Date(input.value);
+                    const now = new Date();
+                    const minDate = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+                    const hours = selectedDate.getHours();
+                    const dayOfWeek = selectedDate.getDay(); // 0 = Sunday, 6 = Saturday
+
+                    let errorMessage = '';
+
+                    // Check if at least 24 hours in the future
+                    if (selectedDate < minDate) {
+                        errorMessage = 'Der Termin muss mindestens 24 Stunden in der Zukunft liegen';
                     }
+                    // Check if weekend
+                    else if (dayOfWeek === 0 || dayOfWeek === 6) {
+                        errorMessage = 'Termine sind nur an Werktagen möglich';
+                    }
+                    // Check if time is between 07:00 and 17:00
+                    else if (hours < 7 || hours >= 17) {
+                        errorMessage = 'Termine sind nur zwischen 07:00 und 17:00 Uhr möglich';
+                    }
+
+                    if (errorMessage) {
+                        isValid = false;
+                        input.classList.add('wwz-ivy-invalid');
+                        if (errorSpan) {
+                            errorSpan.textContent = errorMessage;
+                        }
+                        return;
+                    }
+                }
+
+                // Clear error if valid
+                input.classList.remove('wwz-ivy-invalid');
+                if (errorSpan) {
+                    errorSpan.textContent = '';
                 }
             });
 

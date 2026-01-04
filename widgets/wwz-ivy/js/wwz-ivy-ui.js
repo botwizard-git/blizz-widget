@@ -174,6 +174,9 @@
                                         ${Icons.download}
                                         <span>${Config.feedback.downloadButton}</span>
                                     </button>
+                                    <button class="wwz-ivy-feedback-btn" id="wwz-ivy-feedback-skip">
+                                        <span>Feedback überspringen</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -228,6 +231,7 @@
                 feedbackSend: document.getElementById('wwz-ivy-feedback-send'),
                 feedbackContinue: document.getElementById('wwz-ivy-feedback-continue'),
                 downloadTranscript: document.getElementById('wwz-ivy-download-transcript'),
+                feedbackSkip: document.getElementById('wwz-ivy-feedback-skip'),
                 thankyouClose: document.getElementById('wwz-ivy-thankyou-close')
             };
         },
@@ -347,14 +351,30 @@
          * Render contact form field
          */
         renderFormField: function(field) {
-            const inputType = field.type === 'datetime' ? 'datetime-local' : 'text';
-            const isRequired = field['error message'] ? true : false;
+            // Map field type to HTML input type
+            let inputType = 'text';
+            const fieldId = field.id;
+            const fieldType = (field.type || '').toLowerCase();
+
+            if (fieldType === 'datetime') {
+                inputType = 'datetime-local';
+            } else if (fieldType === 'email') {
+                inputType = 'email';
+            } else if (fieldType === 'tel' || fieldType === 'phone' || fieldType === 'telephone') {
+                inputType = 'tel';
+            } else if (fieldType === 'time') {
+                inputType = 'time';
+            }
+
+            const isRequired = field['required'];
+
             const errorMsg = field['error message'] || 'Dieses Feld ist erforderlich';
 
             return `
                 <div class="wwz-ivy-form-field">
                     <label class="wwz-ivy-form-label">${this.escapeHtml(field.name)}</label>
                     <input
+                        id="${fieldId}"
                         type="${inputType}"
                         name="${this.escapeHtml(field.name)}"
                         class="wwz-ivy-form-input"

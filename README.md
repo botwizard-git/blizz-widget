@@ -148,3 +148,6 @@ On push to `main`, GitHub Actions will:
 
 - **wwz-blizz**: `https://blizz.botwizard.ch/wwz-blizz/wwz-blizz.js`
 - **wwz-ivy**: `https://blizz.botwizard.ch/wwz-ivy/wwz-ivy.js`
+
+- **wwz-blizz-testpage**: `https://blizz.botwizard.ch/wwz-blizz/test.html`
+- **wwz-ivy-testpage**: `https://blizz.botwizard.ch/wwz-blizz/test.html`
