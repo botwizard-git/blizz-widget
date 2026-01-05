@@ -123,10 +123,10 @@
                                         rows="1"
                                     ></textarea>
                                 </div>
-                                <button class="wwz-ivy-send-btn wwz-ivy-hidden" id="wwz-ivy-send-btn" aria-label="Send">
+                                <button class="wwz-ivy-send-btn" id="wwz-ivy-send-btn" aria-label="Send" disabled>
                                     ${Icons.send}
                                 </button>
-                                <button class="wwz-ivy-mic-btn" id="wwz-ivy-mic-btn" aria-label="Voice input">
+                                <button class="wwz-ivy-mic-btn wwz-ivy-hidden" id="wwz-ivy-mic-btn" aria-label="Voice input">
                                     ${Icons.mic}
                                 </button>
                             </div>
@@ -600,17 +600,11 @@
         },
 
         /**
-         * Update send button visibility
+         * Update send button state
          */
         updateSendButton: function() {
             const hasText = elements.input.value.trim().length > 0;
-            if (hasText) {
-                elements.sendBtn.classList.remove('wwz-ivy-hidden');
-                elements.micBtn.classList.add('wwz-ivy-hidden');
-            } else {
-                elements.sendBtn.classList.add('wwz-ivy-hidden');
-                elements.micBtn.classList.remove('wwz-ivy-hidden');
-            }
+            elements.sendBtn.disabled = !hasText;
         },
 
         /**
