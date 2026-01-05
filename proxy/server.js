@@ -426,11 +426,11 @@ app.post('/feedback', async (req, res) => {
  */
 app.post('/contact', async (req, res) => {
     try {
-        const { type, message, formData, widgetId, agentId, formpayload } = req.body;
+        const { type, message, formData, widgetId, agentId, formpayload, sessionId, timestamp } = req.body;
 
         let payload;
         if (type === 'simpleMessage' && message) {
-            payload = { type, message, formData, widgetId, agentId };
+            payload = { type, message, formData, widgetId, agentId, sessionId, timestamp };
             console.log('[Contact] Submitting form (simpleMessage format)');
         } else if (formpayload) {
             payload = { formpayload };
