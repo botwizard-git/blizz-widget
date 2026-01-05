@@ -229,8 +229,21 @@
         };
 
         // Auto-open if configured (after Main API is exposed)
-        if (window.WWZIvy.Config.autoOpen) {
-            setTimeout(() => {
+        // Supports both boolean (legacy) and object (device-specific) config
+        var autoOpenConfig = window.WWZIvy.Config.autoOpen;
+        var shouldAutoOpen = false;
+
+        if (typeof autoOpenConfig === 'boolean') {
+            // Backward compatible: simple boolean
+            shouldAutoOpen = autoOpenConfig;
+        } else if (typeof autoOpenConfig === 'object' && autoOpenConfig !== null) {
+            // Device-specific config: check viewport width (480px matches CSS mobile breakpoint)
+            var isMobile = window.innerWidth <= 480;
+            shouldAutoOpen = isMobile ? autoOpenConfig.mobile : autoOpenConfig.desktop;
+        }
+
+        if (shouldAutoOpen) {
+            setTimeout(function() {
                 window.WWZIvy.Main.expand();
             }, 100);
         }

@@ -20,8 +20,11 @@
         wwzLogo: 'https://chatbot2go-hybrid.enterprisebot.co/assets/botForge/67031622bbfbfaaccecd88f0/wwz_rescaled_image.png',
         launcherIcon: 'https://chatbot2go-hybrid.enterprisebot.co/assets/botForge/67031622bbfbfaaccecd88f0/rescaled_image.png',
 
-        // Widget behavior
-        autoOpen: false, // Set to true to auto-open widget on page load
+        // Widget behavior - device-specific auto-open
+        autoOpen: {
+            desktop: true,   // Auto-open on desktop (viewport > 480px)
+            mobile: false    // Do NOT auto-open on mobile (viewport <= 480px)
+        },
 
         // Welcome message (first bot message in chat)
         welcomeMessage: 'Willkommen beim Chat Service von WWZ. Ich bin Ivy und beantworte gerne Ihre Fragen zu unseren Produkten und Services. Bitte beachten sie, dass ich keinen direkten Zugang zu Kundendaten habe. Schliessen Sie das Chatfenster mit dem Kreuzchen oben rechts, um nach der Konversation Feedback zu geben.',
