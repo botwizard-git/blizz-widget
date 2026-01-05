@@ -137,9 +137,7 @@ app.post('/:widgetId/chat', async (req, res) => {
                 blizzUserMsg,
                 blizzSessionId,
                 blizzBotMessageId,
-                clientUrl,
-                widgetId,
-                agentId
+                clientUrl
             })
         });
 
@@ -342,9 +340,7 @@ app.post('/chat', async (req, res) => {
                 blizzUserMsg,
                 blizzSessionId,
                 blizzBotMessageId,
-                clientUrl,
-                widgetId,
-                agentId
+                clientUrl
             })
         });
 
