@@ -237,11 +237,11 @@ app.post('/:widgetId/contact', async (req, res) => {
             return res.status(404).json({ error: `Unknown widget: ${widgetId}` });
         }
 
-        const { type, message, formData, agentId, formpayload } = req.body;
+        const { type, message, formData, agentId, formpayload, sessionId, timestamp } = req.body;
 
         let payload;
         if (type === 'simpleMessage' && message) {
-            payload = { type, message, formData, widgetId, agentId };
+            payload = { type, message, formData, widgetId, agentId, sessionId, timestamp };
             console.log(`[${widgetId}/Contact] Submitting form (simpleMessage format)`);
         } else if (formpayload) {
             payload = { formpayload };
