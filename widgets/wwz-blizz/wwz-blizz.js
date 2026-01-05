@@ -88,7 +88,7 @@
             <div class="wwz-blizz-app-container" id="wwz-blizz-container">\
                 <!-- Collapsed State Bar -->\
                 <div class="wwz-blizz-collapsed-bar wwz-blizz-hidden" id="wwz-blizz-collapsed-bar">\
-                    <span class="wwz-blizz-collapsed-title">Chatbot - ' + CONFIG.botName + '</span>\
+                    <span class="wwz-blizz-collapsed-title">' + CONFIG.botTitle + '</span>\
                     <button class="wwz-blizz-expand-btn" id="wwz-blizz-expand-btn" title="Erweitern">\
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\
                             <path d="M12 5v14M5 12h14"/>\
@@ -101,9 +101,14 @@
                     <!-- Header -->\
                     <header class="wwz-blizz-chat-header">\
                         <div class="wwz-blizz-header-title">\
-                            <span>Chatbot - ' + CONFIG.botName + '</span>\
+                            <span>' + CONFIG.botTitle + '</span>\
                         </div>\
                         <div class="wwz-blizz-header-actions">\
+                            <button class="wwz-blizz-header-btn enterprisebot-blizz-info-btn" id="wwz-blizz-privacy-btn" title="Datenschutz">\
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">\
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>\
+                                </svg>\
+                            </button>\
                             <button class="wwz-blizz-header-btn" id="wwz-blizz-close-btn" title="Minimieren">\
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\
                                     <path d="M5 12h14"/>\
@@ -112,19 +117,44 @@
                         </div>\
                     </header>\
                     \
+                    <!-- Privacy Popup -->\
+                    <div class="enterprisebot-blizz-privacy-popup wwz-blizz-hidden" id="wwz-blizz-privacy-modal">\
+                        <button class="enterprisebot-blizz-privacy-close-btn" id="wwz-blizz-privacy-close">\
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\
+                                <line x1="18" y1="6" x2="6" y2="18"/>\
+                                <line x1="6" y1="6" x2="18" y2="18"/>\
+                            </svg>\
+                        </button>\
+                        <div class="enterprisebot-blizz-privacy-header">\
+                            <img src="' + CONFIG.botAvatar + '" alt="' + CONFIG.botName + '" class="enterprisebot-blizz-privacy-avatar">\
+                            <h3 class="enterprisebot-blizz-privacy-title">Ich bin ' + CONFIG.botName + ', ' + CONFIG.privacy.title + '</h3>\
+                        </div>\
+                        <p class="enterprisebot-blizz-privacy-text">\
+                            ' + CONFIG.privacy.description + '\
+                        </p>\
+                        <a href="' + CONFIG.privacy.linkUrl + '" target="_blank" rel="noopener noreferrer" class="enterprisebot-blizz-privacy-link">\
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\
+                                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>\
+                                <polyline points="15 3 21 3 21 9"/>\
+                                <line x1="10" y1="14" x2="21" y2="3"/>\
+                            </svg>\
+                            ' + CONFIG.privacy.linkText + '\
+                        </a>\
+                    </div>\
+                    \
                     <!-- Chat Content -->\
                     <div class="wwz-blizz-chat-content" id="wwz-blizz-chat-content">\
                         <!-- Welcome Screen -->\
                         <div class="wwz-blizz-welcome-screen" id="wwz-blizz-welcome-screen">\
                             <div class="wwz-blizz-welcome-content">\
                                 <img src="' + CONFIG.botAvatar + '" alt="' + CONFIG.botName + '" class="wwz-blizz-welcome-avatar">\
-                                <h1 class="wwz-blizz-welcome-title">Wie kann ich Ihnen helfen?</h1>\
-                                <p class="wwz-blizz-welcome-subtitle">Ich bin ' + CONFIG.botName + ', Ihr digitaler Assistent.</p>\
+                                <h1 class="wwz-blizz-welcome-title">' + CONFIG.welcomeTitle + '</h1>\
+                                <p class="wwz-blizz-welcome-subtitle">Ich bin ' + CONFIG.botName + ', ' + CONFIG.welcomeSubtitle + '</p>\
                             </div>\
                             \
                             <div class="wwz-blizz-welcome-input-wrapper">\
                                 <div class="wwz-blizz-input-container wwz-blizz-welcome-input">\
-                                    <textarea id="wwz-blizz-welcome-message-input" placeholder="Stellen Sie mir eine Frage..." rows="1" autocomplete="off"></textarea>\
+                                    <textarea id="wwz-blizz-welcome-message-input" placeholder="' + CONFIG.inputPlaceholder + '" rows="1" autocomplete="off"></textarea>\
                                     <div class="wwz-blizz-input-actions">\
                                         <button class="wwz-blizz-input-btn wwz-blizz-send-btn" id="wwz-blizz-welcome-send-btn" title="Senden">\
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\
@@ -146,7 +176,7 @@
                                 <div class="wwz-blizz-suggestions-container" id="wwz-blizz-suggestions-container"></div>\
                                 \
                                 <div class="wwz-blizz-input-container">\
-                                    <textarea id="wwz-blizz-message-input" placeholder="Nachricht..." rows="1" autocomplete="off"></textarea>\
+                                    <textarea id="wwz-blizz-message-input" placeholder="' + CONFIG.inputPlaceholder + '" rows="1" autocomplete="off"></textarea>\
                                     <div class="wwz-blizz-input-actions">\
                                         <button class="wwz-blizz-input-btn wwz-blizz-send-btn" id="wwz-blizz-send-btn" title="Senden">\
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\
@@ -156,8 +186,8 @@
                                     </div>\
                                 </div>\
                                 \
-                                <p class="wwz-blizz-disclaimer">Der Chatbot kann Fehler machen. Bitte uberprufen Sie wichtige Informationen.</p>\
-                                <button class="wwz-blizz-feedback-trigger-btn" id="wwz-blizz-feedback-trigger-btn">Feedback geben</button>\
+                                <p class="wwz-blizz-disclaimer">' + CONFIG.disclaimerText + '</p>\
+                                <button class="enterprisebot-blizz-end-chat-btn" id="wwz-blizz-end-chat-btn">' + CONFIG.endChatButton + '</button>\
                             </div>\
                         </div>\
                     </div>\
@@ -214,12 +244,8 @@
                                 ></textarea>\
                             </div>\
                             <div class="wwz-blizz-feedback-actions">\
-                                <button class="wwz-blizz-btn wwz-blizz-btn-primary" id="wwz-blizz-feedback-send">\
+                                <button class="wwz-blizz-btn wwz-blizz-btn-primary" id="wwz-blizz-feedback-send-btn">\
                                     ' + CONFIG.feedback.sendButton + '\
-                                </button>\
-                                <button class="wwz-blizz-feedback-btn wwz-blizz-feedback-continue" id="wwz-blizz-feedback-continue">\
-                                    <span>' + CONFIG.feedback.continueButton + '</span>\
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>\
                                 </button>\
                                 <button class="wwz-blizz-feedback-btn" id="wwz-blizz-download-transcript">\
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>\
@@ -234,12 +260,11 @@
                     \
                     <!-- Thank You -->\
                     <div class="wwz-blizz-overlay-screen wwz-blizz-hidden" id="wwz-blizz-thank-you">\
-                        <div class="wwz-blizz-overlay-content">\
-                            <div class="wwz-blizz-thank-you-icon">\
-                                <svg class="wwz-blizz-success-animation" xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\
-                                    <circle cx="12" cy="12" r="10"></circle>\
-                                    <polyline points="16 12 12 8 8 12"></polyline>\
-                                    <line x1="12" y1="16" x2="12" y2="8"></line>\
+                        <div class="wwz-blizz-overlay-content wwz-blizz-thankyou-content">\
+                            <div class="wwz-blizz-checkmark-wrapper">\
+                                <svg class="wwz-blizz-checkmark" viewBox="0 0 52 52">\
+                                    <circle class="wwz-blizz-checkmark-circle" cx="26" cy="26" r="25" fill="none"/>\
+                                    <path class="wwz-blizz-checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>\
                                 </svg>\
                             </div>\
                             <h2 class="wwz-blizz-thankyou-title">' + CONFIG.thankyou.title + '</h2>\

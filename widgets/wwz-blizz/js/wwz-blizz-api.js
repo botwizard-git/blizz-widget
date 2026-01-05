@@ -10,6 +10,29 @@
 
     EBB.APIService = {
         /**
+         * Fetch with timeout support
+         */
+        fetchWithTimeout: function(url, options, timeout) {
+            var timeoutMs = timeout || CONFIG.requestTimeout || 60000;
+
+            return new Promise(function(resolve, reject) {
+                var timeoutId = setTimeout(function() {
+                    reject(new Error('TIMEOUT'));
+                }, timeoutMs);
+
+                fetch(url, options)
+                    .then(function(response) {
+                        clearTimeout(timeoutId);
+                        resolve(response);
+                    })
+                    .catch(function(error) {
+                        clearTimeout(timeoutId);
+                        reject(error);
+                    });
+            });
+        },
+
+        /**
          * Build the request payload
          */
         buildPayload: function(message) {
@@ -86,7 +109,7 @@
 
             console.log('[WWZBlizz] Sending message');
 
-            return fetch(CONFIG.apiEndpoint, {
+            return this.fetchWithTimeout(CONFIG.apiEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -115,6 +138,7 @@
          * Submit user feedback
          */
         submitFeedback: function(rating, comment) {
+            var self = this;
             var payload = {
                 sessionId: SessionService.getSessionId(),
                 rating: rating,
@@ -125,7 +149,7 @@
                 botName: "BLIZZ"
             };
 
-            return fetch(CONFIG.RATING_API, {
+            return this.fetchWithTimeout(CONFIG.RATING_API, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -146,6 +170,7 @@
          * Submit contact form
          */
         submitContactForm: function(formData) {
+            var self = this;
             console.log('[WWZBlizz] Submitting contact form');
 
             // Format payload as expected by blizz-proxy
@@ -159,7 +184,7 @@
                 agentId: CONFIG.AGENT_ID
             };
 
-            return fetch(CONFIG.CONTACT_FORM_API, {
+            return this.fetchWithTimeout(CONFIG.CONTACT_FORM_API, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

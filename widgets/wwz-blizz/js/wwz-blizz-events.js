@@ -74,10 +74,13 @@
                 self.endConversation();
             });
 
-            // Feedback trigger button
-            document.getElementById('wwz-blizz-feedback-trigger-btn').addEventListener('click', function() {
-                self.handleFeedbackTrigger();
-            });
+            // Feedback trigger button (removed - using end chat button instead)
+            // var feedbackTriggerBtn = document.getElementById('wwz-blizz-feedback-trigger-btn');
+            // if (feedbackTriggerBtn) {
+            //     feedbackTriggerBtn.addEventListener('click', function() {
+            //         self.handleFeedbackTrigger();
+            //     });
+            // }
 
             // Feedback rating buttons (event delegation)
             document.getElementById('wwz-blizz-feedback-screen').addEventListener('click', function(e) {
@@ -146,35 +149,61 @@
             });
 
             // Contact form - Close button
-            document.getElementById('wwz-blizz-contact-form-close').addEventListener('click', function() {
-                self.handleContactFormClose();
-            });
+            var contactFormClose = document.getElementById('wwz-blizz-contact-form-close');
+            if (contactFormClose) {
+                contactFormClose.addEventListener('click', function() {
+                    self.handleContactFormClose();
+                });
+            }
 
             // Contact form - Submit
-            document.getElementById('wwz-blizz-contact-form-body').addEventListener('submit', function(e) {
-                e.preventDefault();
-                self.handleContactFormSubmit();
-            });
+            var contactFormBody = document.getElementById('wwz-blizz-contact-form-body');
+            if (contactFormBody) {
+                contactFormBody.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    self.handleContactFormSubmit();
+                });
+            }
 
             // Contact form success - Close button
-            document.getElementById('wwz-blizz-contact-success-close').addEventListener('click', function() {
-                self.handleContactSuccessClose();
-            });
+            var contactSuccessClose = document.getElementById('wwz-blizz-contact-success-close');
+            if (contactSuccessClose) {
+                contactSuccessClose.addEventListener('click', function() {
+                    self.handleContactSuccessClose();
+                });
+            }
 
             // Privacy modal - Open button
-            document.getElementById('wwz-blizz-privacy-btn').addEventListener('click', function() {
-                self.showPrivacyModal();
-            });
+            var privacyBtn = document.getElementById('wwz-blizz-privacy-btn');
+            if (privacyBtn) {
+                privacyBtn.addEventListener('click', function() {
+                    self.showPrivacyModal();
+                });
+            }
 
             // Privacy modal - Close button
-            document.getElementById('wwz-blizz-privacy-close').addEventListener('click', function() {
-                self.hidePrivacyModal();
-            });
+            var privacyClose = document.getElementById('wwz-blizz-privacy-close');
+            if (privacyClose) {
+                privacyClose.addEventListener('click', function() {
+                    self.hidePrivacyModal();
+                });
+            }
 
             // End chat & feedback button
-            document.getElementById('wwz-blizz-end-chat-btn').addEventListener('click', function() {
-                self.handleEndChatAndFeedback();
-            });
+            var endChatBtn = document.getElementById('wwz-blizz-end-chat-btn');
+            if (endChatBtn) {
+                endChatBtn.addEventListener('click', function() {
+                    self.handleEndChatAndFeedback();
+                });
+            }
+
+            // Thank you close button
+            var thankyouCloseBtn = document.getElementById('wwz-blizz-thankyou-close');
+            if (thankyouCloseBtn) {
+                thankyouCloseBtn.addEventListener('click', function() {
+                    self.handleThankYouClose();
+                });
+            }
 
             console.log('[WWZBlizz] Events initialized');
         },
@@ -492,34 +521,38 @@
          * Handle API errors
          */
         handleAPIError: function(error) {
-            var self = this;
-            var CONFIG = EBB.CONFIG;
             var UI = EBB.UI;
             var StateManager = EBB.StateManager;
+            var CONFIG = EBB.CONFIG;
 
-            var retryCount = StateManager.incrementRetry();
+            StateManager.setError(error);
 
-            if (retryCount <= CONFIG.maxRetries) {
-                UI.showNotification(
-                    'Verbindungsfehler. Erneuter Versuch ' + retryCount + '/' + CONFIG.maxRetries + '...',
-                    'error'
-                );
+            var errorText;
+            var statusText;
 
+            // Check for timeout error
+            if (error && error.message === 'TIMEOUT') {
+                errorText = 'Die Anfrage hat zu lange gedauert. Bitte versuchen Sie es erneut.';
+                statusText = 'Zeitüberschreitung';
+            } else if (error && error.message && error.message.indexOf('API Error: 404') !== -1) {
+                // 404 means the backend couldn't find an answer
+                errorText = 'Entschuldigung, ich konnte keine passende Antwort auf Ihre Frage finden. Bitte formulieren Sie Ihre Frage anders oder wählen Sie eine der Optionen unten.';
+                statusText = 'Keine Antwort gefunden';
+                // Show default suggestions to help user
                 setTimeout(function() {
-                    var lastMessage = StateManager.getLastUserMessageText();
-                    if (lastMessage) {
-                        self.sendMessageToAPI(lastMessage);
-                    }
-                }, CONFIG.retryDelay);
+                    UI.renderSuggestions(CONFIG.suggestions);
+                }, 100);
+            } else if (error && error.message && error.message.indexOf('API Error') !== -1) {
+                errorText = 'Der Server ist momentan nicht erreichbar. Bitte versuchen Sie es später erneut.';
+                statusText = 'Server nicht erreichbar';
             } else {
-                StateManager.setError(error);
-                var errorMessage = StateManager.addMessage(
-                    'Es tut mir leid, es ist ein Fehler aufgetreten. Bitte versuchen Sie es spater erneut.',
-                    false
-                );
-                UI.renderMessage(errorMessage);
-                UI.showError('Verbindung fehlgeschlagen');
+                errorText = 'Es tut mir leid, es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.';
+                statusText = 'Verbindung fehlgeschlagen';
             }
+
+            var errorMessage = StateManager.addMessage(errorText, false);
+            UI.renderMessage(errorMessage);
+            UI.showError(statusText);
         },
 
         /**
@@ -923,6 +956,17 @@
             console.log('[WWZBlizz] Closing feedback screen');
             EBB.UI.hideFeedbackScreen();
             EBB.UI.resetFeedbackForm();
+        },
+
+        /**
+         * Handle thank you close button
+         */
+        handleThankYouClose: function() {
+            console.log('[WWZBlizz] Closing thank you screen');
+            // Start a new session
+            EBB.UI.updateView('chat');
+            EBB.StateManager.startNewSession();
+            EBB.UI.showWelcomeScreen();
         }
     };
 

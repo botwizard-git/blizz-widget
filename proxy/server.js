@@ -143,12 +143,20 @@ app.post('/:widgetId/chat', async (req, res) => {
             })
         });
 
+        // EnterpriseBot returns 404 with valid fallback message when it doesn't understand
+        // Try to parse response body even on non-OK status
+        const data = await response.json().catch(() => null);
+
         if (!response.ok) {
-            console.error(`[${widgetId}/Chat] API error:`, response.status);
+            console.error(`[${widgetId}/Chat] API status:`, response.status);
+            // If we got a valid response body with message, return it anyway
+            if (data && (data.message || data.simpleMessage)) {
+                console.log(`[${widgetId}/Chat] Returning fallback response`);
+                return res.json(data);
+            }
             return res.status(response.status).json({ error: 'API request failed' });
         }
 
-        const data = await response.json();
         console.log(`[${widgetId}/Chat] Response received`);
         res.json(data);
 
@@ -340,12 +348,20 @@ app.post('/chat', async (req, res) => {
             })
         });
 
+        // EnterpriseBot returns 404 with valid fallback message when it doesn't understand
+        // Try to parse response body even on non-OK status
+        const data = await response.json().catch(() => null);
+
         if (!response.ok) {
-            console.error('[Chat] API error:', response.status);
+            console.error('[Chat] API status:', response.status);
+            // If we got a valid response body with message, return it anyway
+            if (data && (data.message || data.simpleMessage)) {
+                console.log('[Chat] Returning fallback response');
+                return res.json(data);
+            }
             return res.status(response.status).json({ error: 'API request failed' });
         }
 
-        const data = await response.json();
         console.log('[Chat] Response received');
         res.json(data);
 

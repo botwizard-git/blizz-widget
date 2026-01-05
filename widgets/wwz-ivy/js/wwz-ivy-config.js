@@ -129,8 +129,6 @@
 
         // Timing
         typingDelay: 500,
-        retryDelay: 2000,
-        maxRetries: 3,
 
         // Widget dimensions
         widget: {

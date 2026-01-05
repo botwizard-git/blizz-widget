@@ -25,37 +25,24 @@
         /**
          * Send message to chat API
          */
-        sendMessage: async function(message, retryCount = 0) {
+        sendMessage: async function(message) {
             const payload = this.buildPayload(message);
 
-            try {
-                const response = await fetch(Config.apiEndpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json, text/plain, */*'
-                    },
-                    body: JSON.stringify(payload)
-                });
+            const response = await fetch(Config.apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json, text/plain, */*'
+                },
+                body: JSON.stringify(payload)
+            });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                return this.parseResponse(data);
-
-            } catch (error) {
-                console.error('WWZIvy: API error', error);
-
-                // Retry logic
-                if (retryCount < Config.maxRetries) {
-                    await this.delay(Config.retryDelay);
-                    return this.sendMessage(message, retryCount + 1);
-                }
-
-                throw error;
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
+
+            const data = await response.json();
+            return this.parseResponse(data);
         },
 
         /**
@@ -119,13 +106,6 @@
                 action: null,
                 actionType: null
             };
-        },
-
-        /**
-         * Delay helper
-         */
-        delay: function(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
         },
 
         /**

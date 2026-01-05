@@ -36,7 +36,7 @@
             // Overlay elements
             this.elements.chatContent = document.getElementById('wwz-blizz-chat-content');
             this.elements.closeConfirm = document.getElementById('wwz-blizz-close-confirm');
-            this.elements.feedbackContainer = document.getElementById('wwz-blizz-feedback-container');
+            this.elements.feedbackContainer = document.getElementById('wwz-blizz-feedback-screen');
             this.elements.thankYou = document.getElementById('wwz-blizz-thank-you');
             this.elements.feedbackText = document.getElementById('wwz-blizz-feedback-text');
 
@@ -319,33 +319,34 @@
          * Update view
          */
         updateView: function(viewName) {
-            this.elements.closeConfirm.classList.add('wwz-blizz-hidden');
-            this.elements.feedbackContainer.classList.add('wwz-blizz-hidden');
-            this.elements.thankYou.classList.add('wwz-blizz-hidden');
-            this.elements.contactForm.classList.add('wwz-blizz-hidden');
-            this.elements.contactSuccess.classList.add('wwz-blizz-hidden');
-            this.elements.privacyModal.classList.add('wwz-blizz-hidden');
+            // Hide all overlays (with null checks)
+            if (this.elements.closeConfirm) this.elements.closeConfirm.classList.add('wwz-blizz-hidden');
+            if (this.elements.feedbackContainer) this.elements.feedbackContainer.classList.add('wwz-blizz-hidden');
+            if (this.elements.thankYou) this.elements.thankYou.classList.add('wwz-blizz-hidden');
+            if (this.elements.contactForm) this.elements.contactForm.classList.add('wwz-blizz-hidden');
+            if (this.elements.contactSuccess) this.elements.contactSuccess.classList.add('wwz-blizz-hidden');
+            if (this.elements.privacyModal) this.elements.privacyModal.classList.add('wwz-blizz-hidden');
 
             switch (viewName) {
                 case 'chat':
                     break;
                 case 'closeConfirm':
-                    this.elements.closeConfirm.classList.remove('wwz-blizz-hidden');
+                    if (this.elements.closeConfirm) this.elements.closeConfirm.classList.remove('wwz-blizz-hidden');
                     break;
                 case 'feedback':
-                    this.elements.feedbackContainer.classList.remove('wwz-blizz-hidden');
+                    if (this.elements.feedbackContainer) this.elements.feedbackContainer.classList.remove('wwz-blizz-hidden');
                     break;
                 case 'thankYou':
-                    this.elements.thankYou.classList.remove('wwz-blizz-hidden');
+                    if (this.elements.thankYou) this.elements.thankYou.classList.remove('wwz-blizz-hidden');
                     break;
                 case 'contactForm':
-                    this.elements.contactForm.classList.remove('wwz-blizz-hidden');
+                    if (this.elements.contactForm) this.elements.contactForm.classList.remove('wwz-blizz-hidden');
                     break;
                 case 'contactSuccess':
-                    this.elements.contactSuccess.classList.remove('wwz-blizz-hidden');
+                    if (this.elements.contactSuccess) this.elements.contactSuccess.classList.remove('wwz-blizz-hidden');
                     break;
                 case 'privacy':
-                    this.elements.privacyModal.classList.remove('wwz-blizz-hidden');
+                    if (this.elements.privacyModal) this.elements.privacyModal.classList.remove('wwz-blizz-hidden');
                     break;
             }
 
@@ -356,14 +357,18 @@
          * Show privacy modal
          */
         showPrivacyModal: function() {
-            this.elements.privacyModal.classList.remove('wwz-blizz-hidden');
+            if (this.elements.privacyModal) {
+                this.elements.privacyModal.classList.remove('wwz-blizz-hidden');
+            }
         },
 
         /**
          * Hide privacy modal
          */
         hidePrivacyModal: function() {
-            this.elements.privacyModal.classList.add('wwz-blizz-hidden');
+            if (this.elements.privacyModal) {
+                this.elements.privacyModal.classList.add('wwz-blizz-hidden');
+            }
         },
 
         /**
