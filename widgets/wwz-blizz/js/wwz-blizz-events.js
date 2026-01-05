@@ -902,19 +902,17 @@
             var feedbackTextarea = document.getElementById('wwz-blizz-feedback-text');
             var additionalText = feedbackTextarea ? feedbackTextarea.value.trim() : '';
 
-            // Build comment
-            var comment = '';
-            if (selectedOptions.length > 0) {
-                comment = selectedOptions.join(', ');
-            }
-            if (additionalText) {
-                comment = comment ? comment + '. ' + additionalText : additionalText;
-            }
+            // Build feedback data object
+            var feedbackData = {
+                rating: rating,
+                options: selectedOptions,
+                additionalFeedback: additionalText
+            };
 
-            console.log('[WWZBlizz] Submitting feedback:', { rating: rating, comment: comment });
+            console.log('[WWZBlizz] Submitting feedback:', feedbackData);
 
             // Submit to API
-            APIService.submitFeedback(rating, comment)
+            APIService.submitFeedback(feedbackData)
                 .then(function() {
                     UI.showThankYou();
                     setTimeout(function() {

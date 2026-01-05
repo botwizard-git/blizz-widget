@@ -137,17 +137,28 @@
         /**
          * Submit user feedback
          */
-        submitFeedback: function(rating, comment) {
+        submitFeedback: function(feedbackData) {
             var self = this;
+
+            // Handle both old format (rating, comment) and new format (object)
             var payload = {
                 sessionId: SessionService.getSessionId(),
-                rating: rating,
-                additionalFeedback: comment || '',
                 agentId: CONFIG.AGENT_ID,
                 widgetId: CONFIG.widgetId,
                 timestamp: new Date().toISOString(),
                 botName: "BLIZZ"
             };
+
+            if (typeof feedbackData === 'object' && feedbackData !== null) {
+                payload.rating = feedbackData.rating;
+                payload.options = feedbackData.options || [];
+                payload.additionalFeedback = feedbackData.additionalFeedback || '';
+            } else {
+                // Legacy format - just rating number
+                payload.rating = feedbackData;
+                payload.options = [];
+                payload.additionalFeedback = '';
+            }
 
             return this.fetchWithTimeout(CONFIG.RATING_API, {
                 method: 'POST',

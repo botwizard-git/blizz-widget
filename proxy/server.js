@@ -177,7 +177,7 @@ app.post('/:widgetId/feedback', async (req, res) => {
             return res.status(404).json({ error: `Unknown widget: ${widgetId}` });
         }
 
-        const { blizzSessionId, rating, ratingComment, agentId, timestamp } = req.body;
+        const { blizzSessionId, rating, ratingComment, agentId, timestamp, sessionId, additionalFeedback, options } = req.body;
 
         if (rating === undefined) {
             return res.status(400).json({ error: 'rating is required' });
@@ -197,10 +197,14 @@ app.post('/:widgetId/feedback', async (req, res) => {
                 message: JSON.stringify({
                     rating,
                     ratingComment,
+                    options,
                     agentId,
                     widgetId,
                     blizzSessionId,
-                    timestamp
+                    timestamp,
+                    additionalFeedback,
+                    options,
+                    sessionId
                 })
             })
         });
