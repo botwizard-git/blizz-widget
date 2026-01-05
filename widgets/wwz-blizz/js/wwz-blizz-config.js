@@ -113,10 +113,10 @@
 
         // Default suggestions
         suggestions: [
-            'Strom und Energie',
-            'Wasser',
-            'E-Mobilität',
-            'Kontaktformular'
+            'Internet',
+            'Mobile',
+            'TV',
+            'Festnetz'
         ],
 
         // Contact form trigger keyword
