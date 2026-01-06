@@ -118,7 +118,8 @@
             try {
                 const payload = {
                     sessionId: sessionId || Storage.getSessionId(),
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    isInternal: Config.isInternal()
                 };
 
                 // Handle both old format (just rating) and new format (object)

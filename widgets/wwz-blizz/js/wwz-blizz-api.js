@@ -147,7 +147,8 @@
                 agentId: CONFIG.AGENT_ID,
                 widgetId: CONFIG.widgetId,
                 timestamp: new Date().toISOString(),
-                botName: "BLIZZ"
+                botName: "BLIZZ",
+                isInternal: CONFIG.isInternal()
             };
 
             if (typeof feedbackData === 'object' && feedbackData !== null) {

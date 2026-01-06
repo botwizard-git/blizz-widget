@@ -189,15 +189,16 @@ app.post('/:widgetId/feedback', async (req, res) => {
             return res.status(404).json({ error: `Unknown widget: ${widgetId}` });
         }
 
-        const { blizzSessionId, rating, ratingComment, agentId, timestamp, sessionId, additionalFeedback, options } = req.body;
+        const { blizzSessionId, rating, ratingComment, agentId, timestamp, sessionId, additionalFeedback, options, isInternal } = req.body;
 
         if (rating === undefined) {
             return res.status(400).json({ error: 'rating is required' });
         }
 
         console.log(`[${widgetId}/Feedback] Submitting rating:`, rating);
+        const endpoint = isInternal ? widgetConfig.FEEDBACK_ENDPOINT_INTERNAL : widgetConfig.FEEDBACK_ENDPOINT;
 
-        const response = await fetchWithTimeout(widgetConfig.FEEDBACK_ENDPOINT, {
+        const response = await fetchWithTimeout(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
