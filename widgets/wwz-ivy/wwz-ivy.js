@@ -45,6 +45,7 @@
         script.onload = callback;
         script.onerror = function() {
             console.error('WWZIvy: Failed to load ' + src);
+            console.error('WWZIvy: Failed to load', { src, url, baseUrl, event: e });
         };
         document.head.appendChild(script);
     }
