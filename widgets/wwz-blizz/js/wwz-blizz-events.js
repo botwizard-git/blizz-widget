@@ -1024,9 +1024,8 @@
         skipNewFeedback: function() {
             console.log('[WWZBlizz] Skipping feedback - resetting widget');
 
-            // Hide feedback screen
-            EBB.UI.hideFeedbackScreen();
-            EBB.UI.resetFeedbackForm();
+            // Switch from feedback view to chat view
+            EBB.UI.updateView('chat');
 
             // Reset state (clear messages, session, etc.)
             EBB.StateManager.reset();
@@ -1039,6 +1038,9 @@
 
             // Render default suggestions
             EBB.UI.renderWelcomeSuggestions(EBB.CONFIG.defaultSuggestions);
+
+            // Reset feedback form
+            EBB.UI.resetFeedbackForm();
         },
 
         /**
