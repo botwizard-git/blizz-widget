@@ -690,14 +690,33 @@
         },
 
         /**
-         * Show error
+         * Show error with action buttons
          */
         showError: function(message) {
             var container = this.elements.suggestionsContainer;
             container.innerHTML =
-                '<div class="wwz-blizz-error-message">' + this.escapeHtml(message) + '</div>' +
-                '<button class="wwz-blizz-suggestion-btn" onclick="window.WWZBlizz.Events.retryLastMessage()">Erneut versuchen</button>' +
-                '<button class="wwz-blizz-suggestion-btn" onclick="window.WWZBlizz.Events.startNewConversation()">Neues Gesprach</button>';
+                '<div class="wwz-blizz-error-container">' +
+                    '<div class="wwz-blizz-error-status">' +
+                        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                            '<circle cx="12" cy="12" r="10"/>' +
+                            '<line x1="12" y1="8" x2="12" y2="12"/>' +
+                            '<line x1="12" y1="16" x2="12.01" y2="16"/>' +
+                        '</svg>' +
+                        '<span>' + this.escapeHtml(message) + '</span>' +
+                    '</div>' +
+                    '<div class="wwz-blizz-error-actions">' +
+                        '<button class="wwz-blizz-error-btn wwz-blizz-error-btn-primary" onclick="window.WWZBlizz.Events.retryLastMessage()">' +
+                            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                                '<path d="M23 4v6h-6M1 20v-6h6"/>' +
+                                '<path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>' +
+                            '</svg>' +
+                            'Erneut versuchen' +
+                        '</button>' +
+                        '<button class="wwz-blizz-error-btn wwz-blizz-error-btn-secondary" onclick="window.WWZBlizz.Events.startNewConversation()">' +
+                            'Neues Gespräch' +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
         },
 
         /**

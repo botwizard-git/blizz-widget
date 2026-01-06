@@ -955,6 +955,73 @@
 /* ========================================
    ERROR MESSAGE
    ======================================== */
+/* Error Container */
+.wwz-blizz-error-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: var(--eb-radius-sm);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.wwz-blizz-error-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #dc2626;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.wwz-blizz-error-status svg {
+    flex-shrink: 0;
+}
+
+.wwz-blizz-error-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.wwz-blizz-error-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--eb-radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    font-family: 'Albert Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+}
+
+.wwz-blizz-error-btn-primary {
+    background: var(--eb-primary);
+    color: white;
+    border: none;
+}
+
+.wwz-blizz-error-btn-primary:hover {
+    background: var(--eb-primary-hover);
+}
+
+.wwz-blizz-error-btn-secondary {
+    background: white;
+    color: var(--eb-text);
+    border: 1px solid var(--eb-border);
+}
+
+.wwz-blizz-error-btn-secondary:hover {
+    background: var(--eb-bg-secondary);
+}
+
+/* Legacy error message (keep for backwards compatibility) */
 .wwz-blizz-error-message {
     color: #ef4444;
     font-size: 0.875rem;
