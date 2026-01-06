@@ -140,7 +140,7 @@
             }
 
             // Feedback skip button
-            var skipBtn = document.getElementById('wwz-blizz-feedback-skip-btn');
+            var skipBtn = document.getElementById('wwz-blizz-feedback-skip');
             if (skipBtn) {
                 skipBtn.addEventListener('click', function() {
                     self.skipNewFeedback();
@@ -148,7 +148,7 @@
             }
 
             // Feedback download button
-            var downloadBtn = document.getElementById('wwz-blizz-feedback-download-btn');
+            var downloadBtn = document.getElementById('wwz-blizz-download-transcript');
             if (downloadBtn) {
                 downloadBtn.addEventListener('click', function() {
                     self.downloadTranscript();
@@ -1022,25 +1022,33 @@
          * Skip new feedback
          */
         skipNewFeedback: function() {
-            console.log('[WWZBlizz] Skipping feedback - resetting widget');
+            console.log('[WWZBlizz] skipNewFeedback called - starting reset');
 
             // Switch from feedback view to chat view
+            console.log('[WWZBlizz] Calling updateView("chat")');
             EBB.UI.updateView('chat');
 
             // Reset state (clear messages, session, etc.)
+            console.log('[WWZBlizz] Resetting state');
             EBB.StateManager.reset();
 
             // Clear messages from UI
+            console.log('[WWZBlizz] Clearing messages');
             EBB.UI.clearMessages();
 
             // Show fresh welcome screen
+            console.log('[WWZBlizz] Showing welcome screen');
             EBB.UI.showWelcomeScreen();
 
             // Render default suggestions
+            console.log('[WWZBlizz] Rendering welcome suggestions');
             EBB.UI.renderWelcomeSuggestions(EBB.CONFIG.defaultSuggestions);
 
             // Reset feedback form
+            console.log('[WWZBlizz] Resetting feedback form');
             EBB.UI.resetFeedbackForm();
+
+            console.log('[WWZBlizz] skipNewFeedback completed');
         },
 
         /**
