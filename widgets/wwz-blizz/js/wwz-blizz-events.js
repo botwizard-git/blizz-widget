@@ -139,12 +139,75 @@
                 });
             }
 
-            // Copy message (event delegation)
+            // Copy message and thumbs feedback (event delegation)
             document.getElementById('wwz-blizz-messages-container').addEventListener('click', function(e) {
+                // Copy button handler
                 var copyBtn = e.target.closest('.wwz-blizz-copy-btn');
                 if (copyBtn) {
                     var text = copyBtn.getAttribute('data-text');
                     self.copyMessage(text);
+                    return;
+                }
+
+                // Thumbs up handler
+                var thumbsUpBtn = e.target.closest('.wwz-blizz-thumbs-up-btn');
+                if (thumbsUpBtn && !thumbsUpBtn.classList.contains('wwz-blizz-disabled')) {
+                    var messageId = thumbsUpBtn.getAttribute('data-message-id');
+                    self.handleThumbsUp(messageId);
+                    return;
+                }
+
+                // Thumbs down handler
+                var thumbsDownBtn = e.target.closest('.wwz-blizz-thumbs-down-btn');
+                if (thumbsDownBtn && !thumbsDownBtn.classList.contains('wwz-blizz-disabled')) {
+                    var messageId = thumbsDownBtn.getAttribute('data-message-id');
+                    self.handleThumbsDown(messageId, thumbsDownBtn);
+                    return;
+                }
+
+                // Popup close button
+                var popupClose = e.target.closest('.wwz-blizz-thumbs-popup-close');
+                if (popupClose) {
+                    EBB.UI.hideThumbsDownPopup();
+                    return;
+                }
+
+                // Popup skip button
+                var popupSkip = e.target.closest('.wwz-blizz-thumbs-popup-skip');
+                if (popupSkip) {
+                    var popup = popupSkip.closest('.wwz-blizz-thumbs-popup');
+                    var msgId = popup.getAttribute('data-message-id');
+                    self.submitThumbsDownFeedback(msgId, '');
+                    return;
+                }
+
+                // Popup submit button
+                var popupSubmit = e.target.closest('.wwz-blizz-thumbs-popup-submit');
+                if (popupSubmit) {
+                    var popup = popupSubmit.closest('.wwz-blizz-thumbs-popup');
+                    var msgId = popup.getAttribute('data-message-id');
+                    var textarea = popup.querySelector('.wwz-blizz-thumbs-popup-textarea');
+                    var comment = textarea ? textarea.value.trim() : '';
+                    self.submitThumbsDownFeedback(msgId, comment);
+                    return;
+                }
+
+                // YouTube video play handler
+                var videoLink = e.target.closest('.enterprisebot-blizz-video-link');
+                if (videoLink && !videoLink.classList.contains('playing')) {
+                    var videoId = videoLink.getAttribute('data-video-id');
+                    if (videoId) {
+                        self.playYoutubeVideo(videoLink, videoId);
+                        return;
+                    }
+                }
+            });
+
+            // Close thumbs popup when clicking outside
+            document.addEventListener('click', function(e) {
+                var popup = document.querySelector('.wwz-blizz-thumbs-popup');
+                if (popup && !popup.contains(e.target) && !e.target.closest('.wwz-blizz-thumbs-down-btn')) {
+                    EBB.UI.hideThumbsDownPopup();
                 }
             });
 
@@ -258,6 +321,11 @@
             var UI = EBB.UI;
             var StateManager = EBB.StateManager;
 
+            // Blur input to prevent focus issues on mobile
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
+
             if (StateManager.isLoading()) return;
 
             // Check if this is the contact form trigger
@@ -309,6 +377,11 @@
             var CONFIG = EBB.CONFIG;
             var UI = EBB.UI;
             var StateManager = EBB.StateManager;
+
+            // Blur input to prevent focus issues on mobile
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
 
             if (StateManager.isLoading()) return;
 
@@ -965,6 +1038,104 @@
             EBB.UI.updateView('chat');
             EBB.StateManager.startNewSession();
             EBB.UI.showWelcomeScreen();
+        },
+
+        /**
+         * Handle thumbs up click
+         */
+        handleThumbsUp: function(messageId) {
+            var StateManager = EBB.StateManager;
+            var UI = EBB.UI;
+            var APIService = EBB.APIService;
+
+            // Check if already gave feedback
+            if (StateManager.hasMessageFeedback(messageId)) {
+                console.log('[WWZBlizz] Feedback already given for message:', messageId);
+                return;
+            }
+
+            console.log('[WWZBlizz] Thumbs up for message:', messageId);
+
+            // Update UI immediately
+            UI.updateThumbsState(messageId, 'positive');
+
+            // Store feedback in state
+            StateManager.setMessageFeedback(messageId, 'positive', '');
+
+            // Submit to API
+            APIService.submitMessageFeedback(messageId, 'positive', '')
+                .then(function(success) {
+                    if (success) {
+                        console.log('[WWZBlizz] Message feedback submitted successfully');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('[WWZBlizz] Failed to submit feedback:', error);
+                });
+        },
+
+        /**
+         * Handle thumbs down click
+         */
+        handleThumbsDown: function(messageId, buttonElement) {
+            var StateManager = EBB.StateManager;
+            var UI = EBB.UI;
+
+            // Check if already gave feedback
+            if (StateManager.hasMessageFeedback(messageId)) {
+                console.log('[WWZBlizz] Feedback already given for message:', messageId);
+                return;
+            }
+
+            console.log('[WWZBlizz] Thumbs down for message:', messageId);
+
+            // Show popup for additional feedback
+            UI.showThumbsDownPopup(messageId, buttonElement);
+        },
+
+        /**
+         * Submit thumbs down feedback
+         */
+        submitThumbsDownFeedback: function(messageId, comment) {
+            var StateManager = EBB.StateManager;
+            var UI = EBB.UI;
+            var APIService = EBB.APIService;
+
+            // Hide popup
+            UI.hideThumbsDownPopup();
+
+            // Update UI
+            UI.updateThumbsState(messageId, 'negative');
+
+            // Store feedback in state
+            StateManager.setMessageFeedback(messageId, 'negative', comment);
+
+            // Submit to API
+            APIService.submitMessageFeedback(messageId, 'negative', comment)
+                .then(function(success) {
+                    if (success) {
+                        console.log('[WWZBlizz] Message feedback submitted successfully');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('[WWZBlizz] Failed to submit feedback:', error);
+                });
+        },
+
+        /**
+         * Play YouTube video inline
+         */
+        playYoutubeVideo: function(container, videoId) {
+            var embedUrl = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1';
+            var iframe = '<iframe class="enterprisebot-blizz-video-iframe" ' +
+                'src="' + embedUrl + '" ' +
+                'frameborder="0" ' +
+                'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" ' +
+                'allowfullscreen></iframe>';
+
+            container.innerHTML = iframe;
+            container.classList.add('playing');
+            console.log('[WWZBlizz] Playing YouTube video:', videoId);
         }
     };
 
