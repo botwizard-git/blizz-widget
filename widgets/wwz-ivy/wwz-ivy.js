@@ -6,13 +6,16 @@
  * <div id="wwz-ivy-parent"></div>
  * <script src="wwz-ivy.js"></script>
  */
-(function() {
+(function () {
     'use strict';
 
     // Detect base URL from script src
     const scripts = document.getElementsByTagName('script');
-    const currentScript = scripts[scripts.length - 1];
-    const baseUrl = currentScript.src.substring(0, currentScript.src.lastIndexOf('/') + 1);
+    const currentScript = document.currentScript;
+    if (!currentScript) {
+        console.error('WWZIvy: currentScript not available');
+    }
+    const baseUrl = new URL('.', currentScript.src).href;
 
     // Module loading order
     const modules = [
@@ -43,9 +46,9 @@
         const script = document.createElement('script');
         script.src = baseUrl + src;
         script.onload = callback;
-        script.onerror = function() {
+        script.onerror = function () {
             console.error('WWZIvy: Failed to load ' + src);
-            console.error('WWZIvy: Failed to load', { src, url, baseUrl, event: e });
+            console.error('WWZIvy: Failed to load', { src, baseUrl, event: e });
         };
         document.head.appendChild(script);
     }
@@ -56,7 +59,7 @@
     function loadModules() {
         function loadNext() {
             if (loadedCount < modules.length) {
-                loadScript(modules[loadedCount], function() {
+                loadScript(modules[loadedCount], function () {
                     loadedCount++;
                     loadNext();
                 });
@@ -151,7 +154,7 @@
             /**
              * Collapse the widget
              */
-            collapse: function() {
+            collapse: function () {
                 window.WWZIvy.State.set({ isCollapsed: true });
                 window.WWZIvy.UI.hideWidget();
             },
@@ -159,7 +162,7 @@
             /**
              * Expand the widget
              */
-            expand: function() {
+            expand: function () {
                 window.WWZIvy.State.set({ isCollapsed: false });
                 const state = window.WWZIvy.State.get();
 
@@ -185,7 +188,7 @@
             /**
              * Start a new chat session
              */
-            startNewSession: function() {
+            startNewSession: function () {
                 window.WWZIvy.State.startNewSession();
                 window.WWZIvy.UI.getElements().messages.innerHTML = '';
 
@@ -202,7 +205,7 @@
             /**
              * Get version info
              */
-            getVersionInfo: function() {
+            getVersionInfo: function () {
                 return {
                     name: 'WWZ Ivy Chatbot',
                     version: window.WWZIvy.Config.version,
@@ -213,14 +216,14 @@
             /**
              * Get current state
              */
-            getState: function() {
+            getState: function () {
                 return window.WWZIvy.State.get();
             },
 
             /**
              * Send a message programmatically
              */
-            sendMessage: function(message) {
+            sendMessage: function (message) {
                 if (message && typeof message === 'string') {
                     window.WWZIvy.UI.getElements().input.value = message;
                     window.WWZIvy.UI.updateSendButton();
@@ -244,7 +247,7 @@
         }
 
         if (shouldAutoOpen) {
-            setTimeout(function() {
+            setTimeout(function () {
                 window.WWZIvy.Main.expand();
             }, 100);
         }
