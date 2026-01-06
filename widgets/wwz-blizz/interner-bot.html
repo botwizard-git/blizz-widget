@@ -5,14 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WWZ Interner Bot</title>
     <style>
-        /* Sample page styles to test that widget doesn't conflict */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: #f0f0f0;
             position: relative;
-            min-height: 100vh;
         }
         /* Background image with low opacity */
         body::before {
@@ -30,69 +35,16 @@
             z-index: -1;
             pointer-events: none;
         }
-        .page-header {
-            background: #333;
-            color: white;
-            padding: 20px;
-            margin: -20px -20px 20px -20px;
-        }
-        .page-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        h1 { margin: 0; }
-        p { line-height: 1.6; }
-        .sample-card {
-            background: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        /* This is where the widget will be embedded */
+        /* Widget takes full screen */
         #wwz-blizz-parent {
-            margin: 20px 0;
-            height: 800px;
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
-            overflow: hidden;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
 <body>
-    <div class="page-header">
-        <h1>WWZ Interner Bot</h1>
-    </div>
-
-    <div class="page-content">
-        <div class="sample-card">
-            <h2>Welcome to the Test Page</h2>
-            <p>This page demonstrates the WWZBlizz widget embedded inline. The widget should appear below this text.</p>
-        </div>
-
-        <!-- This is where the chatbot widget will be embedded -->
-        <div id="wwz-blizz-parent"></div>
-
-        <div class="sample-card">
-            <h2>Additional Content</h2>
-            <p>This content appears below the widget to show that the layout is preserved.</p>
-            <ul>
-                <li>The widget uses prefixed CSS classes (wwz-blizz-*)</li>
-                <li>All JavaScript is namespaced under window.WWZBlizz</li>
-                <li>The close button minimizes the widget to a collapsed bar</li>
-                <li>Click the collapsed bar or expand button to restore</li>
-            </ul>
-        </div>
-
-        <div class="sample-card">
-            <h2>API Controls</h2>
-            <p>You can control the widget programmatically:</p>
-            <button onclick="window.WWZBlizz.Main.collapse()">Collapse Widget</button>
-            <button onclick="window.WWZBlizz.Main.expand()">Expand Widget</button>
-            <button onclick="window.WWZBlizz.Main.startNewSession()">New Session</button>
-            <button onclick="console.log(window.WWZBlizz.Main.getVersionInfo())">Log Version Info</button>
-        </div>
-    </div>
+    <!-- Chatbot widget -->
+    <div id="wwz-blizz-parent"></div>
 
     <!-- Load the widget -->
     <script src="wwz-blizz.js"></script>
