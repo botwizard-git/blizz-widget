@@ -28,19 +28,19 @@
         autoOpen: false,
 
         // Welcome screen content
-        welcomeTitle: 'Wie kann ich Ihnen helfen?',
-        welcomeSubtitle: 'Ihr digitaler Assistent.',
-        welcomeDescription: 'Unsere digitale Assistentin Ivy hilft Ihnen gerne weiter. Sie hat jedoch keinen direkten Zugang zu Kunden- und Rechnungsinformationen.',
+        welcomeTitle: 'Wie kann ich Dir helfen?',
+        welcomeSubtitle: 'Dein digitale Assistentin.',
+        welcomeDescription: 'Unsere digitale Assistentin Ivy hilft Dir gerne weiter. Sie hat jedoch keinen direkten Zugang zu Kunden- und Rechnungsinformationen.',
 
         // Chat UI text
-        inputPlaceholder: 'Stellen Sie mir eine Frage...',
+        inputPlaceholder: 'Stelle mir eine Frage...',
         sendButton: 'Senden',
-        disclaimerText: 'Der Chatbot kann Fehler machen. Bitte überprüfen Sie wichtige Informationen.',
+        disclaimerText: 'Der Chatbot kann Fehler machen. Bitte überprüfe wichtige Informationen.',
 
         // Privacy/Disclaimer popup
         privacy: {
             title: 'der digitale Assistent der WWZ.',
-            description: 'Meine Antworten werden von einer künstlichen Intelligenz generiert und sind deshalb nicht immer korrekt. Wenn Sie mich aktivieren, unterstütze ich Sie bei der Suche nach den richtigen Informationen.',
+            description: 'Meine Antworten werden von einer künstlichen Intelligenz generiert und sind deshalb nicht immer korrekt. Wenn Du mich aktivierst, unterstütze ich Dich bei der Suche nach den richtigen Informationen.',
             linkText: 'Datenschutzbestimmungen',
             linkUrl: 'https://www.wwz.ch/datenschutz'
         },
@@ -50,7 +50,7 @@
 
         // Feedback screen configuration
         feedback: {
-            question: 'Wie war Ihre Erfahrung mit unserem digitalen Assistenten?',
+            question: 'Wie war Deine Erfahrung mit unserem digitalen Assistenten?',
             ratingLabels: {
                 1: 'Sehr mangelhaft',
                 2: 'Mangelhaft',
@@ -62,8 +62,8 @@
                 1: 'Was war das Problem?',
                 2: 'Was war das Problem?',
                 3: 'Was können wir verbessern?',
-                4: 'Was hat Ihnen gefallen?',
-                5: 'Was hat Ihnen gefallen?'
+                4: 'Was hat Dir gefallen?',
+                5: 'Was hat Dir gefallen?'
             },
             ratingOptions: {
                 1: [
@@ -98,7 +98,7 @@
                 ]
             },
             additionalFeedbackLabel: 'Zusätzliches Feedback geben',
-            additionalFeedbackPlaceholder: 'Ihr Feedback hier eingeben...',
+            additionalFeedbackPlaceholder: 'Dein Feedback hier eingeben...',
             sendButton: 'Feedback senden',
             downloadButton: 'Chat-Transkript',
             skipButton: 'Feedback überspringen'
@@ -107,7 +107,7 @@
         // Thank you screen
         thankyou: {
             title: 'Vielen Dank!',
-            description: 'Ihr Feedback hilft uns, unseren Service zu verbessern.',
+            description: 'Dein Feedback hilft uns, unseren Service zu verbessern.',
             closeButton: 'Schliessen'
         },
 
@@ -136,7 +136,7 @@
                 'guten abend', 'gruss', 'gruezi', 'servus', 'moin', 'hoi',
                 'greetings', 'good morning', 'good evening', 'good afternoon'
             ],
-            response: 'Hallo! Wie kann ich Ihnen heute helfen? Sie können mir Ihre Frage direkt stellen oder eine der Optionen unten wählen.',
+            response: 'Hallo! Wie kann ich Dir heute helfen? Du kannst mir Deine Frage direkt stellen oder eine der Optionen unten wählen.',
             suggestions: [
                 'Strom und Energie',
                 'Wasser',
