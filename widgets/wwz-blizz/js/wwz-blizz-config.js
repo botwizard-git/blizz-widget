@@ -122,6 +122,13 @@
         // Contact form trigger keyword
         contactFormTrigger: 'Kontaktformular',
 
+        // Dummy YouTube video for demo
+        dummyYoutubeVideo: {
+            url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+            thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+            title: 'WWZ Video'
+        },
+
         // Auto-reply greetings (no API call needed)
         greetings: {
             keywords: [

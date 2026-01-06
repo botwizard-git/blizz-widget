@@ -178,6 +178,54 @@
         },
 
         /**
+         * Submit message-level feedback (thumbs up/down)
+         */
+        submitMessageFeedback: function(messageId, feedbackType, comment) {
+            var self = this;
+            var StateManager = EBB.StateManager;
+
+            // Get the message text for context
+            var messages = StateManager.getMessages();
+            var message = null;
+            for (var i = 0; i < messages.length; i++) {
+                if (messages[i].id === messageId) {
+                    message = messages[i];
+                    break;
+                }
+            }
+
+            var payload = {
+                sessionId: SessionService.getSessionId(),
+                messageId: messageId,
+                feedbackType: feedbackType,
+                comment: comment || '',
+                messageText: message ? message.text : '',
+                agentId: CONFIG.AGENT_ID,
+                widgetId: CONFIG.widgetId,
+                timestamp: new Date().toISOString(),
+                botName: "BLIZZ"
+            };
+
+            console.log('[WWZBlizz] Submitting message feedback:', payload);
+
+            return this.fetchWithTimeout(CONFIG.RATING_API, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json, text/plain, */*'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(function(response) {
+                return response.ok;
+            })
+            .catch(function(error) {
+                console.error('[WWZBlizz] Message feedback submission failed:', error);
+                return false;
+            });
+        },
+
+        /**
          * Submit contact form
          */
         submitContactForm: function(formData) {

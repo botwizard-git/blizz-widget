@@ -196,6 +196,16 @@
                                     '<path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>' +
                                 '</svg>' +
                             '</button>' +
+                            '<button class="wwz-blizz-action-btn wwz-blizz-thumbs-up-btn" title="Hilfreich" data-message-id="' + message.id + '">' +
+                                '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                                    '<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>' +
+                                '</svg>' +
+                            '</button>' +
+                            '<button class="wwz-blizz-action-btn wwz-blizz-thumbs-down-btn" title="Nicht hilfreich" data-message-id="' + message.id + '">' +
+                                '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                                    '<path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>' +
+                                '</svg>' +
+                            '</button>' +
                         '</div>' +
                     '</div>';
             }
@@ -219,6 +229,87 @@
          */
         clearMessages: function() {
             this.elements.messagesContainer.innerHTML = '';
+        },
+
+        /**
+         * Create thumbs down feedback popup HTML
+         */
+        createThumbsDownPopup: function(messageId) {
+            return '<div class="wwz-blizz-thumbs-popup" data-message-id="' + messageId + '">' +
+                '<div class="wwz-blizz-thumbs-popup-content">' +
+                    '<div class="wwz-blizz-thumbs-popup-header">' +
+                        '<span>Was war das Problem?</span>' +
+                        '<button class="wwz-blizz-thumbs-popup-close" type="button">&times;</button>' +
+                    '</div>' +
+                    '<textarea class="wwz-blizz-thumbs-popup-textarea" ' +
+                        'placeholder="Optional: Beschreiben Sie das Problem..." ' +
+                        'rows="3" maxlength="500"></textarea>' +
+                    '<div class="wwz-blizz-thumbs-popup-actions">' +
+                        '<button class="wwz-blizz-thumbs-popup-skip" type="button">Uberspringen</button>' +
+                        '<button class="wwz-blizz-thumbs-popup-submit" type="button">Senden</button>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        },
+
+        /**
+         * Show thumbs down popup
+         */
+        showThumbsDownPopup: function(messageId, buttonElement) {
+            var self = this;
+
+            // Remove any existing popup
+            this.hideThumbsDownPopup();
+
+            var popup = document.createElement('div');
+            popup.innerHTML = this.createThumbsDownPopup(messageId);
+            var popupElement = popup.firstChild;
+
+            // Position relative to the message actions
+            var messageActions = buttonElement.closest('.wwz-blizz-message-actions');
+            if (messageActions) {
+                messageActions.style.position = 'relative';
+                messageActions.appendChild(popupElement);
+            }
+
+            // Focus the textarea
+            var textarea = popupElement.querySelector('.wwz-blizz-thumbs-popup-textarea');
+            if (textarea) {
+                setTimeout(function() { textarea.focus(); }, 100);
+            }
+        },
+
+        /**
+         * Hide thumbs down popup
+         */
+        hideThumbsDownPopup: function() {
+            var existingPopup = document.querySelector('.wwz-blizz-thumbs-popup');
+            if (existingPopup) {
+                existingPopup.remove();
+            }
+        },
+
+        /**
+         * Update thumbs button state
+         */
+        updateThumbsState: function(messageId, feedbackType) {
+            var container = this.elements.messagesContainer;
+            var thumbsUp = container.querySelector('.wwz-blizz-thumbs-up-btn[data-message-id="' + messageId + '"]');
+            var thumbsDown = container.querySelector('.wwz-blizz-thumbs-down-btn[data-message-id="' + messageId + '"]');
+
+            if (thumbsUp && thumbsDown) {
+                // Reset both
+                thumbsUp.classList.remove('wwz-blizz-selected', 'wwz-blizz-disabled');
+                thumbsDown.classList.remove('wwz-blizz-selected', 'wwz-blizz-disabled');
+
+                if (feedbackType === 'positive') {
+                    thumbsUp.classList.add('wwz-blizz-selected');
+                    thumbsDown.classList.add('wwz-blizz-disabled');
+                } else if (feedbackType === 'negative') {
+                    thumbsDown.classList.add('wwz-blizz-selected');
+                    thumbsUp.classList.add('wwz-blizz-disabled');
+                }
+            }
         },
 
         /**
@@ -372,12 +463,21 @@
         },
 
         /**
+         * Extract YouTube video ID from URL
+         */
+        extractYoutubeVideoId: function(url) {
+            var match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+            return match ? match[1] : '';
+        },
+
+        /**
          * Create YouTube video widget HTML
          */
         createVideoWidget: function(video) {
+            var videoId = this.extractYoutubeVideoId(video.url);
             return '<div class="enterprisebot-blizz-video-widget">' +
                 '<p>Hier ist ein Video für Sie:</p>' +
-                '<a href="' + video.url + '" target="_blank" rel="noopener noreferrer" class="enterprisebot-blizz-video-link">' +
+                '<div class="enterprisebot-blizz-video-link" data-video-id="' + videoId + '">' +
                 '<div class="enterprisebot-blizz-video-thumbnail">' +
                 '<img src="' + video.thumbnail + '" alt="' + video.title + '">' +
                 '<div class="enterprisebot-blizz-video-play-icon">' +
@@ -387,7 +487,7 @@
                 '</div>' +
                 '</div>' +
                 '<div class="enterprisebot-blizz-video-title">' + video.title + '</div>' +
-                '</a>' +
+                '</div>' +
                 '</div>';
         },
 

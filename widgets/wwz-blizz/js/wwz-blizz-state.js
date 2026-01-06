@@ -21,7 +21,8 @@
         retryCount: 0,
         lastUserMessage: null,
         contactFormSource: null,  // 'welcome' or 'chat'
-        endChatFeedback: false    // true when feedback from end chat button
+        endChatFeedback: false,   // true when feedback from end chat button
+        messageFeedback: {}       // { messageId: { type: 'positive'|'negative', comment: '' } }
     };
 
     EBB.StateManager = {
@@ -247,6 +248,31 @@
         },
 
         /**
+         * Check if message has feedback
+         */
+        hasMessageFeedback: function(messageId) {
+            return !!state.messageFeedback[messageId];
+        },
+
+        /**
+         * Set message feedback
+         */
+        setMessageFeedback: function(messageId, feedbackType, comment) {
+            state.messageFeedback[messageId] = {
+                type: feedbackType,
+                comment: comment || '',
+                timestamp: new Date().toISOString()
+            };
+        },
+
+        /**
+         * Get message feedback
+         */
+        getMessageFeedback: function(messageId) {
+            return state.messageFeedback[messageId] || null;
+        },
+
+        /**
          * Reset state for new conversation
          */
         reset: function() {
@@ -260,6 +286,7 @@
             state.lastError = null;
             state.retryCount = 0;
             state.lastUserMessage = null;
+            state.messageFeedback = {};
 
             console.log('[WWZBlizz] State reset');
         }
