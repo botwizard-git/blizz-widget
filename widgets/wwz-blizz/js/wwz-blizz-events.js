@@ -75,18 +75,28 @@
             });
 
             // Welcome suggestions (event delegation)
-            document.getElementById('wwz-blizz-welcome-suggestions').addEventListener('click', function(e) {
-                if (e.target.classList.contains('wwz-blizz-suggestion-btn')) {
-                    self.handleWelcomeSuggestionClick(e.target.dataset.suggestion);
-                }
-            });
+            var welcomeSuggestionsEl = document.getElementById('wwz-blizz-welcome-suggestions');
+            if (welcomeSuggestionsEl) {
+                welcomeSuggestionsEl.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('wwz-blizz-suggestion-btn')) {
+                        self.handleWelcomeSuggestionClick(e.target.dataset.suggestion);
+                    }
+                });
+            }
 
             // Chat suggestions (event delegation)
-            document.getElementById('wwz-blizz-suggestions-container').addEventListener('click', function(e) {
-                if (e.target.classList.contains('wwz-blizz-suggestion-btn')) {
-                    self.handleSuggestionClick(e.target.dataset.suggestion);
-                }
-            });
+            var chatSuggestionsEl = document.getElementById('wwz-blizz-suggestions-container');
+            if (chatSuggestionsEl) {
+                chatSuggestionsEl.addEventListener('click', function(e) {
+                    console.log('[WWZBlizz] Chat suggestions click detected', e.target);
+                    if (e.target.classList.contains('wwz-blizz-suggestion-btn')) {
+                        console.log('[WWZBlizz] Suggestion button clicked:', e.target.dataset.suggestion);
+                        self.handleSuggestionClick(e.target.dataset.suggestion);
+                    }
+                });
+            } else {
+                console.error('[WWZBlizz] Chat suggestions container not found during init');
+            }
 
             // Feedback trigger button (removed - using end chat button instead)
             // var feedbackTriggerBtn = document.getElementById('wwz-blizz-feedback-trigger-btn');

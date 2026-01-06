@@ -324,11 +324,13 @@
                 return;
             }
 
+            console.log('[WWZBlizz] Rendering', suggestions.length, 'chat suggestions:', suggestions);
             suggestions.forEach(function(text) {
                 var btn = document.createElement('button');
                 btn.className = 'wwz-blizz-suggestion-btn';
                 btn.textContent = text;
-                btn.setAttribute('data-suggestion', text);
+                btn.dataset.suggestion = text;
+                console.log('[WWZBlizz] Created suggestion button:', btn.className, btn.dataset.suggestion);
                 container.appendChild(btn);
             });
         },
@@ -349,7 +351,7 @@
                 var btn = document.createElement('button');
                 btn.className = 'wwz-blizz-suggestion-btn';
                 btn.textContent = text;
-                btn.setAttribute('data-suggestion', text);
+                btn.dataset.suggestion = text;
                 container.appendChild(btn);
             });
         },
