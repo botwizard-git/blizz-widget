@@ -352,13 +352,6 @@
 
             if (StateManager.isLoading()) return;
 
-            // Check if this is the contact form trigger
-            if (text === CONFIG.contactFormTrigger) {
-                StateManager.setContactFormSource('welcome');
-                UI.showContactForm();
-                return;
-            }
-
             UI.showChatScreen();
             StateManager.setLastUserMessage(text);
 
@@ -402,21 +395,19 @@
             var UI = EBB.UI;
             var StateManager = EBB.StateManager;
 
+            console.log('[WWZBlizz] handleSuggestionClick called with:', text);
+
             // Blur input to prevent focus issues on mobile
             if (document.activeElement) {
                 document.activeElement.blur();
             }
 
-            if (StateManager.isLoading()) return;
-
-            // Check if this is the contact form trigger
-            if (text === CONFIG.contactFormTrigger) {
-                StateManager.setContactFormSource('chat');
-                UI.clearSuggestions();
-                UI.showContactForm();
+            if (StateManager.isLoading()) {
+                console.log('[WWZBlizz] Skipping - already loading');
                 return;
             }
 
+            console.log('[WWZBlizz] Sending message to API');
             StateManager.setLastUserMessage(text);
 
             var userMessage = StateManager.addMessage(text, true);
@@ -1031,9 +1022,23 @@
          * Skip new feedback
          */
         skipNewFeedback: function() {
-            console.log('[WWZBlizz] Skipping feedback');
+            console.log('[WWZBlizz] Skipping feedback - resetting widget');
+
+            // Hide feedback screen
             EBB.UI.hideFeedbackScreen();
             EBB.UI.resetFeedbackForm();
+
+            // Reset state (clear messages, session, etc.)
+            EBB.StateManager.reset();
+
+            // Clear messages from UI
+            EBB.UI.clearMessages();
+
+            // Show fresh welcome screen
+            EBB.UI.showWelcomeScreen();
+
+            // Render default suggestions
+            EBB.UI.renderWelcomeSuggestions(EBB.CONFIG.defaultSuggestions);
         },
 
         /**
