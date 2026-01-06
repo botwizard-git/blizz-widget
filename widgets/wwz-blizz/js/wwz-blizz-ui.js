@@ -1075,10 +1075,16 @@
          * Reset contact form
          */
         resetContactForm: function() {
-            this.elements.contactFormBody.reset();
-            // Reset to default time values
-            document.getElementById('wwz-blizz-contact-time-from').value = '09:00';
-            document.getElementById('wwz-blizz-contact-time-to').value = '17:00';
+            var contactFormBody = document.getElementById('wwz-blizz-contact-form-body');
+            if (contactFormBody) {
+                contactFormBody.reset();
+            }
+
+            // Reset to default time values if they exist
+            var timeFrom = document.getElementById('wwz-blizz-contact-time-from');
+            var timeTo = document.getElementById('wwz-blizz-contact-time-to');
+            if (timeFrom) timeFrom.value = '09:00';
+            if (timeTo) timeTo.value = '17:00';
         },
 
         /**
