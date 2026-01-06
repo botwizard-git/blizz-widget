@@ -13,11 +13,14 @@
         html, body {
             height: 100%;
             width: 100%;
-            overflow: hidden;
         }
         body {
             font-family: Arial, sans-serif;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
         }
         /* Background image with low opacity */
         body::before {
@@ -35,10 +38,27 @@
             z-index: -1;
             pointer-events: none;
         }
-        /* Widget takes full screen */
+        /* Widget container with max dimensions */
         #wwz-blizz-parent {
             width: 100%;
-            height: 100%;
+            max-width: 900px;
+            height: calc(100vh - 80px);
+            max-height: 800px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            body {
+                padding: 16px;
+            }
+            #wwz-blizz-parent {
+                height: calc(100vh - 32px);
+                max-height: none;
+                border-radius: 8px;
+            }
         }
     </style>
 </head>
