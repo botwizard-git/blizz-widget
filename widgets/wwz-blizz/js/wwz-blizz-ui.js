@@ -328,9 +328,7 @@
                 var btn = document.createElement('button');
                 btn.className = 'wwz-blizz-suggestion-btn';
                 btn.textContent = text;
-                btn.addEventListener('click', function() {
-                    EBB.Events.handleSuggestionClick(text);
-                });
+                btn.setAttribute('data-suggestion', text);
                 container.appendChild(btn);
             });
         },
@@ -351,9 +349,7 @@
                 var btn = document.createElement('button');
                 btn.className = 'wwz-blizz-suggestion-btn';
                 btn.textContent = text;
-                btn.addEventListener('click', function() {
-                    EBB.Events.handleWelcomeSuggestionClick(text);
-                });
+                btn.setAttribute('data-suggestion', text);
                 container.appendChild(btn);
             });
         },
