@@ -43,6 +43,8 @@ const WIDGETS = {
     'wwz-blizz': {
         CHAT_ENDPOINT: process.env.WWZ_BLIZZ_CHAT_ENDPOINT ||
             'https://wwz-blitzico.enterprisebot.co/blitzdcbd6ccec92246ca8120ea00deabe70d',
+        CHAT_ENDPOINT_INTERNAL: process.env.WWZ_BLIZZ_CHAT_ENDPOINT_INTERNAL ||
+            'https://wwz-blitzico.enterprisebot.co/blitz155eadfb15e34cd59ad4bb9d7ade6269',
         FORM_ENDPOINT: process.env.WWZ_BLIZZ_FORM_ENDPOINT ||
             'https://wwz-blitzico.enterprisebot.co/blitze1ffae2f9a274b39b5f39e0f34dcadd2',
         FEEDBACK_ENDPOINT: process.env.WWZ_BLIZZ_FEEDBACK_ENDPOINT ||
@@ -53,6 +55,8 @@ const WIDGETS = {
     'wwz-ivy': {
         CHAT_ENDPOINT: process.env.WWZ_IVY_CHAT_ENDPOINT ||
             'https://wwz-blitzico.enterprisebot.co/blitz03429bf6c88d45dbbf47e3892e5c8e89',
+        CHAT_ENDPOINT_INTERNAL: process.env.WWZ_IVY_CHAT_ENDPOINT_INTERNAL ||
+            'https://wwz-blitzico.enterprisebot.co/blitz155eadfb15e34cd59ad4bb9d7ade6269',
         FORM_ENDPOINT: process.env.WWZ_IVY_FORM_ENDPOINT ||
             'https://wwz-blitzico.enterprisebot.co/blitze1ffae2f9a274b39b5f39e0f34dcadd2',
         FEEDBACK_ENDPOINT: process.env.WWZ_IVY_FEEDBACK_ENDPOINT ||
@@ -118,15 +122,19 @@ app.post('/:widgetId/chat', async (req, res) => {
             return res.status(404).json({ error: `Unknown widget: ${widgetId}` });
         }
 
-        const { blizzUserMsg, blizzSessionId, blizzBotMessageId, clientUrl, agentId } = req.body;
+        const { blizzUserMsg, blizzSessionId, blizzBotMessageId, clientUrl, agentId, isInternal } = req.body;
 
         if (!blizzUserMsg) {
             return res.status(400).json({ error: 'blizzUserMsg is required' });
         }
 
-        console.log(`[${widgetId}/Chat] Forwarding message:`, blizzUserMsg.substring(0, 50) + '...');
+        // Choose endpoint based on isInternal flag
+        const endpoint = isInternal ? widgetConfig.CHAT_ENDPOINT_INTERNAL : widgetConfig.CHAT_ENDPOINT;
+        const endpointType = isInternal ? 'INTERNAL' : 'EXTERNAL';
 
-        const response = await fetchWithTimeout(widgetConfig.CHAT_ENDPOINT, {
+        console.log(`[${widgetId}/Chat ${endpointType}] Forwarding message:`, blizzUserMsg.substring(0, 50) + '...');
+
+        const response = await fetchWithTimeout(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

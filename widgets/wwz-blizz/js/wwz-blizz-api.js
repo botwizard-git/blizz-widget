@@ -49,7 +49,8 @@
                 blizzBotMessageId: SessionService.generateUUID(),
                 clientUrl: window.location.href,
                 widgetId: CONFIG.widgetId,
-                agentId: CONFIG.AGENT_ID
+                agentId: CONFIG.AGENT_ID,
+                isInternal: CONFIG.isInternal()
             };
         },
 

@@ -20,6 +20,12 @@
         feedbackEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/feedback',
         contactEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/contact',
 
+        // Internal vs External mode - detected from container class
+        isInternal: function() {
+            var container = document.getElementById('wwz-blizz-parent');
+            return container && container.classList.contains('wwz-internal');
+        },
+
         // Assets
         botAvatar: 'https://chatbot2go-hybrid.enterprisebot.co/assets/botForge/67031622bbfbfaaccecd88f0/wwz_rescaled_image.png',
         wwzLogo: 'https://chatbot2go-hybrid.enterprisebot.co/assets/botForge/67031622bbfbfaaccecd88f0/wwz_rescaled_image.png',
