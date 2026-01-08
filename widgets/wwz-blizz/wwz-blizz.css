@@ -1680,13 +1680,13 @@
 
 .enterprisebot-blizz-hours-row {
     display: flex;
-    justify-content: space-between;
+    gap: 12px;
     font-size: 0.75rem;
     color: var(--eb-text-muted);
 }
 
 .enterprisebot-blizz-hours-day {
-    min-width: 45px;
+    min-width: 20px;
     color: var(--eb-text);
     font-weight: 500;
 }

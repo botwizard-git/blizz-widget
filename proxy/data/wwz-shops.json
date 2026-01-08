@@ -1,0 +1,321 @@
+{
+  "shops": [
+    {
+      "id": "hauptsitz",
+      "name": "WWZ AG (Hauptsitz)",
+      "shortName": "Hauptsitz",
+      "address": {
+        "street": "Chollerstrasse 26",
+        "plz": "6301",
+        "city": "Zug",
+        "canton": "ZG"
+      },
+      "contact": {
+        "phone": "+41 41 748 45 45",
+        "email": "info@wwz.ch"
+      },
+      "hours": {
+        "monday": "08:00-12:00, 13:00-17:00",
+        "tuesday": "08:00-12:00, 13:00-17:00",
+        "wednesday": "08:00-12:00, 13:00-17:00",
+        "thursday": "08:00-12:00, 13:00-17:00",
+        "friday": "08:00-12:00, 13:00-17:00",
+        "saturday": "Closed",
+        "sunday": "Closed"
+      },
+      "services": [
+        "Energy (Electricity, Gas, Water)",
+        "Telecommunications",
+        "E-Mobility",
+        "Customer Service",
+        "Corporate HQ"
+      ],
+      "googleMapsQuery": "WWZ+AG+Chollerstrasse+26+6301+Zug+Switzerland",
+      "timezone": "Europe/Zurich"
+    },
+    {
+      "id": "metalli",
+      "name": "WWZ-Shop Zug (EKZ Metalli)",
+      "shortName": "Metalli",
+      "address": {
+        "street": "Einkaufs-Allee Metalli, Baarerstrasse 18",
+        "plz": "6300",
+        "city": "Zug",
+        "canton": "ZG"
+      },
+      "contact": {
+        "phone": "+41 41 748 46 46",
+        "email": "info@wwz.ch"
+      },
+      "hours": {
+        "monday": "09:00-19:00",
+        "tuesday": "09:00-19:00",
+        "wednesday": "09:00-19:00",
+        "thursday": "09:00-20:00",
+        "friday": "09:00-19:00",
+        "saturday": "09:00-17:00",
+        "sunday": "Closed"
+      },
+      "services": [
+        "Internet",
+        "TV",
+        "Mobile",
+        "Landline",
+        "Quickline Products",
+        "Personal Consultation",
+        "Technical Support"
+      ],
+      "googleMapsQuery": "WWZ+Shop+Metalli+Baarerstrasse+18+6300+Zug+Switzerland",
+      "timezone": "Europe/Zurich"
+    },
+    {
+      "id": "affoltern",
+      "name": "WWZ-Shop Affoltern a.A.",
+      "shortName": "Affoltern",
+      "address": {
+        "street": "Obere Bahnhofstrasse 13",
+        "plz": "8910",
+        "city": "Affoltern am Albis",
+        "canton": "ZH"
+      },
+      "contact": {
+        "phone": "+41 41 748 46 46",
+        "email": "info@wwz.ch"
+      },
+      "hours": {
+        "monday": "09:00-12:00, 13:30-18:00",
+        "tuesday": "09:00-12:00, 13:30-18:00",
+        "wednesday": "09:00-12:00, 13:30-18:00",
+        "thursday": "09:00-12:00, 13:30-18:00",
+        "friday": "09:00-12:00, 13:30-18:00",
+        "saturday": "09:00-14:00",
+        "sunday": "Closed"
+      },
+      "services": [
+        "Internet",
+        "TV",
+        "Mobile",
+        "Landline",
+        "Quickline Products",
+        "Personal Consultation",
+        "Technical Support"
+      ],
+      "googleMapsQuery": "Obere+Bahnhofstrasse+13+8910+Affoltern+am+Albis+Switzerland",
+      "timezone": "Europe/Zurich"
+    },
+    {
+      "id": "goldau",
+      "name": "WWZ-Shop Goldau",
+      "shortName": "Goldau",
+      "address": {
+        "street": "Mythenstrasse 5a",
+        "plz": "6410",
+        "city": "Goldau",
+        "canton": "SZ"
+      },
+      "contact": {
+        "phone": "+41 41 748 46 46",
+        "email": "info@wwz.ch"
+      },
+      "hours": {
+        "monday": "Closed",
+        "tuesday": "09:00-12:00, 13:30-18:00",
+        "wednesday": "09:00-12:00, 13:30-18:00",
+        "thursday": "09:00-12:00, 13:30-18:00",
+        "friday": "09:00-12:00, 13:30-18:00",
+        "saturday": "09:00-12:00",
+        "sunday": "Closed"
+      },
+      "services": [
+        "Internet",
+        "TV",
+        "Mobile",
+        "Landline",
+        "Quickline Products",
+        "Personal Consultation",
+        "Technical Support"
+      ],
+      "googleMapsQuery": "Mythenstrasse+5a+6410+Goldau+Switzerland",
+      "timezone": "Europe/Zurich"
+    },
+    {
+      "id": "hochdorf",
+      "name": "WWZ-Shop Hochdorf",
+      "shortName": "Hochdorf",
+      "address": {
+        "street": "Hauptstrasse 18",
+        "plz": "6280",
+        "city": "Hochdorf",
+        "canton": "LU"
+      },
+      "contact": {
+        "phone": "+41 41 748 46 46",
+        "email": "info@wwz.ch"
+      },
+      "hours": {
+        "monday": "Closed",
+        "tuesday": "09:00-12:00, 13:30-18:00",
+        "wednesday": "09:00-12:00, 13:30-18:00",
+        "thursday": "09:00-12:00, 13:30-18:00",
+        "friday": "09:00-12:00, 13:30-18:00",
+        "saturday": "09:00-14:00",
+        "sunday": "Closed"
+      },
+      "services": [
+        "Internet",
+        "TV",
+        "Mobile",
+        "Landline",
+        "Quickline Products",
+        "Personal Consultation",
+        "Technical Support"
+      ],
+      "googleMapsQuery": "Hauptstrasse+18+6280+Hochdorf+Switzerland",
+      "timezone": "Europe/Zurich"
+    },
+    {
+      "id": "kuessnacht",
+      "name": "WWZ-Shop Küssnacht",
+      "shortName": "Küssnacht",
+      "address": {
+        "street": "Hauptplatz 3",
+        "plz": "6403",
+        "city": "Küssnacht am Rigi",
+        "canton": "SZ"
+      },
+      "contact": {
+        "phone": "+41 41 748 46 46",
+        "email": "info@wwz.ch"
+      },
+      "hours": {
+        "monday": "Closed",
+        "tuesday": "09:00-12:00, 13:30-18:30",
+        "wednesday": "09:00-12:00, 13:30-18:30",
+        "thursday": "09:00-12:00, 13:30-18:30",
+        "friday": "09:00-12:00, 13:30-18:30",
+        "saturday": "09:00-12:00, 14:00-16:00",
+        "sunday": "Closed"
+      },
+      "services": [
+        "Internet",
+        "TV",
+        "Mobile",
+        "Landline",
+        "Quickline Products",
+        "Personal Consultation",
+        "Technical Support (Cable-Line AG Partner)"
+      ],
+      "googleMapsQuery": "Hauptplatz+3+6403+Kuessnacht+am+Rigi+Switzerland",
+      "timezone": "Europe/Zurich"
+    },
+    {
+      "id": "reiden",
+      "name": "WWZ-Shop Reiden",
+      "shortName": "Reiden",
+      "address": {
+        "street": "Hauptstrasse 34",
+        "plz": "6260",
+        "city": "Reiden",
+        "canton": "LU"
+      },
+      "contact": {
+        "phone": "+41 41 748 46 46",
+        "email": "info@wwz.ch"
+      },
+      "hours": {
+        "monday": "Closed",
+        "tuesday": "09:00-12:00, 13:30-18:00",
+        "wednesday": "09:00-12:00, 13:30-18:00",
+        "thursday": "09:00-12:00, 13:30-18:00",
+        "friday": "09:00-12:00, 13:30-18:00",
+        "saturday": "09:00-14:00",
+        "sunday": "Closed"
+      },
+      "services": [
+        "Internet",
+        "TV",
+        "Mobile",
+        "Landline",
+        "Quickline Products",
+        "Personal Consultation",
+        "Technical Support"
+      ],
+      "googleMapsQuery": "Hauptstrasse+34+6260+Reiden+Switzerland",
+      "timezone": "Europe/Zurich"
+    },
+    {
+      "id": "schoeftland",
+      "name": "WWZ-Shop Schöftland",
+      "shortName": "Schöftland",
+      "address": {
+        "street": "Ruederstrasse 8",
+        "plz": "5040",
+        "city": "Schöftland",
+        "canton": "AG"
+      },
+      "contact": {
+        "phone": "+41 41 748 46 46",
+        "email": "info@wwz.ch"
+      },
+      "hours": {
+        "monday": "Closed",
+        "tuesday": "09:00-12:00, 13:30-18:30",
+        "wednesday": "09:00-12:00, 13:30-18:30",
+        "thursday": "09:00-12:00, 13:30-18:30",
+        "friday": "09:00-12:00, 13:30-18:30",
+        "saturday": "09:00-15:00",
+        "sunday": "Closed"
+      },
+      "services": [
+        "Internet",
+        "TV",
+        "Mobile",
+        "Landline",
+        "Quickline Products",
+        "Personal Consultation",
+        "Technical Support"
+      ],
+      "googleMapsQuery": "Ruederstrasse+8+5040+Schoeftland+Switzerland",
+      "timezone": "Europe/Zurich"
+    },
+    {
+      "id": "unteraegeri",
+      "name": "WWZ-Shop Unterägeri",
+      "shortName": "Unterägeri",
+      "address": {
+        "street": "Zugerstrasse 25",
+        "plz": "6314",
+        "city": "Unterägeri",
+        "canton": "ZG"
+      },
+      "contact": {
+        "phone": "+41 41 748 46 46",
+        "email": "info@wwz.ch"
+      },
+      "hours": {
+        "monday": "Closed",
+        "tuesday": "09:00-12:00, 13:30-18:30",
+        "wednesday": "09:00-12:00, 13:30-18:30",
+        "thursday": "09:00-12:00, 13:30-18:30",
+        "friday": "09:00-12:00, 13:30-18:30",
+        "saturday": "09:00-16:00",
+        "sunday": "Closed"
+      },
+      "services": [
+        "Internet",
+        "TV",
+        "Mobile",
+        "Landline",
+        "Quickline Products",
+        "Personal Consultation",
+        "Technical Support (Shop-in-Shop at Iten-Arnold Elektro AG)"
+      ],
+      "googleMapsQuery": "Zugerstrasse+25+6314+Unteraegeri+Switzerland",
+      "timezone": "Europe/Zurich"
+    }
+  ],
+  "metadata": {
+    "lastUpdated": "2026-01-08T11:21:41.793Z",
+    "version": "1.0"
+  }
+}

@@ -15,8 +15,22 @@
             var UI = EBB.UI;
             var Events = EBB.Events;
             var StateManager = EBB.StateManager;
+            var APIService = EBB.APIService;
 
             console.log('[WWZBlizz] Initializing widget...');
+
+            // Initialize session cookie immediately (async, doesn't block UI)
+            APIService.initSession().then(function(success) {
+                if (!success) {
+                    console.warn('[WWZBlizz] Session init failed - API calls may fail');
+                }
+            });
+
+            // Load shop locations (async, doesn't block UI)
+            APIService.fetchShops().then(function(shopsMap) {
+                CONFIG.wwzShops = shopsMap;
+                console.log('[WWZBlizz] Shops loaded into config');
+            });
 
             // Initialize UI element references
             UI.init();

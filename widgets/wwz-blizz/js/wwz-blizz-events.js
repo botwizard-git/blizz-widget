@@ -520,6 +520,43 @@
         },
 
         /**
+         * Convert shop data from JSON format to widget format
+         */
+        convertShopForWidget: function(shop) {
+            var address = shop.address;
+            // Format address as 2 lines: street on line 1, PLZ + city on line 2
+            var fullAddress = address.street + '<br>' + address.plz + ' ' + address.city;
+
+            // Convert per-day hours to array format for createMapWidget
+            var hours = [];
+            var daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            var dayLabels = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+
+            daysOfWeek.forEach(function(day, index) {
+                var time = shop.hours[day] || 'Closed';
+                if (time.toLowerCase() === 'closed') {
+                    time = 'Geschlossen';
+                } else {
+                    // Format time with spaces around dash: "09:00-19:00" -> "09:00 - 19:00"
+                    time = time.replace(/-/g, ' - ').replace(/,\s*/g, ', ');
+                }
+                hours.push({
+                    days: dayLabels[index],
+                    time: time
+                });
+            });
+
+            return {
+                name: shop.name,
+                address: fullAddress,
+                phone: shop.contact.phone,
+                email: shop.contact.email,
+                query: shop.googleMapsQuery,
+                hours: hours
+            };
+        },
+
+        /**
          * Send message to API
          */
         sendMessageToAPI: function(text) {
@@ -540,12 +577,8 @@
                 return;
             }
 
-            // Check for shop mention - show map widget
-            var shop = UI.detectShopMention(text);
-            if (shop) {
-                self.handleShopRequest(text, shop);
-                return;
-            }
+            // Note: Shop detection removed - all messages go to /chat API
+            // Shop cards are displayed when API returns shopList in response
 
             StateManager.setLoading(true);
             UI.showTypingIndicator();
@@ -590,11 +623,36 @@
                         UI.renderMessage(defaultReply);
                     }
 
+                    // Handle shopList - render location cards for matched shops
+                    if (response.shopList && response.shopList.length > 0) {
+                        var shopDelay = (response.replies ? response.replies.length : 1) * 300 + 200;
+                        response.shopList.forEach(function(shopId, shopIndex) {
+                            setTimeout(function() {
+                                // Normalize shopId to lowercase for lookup
+                                var normalizedId = shopId.toLowerCase();
+                                var shop = CONFIG.wwzShops[normalizedId];
+                                if (shop) {
+                                    // Convert shop data to format expected by createMapWidget
+                                    var shopData = self.convertShopForWidget(shop);
+                                    var mapHtml = UI.createMapWidget(shopData);
+                                    var mapMessage = StateManager.addMessage(mapHtml, false, { isHtml: true });
+                                    UI.renderMessage(mapMessage);
+                                } else {
+                                    console.warn('[WWZBlizz] Shop not found:', shopId, '(normalized:', normalizedId + ')');
+                                }
+                            }, shopDelay + (shopIndex * 400));
+                        });
+                    }
+
                     if (response.suggestions && response.suggestions.length > 0) {
-                        var delay = (response.replies ? response.replies.length : 1) * 300 + 100;
+                        var suggestDelay = (response.replies ? response.replies.length : 1) * 300 + 100;
+                        // Add extra delay if shop cards are being rendered
+                        if (response.shopList && response.shopList.length > 0) {
+                            suggestDelay += response.shopList.length * 400 + 200;
+                        }
                         setTimeout(function() {
                             UI.renderSuggestions(response.suggestions);
-                        }, delay);
+                        }, suggestDelay);
                     }
                 })
                 .catch(function(error) {

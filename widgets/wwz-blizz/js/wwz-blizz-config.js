@@ -19,6 +19,8 @@
         apiEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/chat',
         feedbackEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/feedback',
         contactEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/contact',
+        initEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/init',
+        shopsEndpoint: 'https://blizz-api.botwizard.ch/shops',
 
         // Internal vs External mode - detected from container class
         isInternal: function() {
@@ -169,7 +171,10 @@
         retryDelay: 2000,
 
         // Version
-        version: '1.0.0'
+        version: '1.0.0',
+
+        // Shop locations (populated dynamically from API)
+        wwzShops: {}
     };
 
     // Legacy support - map old property names

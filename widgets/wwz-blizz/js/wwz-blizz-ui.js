@@ -505,33 +505,47 @@
 
         /**
          * Check if shop is currently open based on hours
+         * Supports both formats:
+         * - Per-day: hours[0]=Mo, hours[1]=Di, ..., hours[6]=So (7 entries)
+         * - Legacy:  hours[0]=Mo-Fr, hours[1]=Sa, hours[2]=So (3 entries)
          */
         isShopOpen: function(hours) {
             if (!hours || hours.length === 0) return false;
 
             var now = new Date();
-            var day = now.getDay(); // 0=Sun, 1=Mon, ...
+            var jsDay = now.getDay(); // 0=Sun, 1=Mon, 2=Tue, ...
             var currentTime = now.getHours() * 100 + now.getMinutes(); // e.g., 1430 for 14:30
 
-            // Map day number to hours array index
-            // hours[0] = Mo-Fr, hours[1] = Sa, hours[2] = So
             var todayHours = null;
-            if (day >= 1 && day <= 5) { // Mon-Fri
-                todayHours = hours[0];
-            } else if (day === 6) { // Sat
-                todayHours = hours[1];
-            } else { // Sun
-                todayHours = hours[2];
+
+            if (hours.length === 7) {
+                // Per-day format: hours[0]=Mo, hours[1]=Di, ..., hours[6]=So
+                // Map JS day (0=Sun) to array index (0=Mo, 6=So)
+                var dayIndex = jsDay === 0 ? 6 : jsDay - 1;
+                todayHours = hours[dayIndex];
+            } else if (hours.length === 3) {
+                // Legacy format: hours[0]=Mo-Fr, hours[1]=Sa, hours[2]=So
+                if (jsDay >= 1 && jsDay <= 5) {
+                    todayHours = hours[0];
+                } else if (jsDay === 6) {
+                    todayHours = hours[1];
+                } else {
+                    todayHours = hours[2];
+                }
+            } else {
+                return false;
             }
 
             if (!todayHours || todayHours.time.toLowerCase() === 'geschlossen') {
                 return false;
             }
 
-            // Parse time ranges like "08:00 - 18:30" or "08:30 - 12:00, 13:30 - 18:00"
+            // Parse time ranges like "08:00-18:30" or "08:30-12:00, 13:30-18:00"
             var ranges = todayHours.time.split(',');
             for (var i = 0; i < ranges.length; i++) {
-                var parts = ranges[i].trim().split(' - ');
+                var range = ranges[i].trim();
+                // Handle both "08:00 - 18:30" and "08:00-18:30" formats
+                var parts = range.split(/\s*-\s*/);
                 if (parts.length === 2) {
                     var open = parseInt(parts[0].replace(':', ''), 10);
                     var close = parseInt(parts[1].replace(':', ''), 10);

@@ -10,17 +10,27 @@
 
     EBB.APIService = {
         /**
-         * Fetch with timeout support
+         * Track if session cookie is initialized
+         */
+        _sessionInitialized: false,
+
+        /**
+         * Fetch with timeout support (includes credentials for cookies)
          */
         fetchWithTimeout: function(url, options, timeout) {
             var timeoutMs = timeout || CONFIG.requestTimeout || 60000;
+
+            // Always include credentials for cookie support
+            var fetchOptions = Object.assign({}, options, {
+                credentials: 'include'
+            });
 
             return new Promise(function(resolve, reject) {
                 var timeoutId = setTimeout(function() {
                     reject(new Error('TIMEOUT'));
                 }, timeoutMs);
 
-                fetch(url, options)
+                fetch(url, fetchOptions)
                     .then(function(response) {
                         clearTimeout(timeoutId);
                         resolve(response);
@@ -30,6 +40,53 @@
                         reject(error);
                     });
             });
+        },
+
+        /**
+         * Initialize session with server (get cookie)
+         * Called once when widget loads
+         */
+        initSession: function() {
+            var self = this;
+
+            if (this._sessionInitialized) {
+                return Promise.resolve(true);
+            }
+
+            console.log('[WWZBlizz] Initializing session...');
+
+            return this.fetchWithTimeout(CONFIG.initEndpoint, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    console.error('[WWZBlizz] Session init failed:', response.status);
+                    return false;
+                }
+                self._sessionInitialized = true;
+                console.log('[WWZBlizz] Session initialized successfully');
+                return true;
+            })
+            .catch(function(error) {
+                console.error('[WWZBlizz] Session init error:', error);
+                return false;
+            });
+        },
+
+        /**
+         * Ensure session is initialized before making API calls
+         */
+        ensureSession: function() {
+            var self = this;
+
+            if (this._sessionInitialized) {
+                return Promise.resolve(true);
+            }
+
+            return this.initSession();
         },
 
         /**
@@ -84,6 +141,7 @@
                     message: data.message || '',
                     replies: data.message ? [data.message] : [],
                     suggestions: data.suggestions || [],
+                    shopList: data.shopList || [],
                     isHtml: true
                 };
             }
@@ -97,6 +155,7 @@
                 replies: response.replies || [],
                 suggestions: response.suggestions || [],
                 sessionId: response.sessionId || null,
+                shopList: response.shopList || data.shopList || [],
                 isHtml: false
             };
         },
@@ -106,19 +165,31 @@
          */
         sendMessage: function(message) {
             var self = this;
-            var payload = this.buildPayload(message);
 
-            console.log('[WWZBlizz] Sending message');
+            // Ensure session cookie exists before sending
+            return this.ensureSession().then(function(hasSession) {
+                if (!hasSession) {
+                    console.warn('[WWZBlizz] No session, attempting to send anyway');
+                }
 
-            return this.fetchWithTimeout(CONFIG.apiEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json, text/plain, */*'
-                },
-                body: JSON.stringify(payload)
+                var payload = self.buildPayload(message);
+                console.log('[WWZBlizz] Sending message');
+
+                return self.fetchWithTimeout(CONFIG.apiEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json, text/plain, */*'
+                    },
+                    body: JSON.stringify(payload)
+                });
             })
             .then(function(response) {
+                // Handle 403 - session expired or invalid
+                if (response.status === 403) {
+                    self._sessionInitialized = false;
+                    throw new Error('SESSION_EXPIRED');
+                }
                 if (!response.ok) {
                     throw new Error('API Error: ' + response.status);
                 }
@@ -141,36 +212,41 @@
         submitFeedback: function(feedbackData) {
             var self = this;
 
-            // Handle both old format (rating, comment) and new format (object)
-            var payload = {
-                sessionId: SessionService.getSessionId(),
-                agentId: CONFIG.AGENT_ID,
-                widgetId: CONFIG.widgetId,
-                timestamp: new Date().toISOString(),
-                botName: "BLIZZ",
-                isInternal: CONFIG.isInternal()
-            };
+            return this.ensureSession().then(function() {
+                // Handle both old format (rating, comment) and new format (object)
+                var payload = {
+                    sessionId: SessionService.getSessionId(),
+                    agentId: CONFIG.AGENT_ID,
+                    widgetId: CONFIG.widgetId,
+                    timestamp: new Date().toISOString(),
+                    botName: "BLIZZ",
+                    isInternal: CONFIG.isInternal()
+                };
 
-            if (typeof feedbackData === 'object' && feedbackData !== null) {
-                payload.rating = feedbackData.rating;
-                payload.options = feedbackData.options || [];
-                payload.additionalFeedback = feedbackData.additionalFeedback || '';
-            } else {
-                // Legacy format - just rating number
-                payload.rating = feedbackData;
-                payload.options = [];
-                payload.additionalFeedback = '';
-            }
+                if (typeof feedbackData === 'object' && feedbackData !== null) {
+                    payload.rating = feedbackData.rating;
+                    payload.options = feedbackData.options || [];
+                    payload.additionalFeedback = feedbackData.additionalFeedback || '';
+                } else {
+                    // Legacy format - just rating number
+                    payload.rating = feedbackData;
+                    payload.options = [];
+                    payload.additionalFeedback = '';
+                }
 
-            return this.fetchWithTimeout(CONFIG.RATING_API, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json, text/plain, */*'
-                },
-                body: JSON.stringify(payload)
+                return self.fetchWithTimeout(CONFIG.RATING_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json, text/plain, */*'
+                    },
+                    body: JSON.stringify(payload)
+                });
             })
             .then(function(response) {
+                if (response.status === 403) {
+                    self._sessionInitialized = false;
+                }
                 return response.ok;
             })
             .catch(function(error) {
@@ -186,39 +262,44 @@
             var self = this;
             var StateManager = EBB.StateManager;
 
-            // Get the message text for context
-            var messages = StateManager.getMessages();
-            var message = null;
-            for (var i = 0; i < messages.length; i++) {
-                if (messages[i].id === messageId) {
-                    message = messages[i];
-                    break;
+            return this.ensureSession().then(function() {
+                // Get the message text for context
+                var messages = StateManager.getMessages();
+                var message = null;
+                for (var i = 0; i < messages.length; i++) {
+                    if (messages[i].id === messageId) {
+                        message = messages[i];
+                        break;
+                    }
                 }
-            }
 
-            var payload = {
-                sessionId: SessionService.getSessionId(),
-                messageId: messageId,
-                feedbackType: feedbackType,
-                comment: comment || '',
-                messageText: message ? message.text : '',
-                agentId: CONFIG.AGENT_ID,
-                widgetId: CONFIG.widgetId,
-                timestamp: new Date().toISOString(),
-                botName: "BLIZZ"
-            };
+                var payload = {
+                    sessionId: SessionService.getSessionId(),
+                    messageId: messageId,
+                    feedbackType: feedbackType,
+                    comment: comment || '',
+                    messageText: message ? message.text : '',
+                    agentId: CONFIG.AGENT_ID,
+                    widgetId: CONFIG.widgetId,
+                    timestamp: new Date().toISOString(),
+                    botName: "BLIZZ"
+                };
 
-            console.log('[WWZBlizz] Submitting message feedback:', payload);
+                console.log('[WWZBlizz] Submitting message feedback:', payload);
 
-            return this.fetchWithTimeout(CONFIG.RATING_API, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json, text/plain, */*'
-                },
-                body: JSON.stringify(payload)
+                return self.fetchWithTimeout(CONFIG.RATING_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json, text/plain, */*'
+                    },
+                    body: JSON.stringify(payload)
+                });
             })
             .then(function(response) {
+                if (response.status === 403) {
+                    self._sessionInitialized = false;
+                }
                 return response.ok;
             })
             .catch(function(error) {
@@ -228,32 +309,74 @@
         },
 
         /**
+         * Fetch shop locations from API
+         */
+        fetchShops: function() {
+            console.log('[WWZBlizz] Fetching shops...');
+
+            return fetch(CONFIG.shopsEndpoint, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch shops: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                // Build lookup map by shop ID
+                var shopsMap = {};
+                if (data.shops && data.shops.length > 0) {
+                    data.shops.forEach(function(shop) {
+                        shopsMap[shop.id] = shop;
+                    });
+                }
+                console.log('[WWZBlizz] Loaded', Object.keys(shopsMap).length, 'shops');
+                return shopsMap;
+            })
+            .catch(function(error) {
+                console.error('[WWZBlizz] Failed to fetch shops:', error);
+                return {};
+            });
+        },
+
+        /**
          * Submit contact form
          */
         submitContactForm: function(formData) {
             var self = this;
-            console.log('[WWZBlizz] Submitting contact form');
 
-            // Format payload as expected by blizz-proxy
-            var payload = {
-                type: 'simpleMessage',
-                message: JSON.stringify(formData),
-                formData: formData,
-                sessionId: SessionService.getSessionId(),
-                timestamp: new Date().toISOString(),
-                widgetId: CONFIG.widgetId,
-                agentId: CONFIG.AGENT_ID
-            };
+            return this.ensureSession().then(function() {
+                console.log('[WWZBlizz] Submitting contact form');
 
-            return this.fetchWithTimeout(CONFIG.CONTACT_FORM_API, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json, text/plain, */*'
-                },
-                body: JSON.stringify(payload)
+                // Format payload as expected by blizz-proxy
+                var payload = {
+                    type: 'simpleMessage',
+                    message: JSON.stringify(formData),
+                    formData: formData,
+                    sessionId: SessionService.getSessionId(),
+                    timestamp: new Date().toISOString(),
+                    widgetId: CONFIG.widgetId,
+                    agentId: CONFIG.AGENT_ID
+                };
+
+                return self.fetchWithTimeout(CONFIG.CONTACT_FORM_API, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json, text/plain, */*'
+                    },
+                    body: JSON.stringify(payload)
+                });
             })
             .then(function(response) {
+                if (response.status === 403) {
+                    self._sessionInitialized = false;
+                    throw new Error('SESSION_EXPIRED');
+                }
                 if (!response.ok) {
                     throw new Error('Form submission failed: ' + response.status);
                 }

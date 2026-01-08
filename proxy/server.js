@@ -16,14 +16,25 @@
 require('dotenv').config();
 const express = require('express');
 const fetch = require('node-fetch');
+const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 // Note: CORS is handled by nginx, not Express
 
 // Global config
 const config = {
     PORT: process.env.PORT || 3050,
     API_KEY: process.env.API_KEY || '',
-    REQUEST_TIMEOUT: 120000 // 2 minutes in milliseconds
+    REQUEST_TIMEOUT: 120000, // 2 minutes in milliseconds
+    COOKIE_SECRET: process.env.COOKIE_SECRET || crypto.randomBytes(32).toString('hex'),
+    COOKIE_NAME: 'blizz_session',
+    COOKIE_MAX_AGE: 24 * 60 * 60 // 24 hours in seconds
 };
+
+// Log warning if using auto-generated secret (won't persist across restarts)
+if (!process.env.COOKIE_SECRET) {
+    console.warn('[Blizz Proxy] WARNING: No COOKIE_SECRET set, using random secret (sessions will not persist across restarts)');
+}
 
 /**
  * Fetch with timeout wrapper
@@ -35,6 +46,126 @@ async function fetchWithTimeout(url, options = {}) {
             setTimeout(() => reject(new Error('Request timeout')), config.REQUEST_TIMEOUT)
         )
     ]);
+}
+
+// =============================================================================
+// SESSION TOKEN GENERATION & VALIDATION
+// =============================================================================
+
+/**
+ * Generate a signed session token
+ * Format: {sessionId}:{timestamp}:{originHash}.{signature}
+ */
+function generateSessionToken(origin) {
+    const sessionId = crypto.randomUUID();
+    const timestamp = Math.floor(Date.now() / 1000);
+    const originHash = crypto
+        .createHash('sha256')
+        .update(origin || 'unknown')
+        .digest('hex')
+        .substring(0, 8);
+
+    const tokenData = `${sessionId}:${timestamp}:${originHash}`;
+    const signature = crypto
+        .createHmac('sha256', config.COOKIE_SECRET)
+        .update(tokenData)
+        .digest('hex')
+        .substring(0, 16);
+
+    return `${tokenData}.${signature}`;
+}
+
+/**
+ * Validate a signed session token
+ */
+function validateSessionToken(signedToken, origin) {
+    if (!signedToken) return null;
+
+    const dotIndex = signedToken.lastIndexOf('.');
+    if (dotIndex === -1) return null;
+
+    const tokenData = signedToken.substring(0, dotIndex);
+    const signature = signedToken.substring(dotIndex + 1);
+
+    // Verify signature
+    const expectedSignature = crypto
+        .createHmac('sha256', config.COOKIE_SECRET)
+        .update(tokenData)
+        .digest('hex')
+        .substring(0, 16);
+
+    if (signature !== expectedSignature) {
+        console.log('[Auth] Invalid token signature');
+        return null;
+    }
+
+    // Parse token components
+    const parts = tokenData.split(':');
+    if (parts.length !== 3) return null;
+
+    const [sessionId, timestamp, originHash] = parts;
+    const tokenAge = Math.floor(Date.now() / 1000) - parseInt(timestamp, 10);
+
+    // Check expiration
+    if (tokenAge > config.COOKIE_MAX_AGE) {
+        console.log('[Auth] Token expired');
+        return null;
+    }
+
+    // Verify origin binding
+    const expectedOriginHash = crypto
+        .createHash('sha256')
+        .update(origin || 'unknown')
+        .digest('hex')
+        .substring(0, 8);
+
+    if (originHash !== expectedOriginHash) {
+        console.log('[Auth] Origin mismatch');
+        return null;
+    }
+
+    return { sessionId, timestamp: parseInt(timestamp, 10), originHash };
+}
+
+/**
+ * Parse cookies from request header
+ */
+function parseCookies(cookieHeader) {
+    const cookies = {};
+    if (!cookieHeader) return cookies;
+
+    cookieHeader.split(';').forEach(cookie => {
+        const parts = cookie.split('=');
+        if (parts.length >= 2) {
+            const key = parts[0].trim();
+            const value = parts.slice(1).join('=').trim();
+            cookies[key] = value;
+        }
+    });
+    return cookies;
+}
+
+/**
+ * Middleware to validate session cookie on protected routes
+ */
+function requireValidSession(req, res, next) {
+    const cookies = parseCookies(req.headers.cookie);
+    const sessionToken = cookies[config.COOKIE_NAME];
+    const origin = req.headers.origin || req.headers.referer;
+
+    const tokenData = validateSessionToken(sessionToken, origin);
+
+    if (!tokenData) {
+        console.log('[Auth] Request blocked - invalid or missing session cookie');
+        return res.status(403).json({
+            error: 'Invalid session',
+            code: 'SESSION_REQUIRED',
+            message: 'Please reload the widget to continue'
+        });
+    }
+
+    req.sessionData = tokenData;
+    next();
 }
 
 // Per-widget endpoint configurations
@@ -97,8 +228,122 @@ app.get('/health', (req, res) => {
             chat: true,
             contact: true,
             feedback: true,
-            botflow: true
+            botflow: true,
+            init: true,
+            shops: true
         }
+    });
+});
+
+// =============================================================================
+// SHOPS ENDPOINTS (PUBLIC - no session required)
+// =============================================================================
+
+const SHOPS_FILE = path.join(__dirname, 'data', 'wwz-shops.json');
+
+/**
+ * Get all shop locations
+ * GET /shops
+ */
+app.get('/shops', (req, res) => {
+    try {
+        const shopsData = JSON.parse(fs.readFileSync(SHOPS_FILE, 'utf8'));
+        console.log('[Shops] Returning', shopsData.shops.length, 'shops');
+        res.json(shopsData);
+    } catch (error) {
+        console.error('[Shops] Error reading shops file:', error.message);
+        res.status(500).json({ error: 'Failed to load shops data' });
+    }
+});
+
+/**
+ * Add or update a shop location
+ * POST /shops
+ * Header: x-api-key: wwz-shops-admin-2026
+ * Body: { shop: { id, name, shortName, address, contact, hours, services, googleMapsQuery } }
+ */
+const SHOPS_API_KEY = 'wwz-shops-admin-2026';
+
+app.post('/shops', (req, res) => {
+    try {
+        // Check API key
+        const apiKey = req.headers['x-api-key'];
+        if (apiKey !== SHOPS_API_KEY) {
+            console.log('[Shops] Unauthorized POST attempt');
+            return res.status(401).json({ error: 'Invalid API key' });
+        }
+
+        const { shop } = req.body;
+
+        if (!shop || !shop.id) {
+            return res.status(400).json({ error: 'Shop data with id is required' });
+        }
+
+        // Always normalize shop ID to lowercase
+        shop.id = shop.id.toLowerCase();
+
+        // Read existing data
+        let shopsData;
+        try {
+            shopsData = JSON.parse(fs.readFileSync(SHOPS_FILE, 'utf8'));
+        } catch (e) {
+            shopsData = { shops: [], metadata: { lastUpdated: null, version: '1.0' } };
+        }
+
+        // Find existing shop by id
+        const existingIndex = shopsData.shops.findIndex(s => s.id === shop.id);
+
+        if (existingIndex >= 0) {
+            // Update existing shop
+            shopsData.shops[existingIndex] = { ...shopsData.shops[existingIndex], ...shop };
+            console.log('[Shops] Updated shop:', shop.id);
+        } else {
+            // Add new shop
+            shopsData.shops.push(shop);
+            console.log('[Shops] Added new shop:', shop.id);
+        }
+
+        // Update metadata
+        shopsData.metadata.lastUpdated = new Date().toISOString();
+
+        // Write back to file
+        fs.writeFileSync(SHOPS_FILE, JSON.stringify(shopsData, null, 2), 'utf8');
+
+        res.json({
+            success: true,
+            message: existingIndex >= 0 ? 'Shop updated' : 'Shop added',
+            shop: shopsData.shops.find(s => s.id === shop.id)
+        });
+
+    } catch (error) {
+        console.error('[Shops] Error saving shop:', error.message);
+        res.status(500).json({ error: 'Failed to save shop data' });
+    }
+});
+
+/**
+ * Session initialization endpoint - sets the session cookie
+ * GET /init or GET /:widgetId/init
+ */
+app.get(['/init', '/:widgetId/init'], (req, res) => {
+    const origin = req.headers.origin;
+
+    if (!origin) {
+        console.log('[Init] Blocked - no origin header');
+        return res.status(403).json({ error: 'Origin header required' });
+    }
+
+    const signedToken = generateSessionToken(origin);
+
+    // Set the cookie with cross-origin compatible options
+    const cookieValue = `${config.COOKIE_NAME}=${signedToken}; HttpOnly; Secure; SameSite=None; Max-Age=${config.COOKIE_MAX_AGE}; Path=/`;
+    res.setHeader('Set-Cookie', cookieValue);
+
+    console.log('[Init] Session created for origin:', origin);
+
+    res.json({
+        status: 'ok',
+        message: 'Session initialized'
     });
 });
 
@@ -117,7 +362,7 @@ function getWidgetConfig(widgetId) {
  * Per-widget Chat endpoint
  * POST /:widgetId/chat
  */
-app.post('/:widgetId/chat', async (req, res) => {
+app.post('/:widgetId/chat', requireValidSession, async (req, res) => {
     try {
         const { widgetId } = req.params;
         const widgetConfig = getWidgetConfig(widgetId);
@@ -180,7 +425,7 @@ app.post('/:widgetId/chat', async (req, res) => {
  * Per-widget Feedback endpoint
  * POST /:widgetId/feedback
  */
-app.post('/:widgetId/feedback', async (req, res) => {
+app.post('/:widgetId/feedback', requireValidSession, async (req, res) => {
     try {
         const { widgetId } = req.params;
         const widgetConfig = getWidgetConfig(widgetId);
@@ -241,7 +486,7 @@ app.post('/:widgetId/feedback', async (req, res) => {
  * Per-widget Contact form endpoint
  * POST /:widgetId/contact
  */
-app.post('/:widgetId/contact', async (req, res) => {
+app.post('/:widgetId/contact', requireValidSession, async (req, res) => {
     try {
         const { widgetId } = req.params;
         const widgetConfig = getWidgetConfig(widgetId);
@@ -292,7 +537,7 @@ app.post('/:widgetId/contact', async (req, res) => {
  * Per-widget Botflow endpoint
  * POST /:widgetId/botflow
  */
-app.post('/:widgetId/botflow', async (req, res) => {
+app.post('/:widgetId/botflow', requireValidSession, async (req, res) => {
     try {
         const { widgetId } = req.params;
         const widgetConfig = getWidgetConfig(widgetId);
@@ -336,7 +581,7 @@ app.post('/:widgetId/botflow', async (req, res) => {
  * Legacy Chat endpoint
  * POST /chat
  */
-app.post('/chat', async (req, res) => {
+app.post('/chat', requireValidSession, async (req, res) => {
     try {
         const { blizzUserMsg, blizzSessionId, blizzBotMessageId, clientUrl, widgetId, agentId } = req.body;
 
@@ -388,7 +633,7 @@ app.post('/chat', async (req, res) => {
  * Legacy Feedback endpoint
  * POST /feedback
  */
-app.post('/feedback', async (req, res) => {
+app.post('/feedback', requireValidSession, async (req, res) => {
     try {
         const { blizzSessionId, rating, ratingComment, agentId, widgetId, timestamp } = req.body;
 
@@ -437,7 +682,7 @@ app.post('/feedback', async (req, res) => {
  * Legacy Contact form endpoint
  * POST /contact
  */
-app.post('/contact', async (req, res) => {
+app.post('/contact', requireValidSession, async (req, res) => {
     try {
         const { type, message, formData, widgetId, agentId, formpayload, sessionId, timestamp } = req.body;
 
@@ -481,7 +726,7 @@ app.post('/contact', async (req, res) => {
  * Legacy Botflow endpoint
  * POST /botflow
  */
-app.post('/botflow', async (req, res) => {
+app.post('/botflow', requireValidSession, async (req, res) => {
     try {
         console.log('[Botflow] Forwarding request');
 
