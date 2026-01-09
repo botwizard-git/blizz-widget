@@ -34,10 +34,30 @@
         /* This is where the widget will be embedded */
         #wwz-blizz-parent {
             margin: 20px 0;
-            height: 800px;
+            min-height: 400px;
+            max-height: calc(100vh - 200px);
+            height: 70vh;
             border: 1px solid #e5e5e5;
             border-radius: 8px;
             overflow: hidden;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            #wwz-blizz-parent {
+                height: 60vh;
+                min-height: 300px;
+                max-height: calc(100vh - 150px);
+            }
+        }
+        
+        @media (max-height: 600px) {
+            #wwz-blizz-parent {
+                height: calc(100vh - 120px);
+                min-height: 250px;
+            }
         }
     </style>
 </head>
