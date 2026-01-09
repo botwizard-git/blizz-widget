@@ -48,11 +48,15 @@
             elements.messages.addEventListener('click', (e) => {
                 const copyBtn = e.target.closest('.wwz-ivy-copy-btn');
                 const speakBtn = e.target.closest('.wwz-ivy-speak-btn');
+                const refDownloadLink = e.target.closest('.wwz-ivy-ref-download');
 
                 if (copyBtn) {
                     this.handleCopyMessage(copyBtn.dataset.text);
                 } else if (speakBtn) {
                     this.handleSpeakMessage(speakBtn.dataset.text);
+                } else if (refDownloadLink) {
+                    e.preventDefault();
+                    this.handleReferenceDownload(refDownloadLink.dataset.url, refDownloadLink.dataset.filename);
                 }
             });
 
@@ -145,7 +149,9 @@
          */
         handleClose: function() {
             const state = State.get();
-            if (state.messages.length > 0) {
+            // Only show feedback if user has sent at least one message
+            const hasUserMessage = state.messages.some(msg => msg.role === 'user');
+            if (hasUserMessage) {
                 UI.resetFeedbackForm();
                 UI.showScreen('feedback');
             } else {
@@ -346,6 +352,40 @@
             utterance.pitch = 1;
 
             window.speechSynthesis.speak(utterance);
+        },
+
+        /**
+         * Handle reference download as blob via proxy (to bypass CORS)
+         */
+        handleReferenceDownload: async function(url, filename) {
+            try {
+                // Use the download proxy to bypass CORS
+                const proxyUrl = 'https://blizz-api.botwizard.ch/download-proxy?url=' + encodeURIComponent(url);
+
+                const response = await fetch(proxyUrl, {
+                    method: 'GET',
+                    credentials: 'include' // Include session cookie
+                });
+
+                if (!response.ok) {
+                    throw new Error('Download failed: ' + response.status);
+                }
+
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = filename || 'download.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(blobUrl);
+            } catch (error) {
+                console.error('WWZIvy: Download error', error);
+                // Fallback: open in new tab
+                window.open(url, '_blank');
+            }
         },
 
         /**

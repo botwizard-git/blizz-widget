@@ -172,6 +172,13 @@
                         <div class="wwz-blizz-chat-screen wwz-blizz-hidden" id="wwz-blizz-chat-screen">\
                             <div class="wwz-blizz-messages-container" id="wwz-blizz-messages-container"></div>\
                             \
+                            <!-- Scroll to Bottom Button (ChatGPT-style) -->\
+                            <button id="wwz-blizz-scroll-to-bottom" class="wwz-blizz-scroll-to-bottom" title="Nach unten scrollen">\
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">\
+                                    <path d="M12 5v14M5 12l7 7 7-7"/>\
+                                </svg>\
+                            </button>\
+                            \
                             <div class="wwz-blizz-bottom-input-wrapper">\
                                 <div class="wwz-blizz-suggestions-container" id="wwz-blizz-suggestions-container"></div>\
                                 \

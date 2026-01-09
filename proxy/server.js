@@ -755,6 +755,93 @@ app.post('/botflow', requireValidSession, async (req, res) => {
     }
 });
 
+// =============================================================================
+// FILE DOWNLOAD PROXY (bypasses CORS for external file downloads)
+// =============================================================================
+
+/**
+ * Allowed domains for file downloads (security whitelist)
+ */
+const ALLOWED_DOWNLOAD_DOMAINS = [
+    'www.wwz.ch',
+    'wwz.ch'
+];
+
+/**
+ * Download proxy endpoint
+ * GET /download-proxy?url=<encoded-url>
+ */
+app.get('/download-proxy', requireValidSession, async (req, res) => {
+    try {
+        const { url } = req.query;
+
+        if (!url) {
+            return res.status(400).json({ error: 'URL parameter is required' });
+        }
+
+        // Parse and validate URL
+        let parsedUrl;
+        try {
+            parsedUrl = new URL(url);
+        } catch (e) {
+            return res.status(400).json({ error: 'Invalid URL format' });
+        }
+
+        // Security: Only allow whitelisted domains
+        const domain = parsedUrl.hostname.toLowerCase();
+        if (!ALLOWED_DOWNLOAD_DOMAINS.includes(domain)) {
+            console.log('[Download Proxy] Blocked domain:', domain);
+            return res.status(403).json({ error: 'Domain not allowed for download proxy' });
+        }
+
+        console.log('[Download Proxy] Fetching:', url);
+
+        const response = await fetchWithTimeout(url, {
+            method: 'GET',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; BlizzWidget/1.0)'
+            }
+        });
+
+        if (!response.ok) {
+            console.error('[Download Proxy] Fetch failed:', response.status);
+            return res.status(response.status).json({ error: 'Failed to fetch file' });
+        }
+
+        // Get content type and filename
+        const contentType = response.headers.get('content-type') || 'application/octet-stream';
+        const contentDisposition = response.headers.get('content-disposition');
+
+        // Extract filename from URL if not in content-disposition
+        let filename = parsedUrl.pathname.split('/').pop() || 'download';
+        if (contentDisposition) {
+            const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+            if (match && match[1]) {
+                filename = match[1].replace(/['"]/g, '');
+            }
+        }
+
+        // Set response headers for download
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+        // Forward content-length if available
+        const contentLength = response.headers.get('content-length');
+        if (contentLength) {
+            res.setHeader('Content-Length', contentLength);
+        }
+
+        // Stream the response body
+        const buffer = await response.buffer();
+        console.log('[Download Proxy] Sending file:', filename, '(' + buffer.length + ' bytes)');
+        res.send(buffer);
+
+    } catch (error) {
+        console.error('[Download Proxy] Error:', error.message);
+        res.status(500).json({ error: 'Download proxy error' });
+    }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error('[Error]', err.message);

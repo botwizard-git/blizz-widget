@@ -252,10 +252,11 @@
 .wwz-blizz-messages-container {
     flex: 1;
     overflow-y: auto;
-    padding: 24px 20px;
+    padding: 12px 20px 50px 20px; /* Increased bottom padding for thumbs visibility */
     display: flex;
     flex-direction: column;
     gap: 24px;
+    justify-content: flex-start; /* Messages start at top like ChatGPT */
 }
 
 .wwz-blizz-messages-container::-webkit-scrollbar {
@@ -269,6 +270,56 @@
 
 .wwz-blizz-messages-container::-webkit-scrollbar-track {
     background: transparent;
+}
+
+/* ========================================
+   SCROLL TO BOTTOM BUTTON (ChatGPT-style)
+   ======================================== */
+.wwz-blizz-scroll-to-bottom {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--eb-bg);
+    border: 1px solid var(--eb-border);
+    box-shadow: var(--eb-shadow);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    z-index: 10;
+    color: var(--eb-text-muted);
+}
+
+.wwz-blizz-scroll-to-bottom.wwz-blizz-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.wwz-blizz-scroll-to-bottom:hover {
+    background: var(--eb-bg-secondary);
+    border-color: var(--eb-primary);
+    color: var(--eb-primary);
+    transform: translateX(-50%) scale(1.1);
+}
+
+.wwz-blizz-scroll-to-bottom:active {
+    transform: translateX(-50%) scale(0.95);
+}
+
+/* Mobile adjustments for scroll button */
+@media (max-width: 640px) {
+    .wwz-blizz-scroll-to-bottom {
+        bottom: 90px;
+        width: 32px;
+        height: 32px;
+    }
 }
 
 /* ========================================
@@ -1073,7 +1124,7 @@
         min-height: 0; /* Enables proper scrolling in flex container */
         overflow-y: auto;
         -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-        padding: 16px;
+        padding: 8px 16px 50px 16px; /* Increased bottom padding for thumbs visibility */
     }
 
     .wwz-blizz-welcome-screen {

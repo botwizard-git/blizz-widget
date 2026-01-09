@@ -292,6 +292,14 @@
                 });
             }
 
+            // Scroll to bottom button (ChatGPT-style)
+            var scrollToBottomBtn = document.getElementById('wwz-blizz-scroll-to-bottom');
+            if (scrollToBottomBtn) {
+                scrollToBottomBtn.addEventListener('click', function() {
+                    EBB.UI.scrollToBottom(true); // true = smooth scroll
+                });
+            }
+
             console.log('[WWZBlizz] Events initialized');
         },
 
@@ -566,10 +574,8 @@
             var StateManager = EBB.StateManager;
             var APIService = EBB.APIService;
 
-            if (self.isGreeting(text)) {
-                self.handleGreeting(text);
-                return;
-            }
+            // Note: Greeting interceptor removed - all messages go to API
+            // This ensures questions like "hello I have doubt about X" are processed properly
 
             // Check for YouTube keyword - show dummy video widget
             if (text.toLowerCase().indexOf('youtube') !== -1) {

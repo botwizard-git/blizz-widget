@@ -52,7 +52,47 @@
             this.elements.privacyModal = document.getElementById('wwz-blizz-privacy-modal');
             this.elements.privacyClose = document.getElementById('wwz-blizz-privacy-close');
 
+            // Scroll to bottom button
+            this.elements.scrollToBottomBtn = document.getElementById('wwz-blizz-scroll-to-bottom');
+
+            // Initialize scroll listener for ChatGPT-style behavior
+            this.initScrollListener();
+
             console.log('[WWZBlizz] UI elements initialized');
+        },
+
+        /**
+         * Initialize scroll listener for showing/hiding scroll-to-bottom button
+         */
+        initScrollListener: function() {
+            var self = this;
+            var container = this.elements.messagesContainer;
+
+            if (!container) return;
+
+            container.addEventListener('scroll', function() {
+                self.updateScrollButtonVisibility();
+            });
+        },
+
+        /**
+         * Update scroll-to-bottom button visibility based on scroll position
+         */
+        updateScrollButtonVisibility: function() {
+            var container = this.elements.messagesContainer;
+            var btn = this.elements.scrollToBottomBtn;
+
+            if (!btn || !container) return;
+
+            // Calculate how far user has scrolled from bottom
+            var scrolledFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+
+            // Show button if scrolled up more than 100px from bottom
+            if (scrolledFromBottom > 100) {
+                btn.classList.add('wwz-blizz-visible');
+            } else {
+                btn.classList.remove('wwz-blizz-visible');
+            }
         },
 
         /**
@@ -397,11 +437,36 @@
         },
 
         /**
-         * Scroll to bottom
+         * Scroll to bottom (with optional smooth animation)
+         * Only scrolls if content actually exceeds container height (ChatGPT behavior)
+         * Thumbs visibility is handled by bottom padding in CSS
          */
-        scrollToBottom: function() {
+        scrollToBottom: function(smooth) {
+            var self = this;
             var container = this.elements.messagesContainer;
-            container.scrollTop = container.scrollHeight;
+
+            if (!container) return;
+
+            // Only scroll if content exceeds container height (has overflow)
+            // This prevents scrolling to empty space when there's only 1-2 messages
+            if (container.scrollHeight > container.clientHeight) {
+                // Scroll to actual bottom - thumbs visibility handled by bottom padding
+                var scrollTarget = container.scrollHeight - container.clientHeight;
+
+                if (smooth) {
+                    container.scrollTo({
+                        top: scrollTarget,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    container.scrollTop = scrollTarget;
+                }
+            }
+
+            // Update button visibility after scroll completes
+            setTimeout(function() {
+                self.updateScrollButtonVisibility();
+            }, smooth ? 300 : 0);
         },
 
         /**

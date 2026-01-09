@@ -701,23 +701,28 @@
                 // Handle both string URLs and objects with url/title
                 const url = (typeof ref === 'string') ? ref : (ref.url || '');
                 let title = (typeof ref === 'object' && ref.title) ? ref.title : '';
+                let filename = '';
 
-                // If no title, extract filename from URL without extension
-                if (!title && url) {
+                // Extract filename from URL
+                if (url) {
                     try {
                         const pathname = new URL(url).pathname;
-                        const filename = pathname.split('/').pop() || url;
-                        // Remove extension
-                        title = filename.replace(/\.[^/.]+$/, '');
+                        filename = pathname.split('/').pop() || 'download';
+                        // If no title, use filename without extension
+                        if (!title) {
+                            title = filename.replace(/\.[^/.]+$/, '');
+                        }
                     } catch (e) {
-                        title = url;
+                        filename = 'download';
+                        if (!title) title = url;
                     }
                 }
 
                 const isPdf = url.toLowerCase().endsWith('.pdf');
 
                 if (isPdf) {
-                    return `<li><a href="${self.escapeHtml(url)}" target="_blank" rel="noopener" download>${self.escapeHtml(title)}</a></li>`;
+                    // Use data attributes for blob download handling
+                    return `<li><a href="#" class="wwz-ivy-ref-download" data-url="${self.escapeHtml(url)}" data-filename="${self.escapeHtml(filename)}">${self.escapeHtml(title)}</a></li>`;
                 } else {
                     return `<li><a href="${self.escapeHtml(url)}" target="_blank" rel="noopener">${self.escapeHtml(title)}</a></li>`;
                 }
