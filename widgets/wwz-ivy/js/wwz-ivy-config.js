@@ -14,6 +14,7 @@
         // API Configuration - all calls go through blizz-proxy
         apiEndpoint: 'https://blizz-api.botwizard.ch/wwz-ivy/chat',
         contactEndpoint: 'https://blizz-api.botwizard.ch/wwz-ivy/contact',
+        initEndpoint: 'https://blizz-api.botwizard.ch/wwz-ivy/init',
 
         // Internal vs External mode - detected from container class
         isInternal: function() {

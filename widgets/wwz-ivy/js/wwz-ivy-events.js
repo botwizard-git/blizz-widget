@@ -246,7 +246,8 @@
                     // Add bot response
                     const botMessage = State.addMessage({
                         role: 'bot',
-                        text: response.message
+                        text: response.message,
+                        references: response.references || []
                     });
                     UI.addMessage(botMessage);
 

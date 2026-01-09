@@ -11,6 +11,82 @@
 
     window.WWZIvy.API = {
         /**
+         * Track if session cookie is initialized
+         */
+        _sessionInitialized: false,
+
+        /**
+         * Fetch with timeout support (includes credentials for cookies)
+         */
+        fetchWithTimeout: function(url, options, timeout) {
+            var timeoutMs = timeout || 60000;
+
+            // Always include credentials for cookie support
+            var fetchOptions = Object.assign({}, options, {
+                credentials: 'include'
+            });
+
+            return new Promise(function(resolve, reject) {
+                var timeoutId = setTimeout(function() {
+                    reject(new Error('TIMEOUT'));
+                }, timeoutMs);
+
+                fetch(url, fetchOptions)
+                    .then(function(response) {
+                        clearTimeout(timeoutId);
+                        resolve(response);
+                    })
+                    .catch(function(error) {
+                        clearTimeout(timeoutId);
+                        reject(error);
+                    });
+            });
+        },
+
+        /**
+         * Initialize session with server (get cookie)
+         */
+        initSession: function() {
+            var self = this;
+
+            if (this._sessionInitialized) {
+                return Promise.resolve(true);
+            }
+
+            console.log('[WWZIvy] Initializing session...');
+
+            return this.fetchWithTimeout(Config.initEndpoint, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    console.error('[WWZIvy] Session init failed:', response.status);
+                    return false;
+                }
+                self._sessionInitialized = true;
+                console.log('[WWZIvy] Session initialized successfully');
+                return true;
+            })
+            .catch(function(error) {
+                console.error('[WWZIvy] Session init error:', error);
+                return false;
+            });
+        },
+
+        /**
+         * Ensure session is initialized before making API calls
+         */
+        ensureSession: function() {
+            if (this._sessionInitialized) {
+                return Promise.resolve(true);
+            }
+            return this.initSession();
+        },
+
+        /**
          * Build request payload
          */
         buildPayload: function(message) {
@@ -25,24 +101,39 @@
         /**
          * Send message to chat API
          */
-        sendMessage: async function(message) {
-            const payload = this.buildPayload(message);
+        sendMessage: function(message) {
+            var self = this;
 
-            const response = await fetch(Config.apiEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json, text/plain, */*'
-                },
-                body: JSON.stringify(payload)
+            return this.ensureSession().then(function(hasSession) {
+                if (!hasSession) {
+                    console.warn('[WWZIvy] No session, attempting to send anyway');
+                }
+
+                var payload = self.buildPayload(message);
+
+                return self.fetchWithTimeout(Config.apiEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json, text/plain, */*'
+                    },
+                    body: JSON.stringify(payload)
+                });
+            })
+            .then(function(response) {
+                // Handle 403 - session expired or invalid
+                if (response.status === 403) {
+                    self._sessionInitialized = false;
+                    throw new Error('SESSION_EXPIRED');
+                }
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                return self.parseResponse(data);
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            return this.parseResponse(data);
         },
 
         /**
@@ -61,7 +152,8 @@
                     return {
                         type: 'contactForm',
                         formData: formData,
-                        suggestions: data.suggestions || []
+                        suggestions: data.suggestions || [],
+                        references: data.references || []
                     };
                 } catch (e) {
                     console.error('WWZIvy: Failed to parse contact form payload', e);
@@ -74,7 +166,8 @@
                     message: data.simpleMessage,
                     suggestions: data.suggestions || [],
                     action: data.action || null,
-                    actionType: data.actionType || null
+                    actionType: data.actionType || null,
+                    references: data.references || []
                 };
             }
 
@@ -85,7 +178,8 @@
                     message: reply.text || reply.message || '',
                     suggestions: data.suggestions || reply.suggestions || [],
                     action: data.action || null,
-                    actionType: data.actionType || null
+                    actionType: data.actionType || null,
+                    references: data.references || []
                 };
             }
 
@@ -95,7 +189,8 @@
                     message: data.message || data.text,
                     suggestions: data.suggestions || [],
                     action: data.action || null,
-                    actionType: data.actionType || null
+                    actionType: data.actionType || null,
+                    references: data.references || []
                 };
             }
 
@@ -104,19 +199,21 @@
                 message: 'Es tut mir leid, ich konnte Ihre Anfrage nicht verarbeiten.',
                 suggestions: Config.suggestions,
                 action: null,
-                actionType: null
+                actionType: null,
+                references: []
             };
         },
 
         /**
          * Submit feedback
          */
-        submitFeedback: async function(feedbackData, sessionId) {
+        submitFeedback: function(feedbackData, sessionId) {
+            var self = this;
             // Feedback endpoint - via blizz-proxy
-            const feedbackEndpoint = Config.apiEndpoint.replace('/chat', '/feedback');
+            var feedbackEndpoint = Config.apiEndpoint.replace('/chat', '/feedback');
 
-            try {
-                const payload = {
+            return this.ensureSession().then(function() {
+                var payload = {
                     sessionId: sessionId || Storage.getSessionId(),
                     timestamp: new Date().toISOString(),
                     isInternal: Config.isInternal()
@@ -132,50 +229,61 @@
                     payload.rating = feedbackData;
                 }
 
-                const response = await fetch(feedbackEndpoint, {
+                return self.fetchWithTimeout(feedbackEndpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(payload)
                 });
-
+            })
+            .then(function(response) {
+                if (response.status === 403) {
+                    self._sessionInitialized = false;
+                }
                 return response.ok;
-            } catch (error) {
-                console.warn('WWZIvy: Feedback submission failed', error);
+            })
+            .catch(function(error) {
+                console.warn('[WWZIvy] Feedback submission failed', error);
                 return false;
-            }
+            });
         },
 
         /**
          * Submit contact form
          */
-        submitContactForm: async function(formData) {
-            const contactEndpoint = Config.contactEndpoint;
+        submitContactForm: function(formData) {
+            var self = this;
 
-            // Format payload as expected by blizz-proxy
-            const payload = {
-                type: 'simpleMessage',
-                message: JSON.stringify(formData),
-                formData: formData,
-                sessionId: Storage.getSessionId(),
-                timestamp: new Date().toISOString()
-            };
+            return this.ensureSession().then(function() {
+                // Format payload as expected by blizz-proxy
+                var payload = {
+                    type: 'simpleMessage',
+                    message: JSON.stringify(formData),
+                    formData: formData,
+                    sessionId: Storage.getSessionId(),
+                    timestamp: new Date().toISOString()
+                };
 
-            try {
-                const response = await fetch(contactEndpoint, {
+                return self.fetchWithTimeout(Config.contactEndpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(payload)
                 });
-
+            })
+            .then(function(response) {
+                if (response.status === 403) {
+                    self._sessionInitialized = false;
+                    throw new Error('SESSION_EXPIRED');
+                }
                 return response.ok;
-            } catch (error) {
-                console.error('WWZIvy: Contact form submission failed', error);
+            })
+            .catch(function(error) {
+                console.error('[WWZIvy] Contact form submission failed', error);
                 return false;
-            }
+            });
         }
     };
 })();

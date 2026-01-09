@@ -313,8 +313,9 @@
             messageEl.dataset.id = message.id;
 
             if (message.role === 'bot') {
+                const referencesHtml = this.formatReferences(message.references);
                 messageEl.innerHTML = `
-                    <div class="wwz-ivy-message-bubble">${this.formatMessage(message.text)}</div>
+                    <div class="wwz-ivy-message-bubble">${this.formatMessage(message.text)}${referencesHtml}</div>
                     <div class="wwz-ivy-message-footer">
                         <div class="wwz-ivy-message-avatar">
                             <img src="${Config.botAvatar}" alt="${Config.botName}">
@@ -687,6 +688,42 @@
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;
             return tempDiv.textContent || tempDiv.innerText || '';
+        },
+
+        /**
+         * Format references as HTML list with download links for PDFs
+         */
+        formatReferences: function(references) {
+            if (!references || references.length === 0) return '';
+
+            const self = this;
+            const listItems = references.map(ref => {
+                // Handle both string URLs and objects with url/title
+                const url = (typeof ref === 'string') ? ref : (ref.url || '');
+                let title = (typeof ref === 'object' && ref.title) ? ref.title : '';
+
+                // If no title, extract filename from URL without extension
+                if (!title && url) {
+                    try {
+                        const pathname = new URL(url).pathname;
+                        const filename = pathname.split('/').pop() || url;
+                        // Remove extension
+                        title = filename.replace(/\.[^/.]+$/, '');
+                    } catch (e) {
+                        title = url;
+                    }
+                }
+
+                const isPdf = url.toLowerCase().endsWith('.pdf');
+
+                if (isPdf) {
+                    return `<li><a href="${self.escapeHtml(url)}" target="_blank" rel="noopener" download>${self.escapeHtml(title)}</a></li>`;
+                } else {
+                    return `<li><a href="${self.escapeHtml(url)}" target="_blank" rel="noopener">${self.escapeHtml(title)}</a></li>`;
+                }
+            }).join('');
+
+            return `<p><strong>Referenzen</strong></p><ul>${listItems}</ul>`;
         },
 
         /**
