@@ -373,13 +373,14 @@
 
             return `
                 <div class="wwz-ivy-form-field">
-                    <label class="wwz-ivy-form-label">${this.escapeHtml(field.name)}</label>
+                    <div class="wwz-ivy-form-label">${this.escapeHtml(field.name)}</div>
                     <input
                         id="${fieldId}"
                         type="${inputType}"
                         name="${this.escapeHtml(field.name)}"
                         class="wwz-ivy-form-input"
                         ${isRequired ? 'required' : ''}
+                        ${inputType === 'text' ? 'placeholder="test123"' : ''}
                         data-error="${this.escapeHtml(errorMsg)}"
                     />
                     <span class="wwz-ivy-form-error"></span>
