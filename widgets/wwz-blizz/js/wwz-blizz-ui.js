@@ -862,13 +862,15 @@
                 inputType = 'tel';
             } else if (fieldType === 'time') {
                 inputType = 'time';
+            } else if (fieldType === 'textarea') {
+                inputType = 'textarea';
             }
 
             var isRequired = field['required'];
             var errorMsg = field['error message'] || 'Dieses Feld ist erforderlich';
 
             return '<div class="wwz-blizz-form-field">' +
-                '<label class="wwz-blizz-form-label">' + this.escapeHtml(field.name) + '</label>' +
+                '<div class="wwz-blizz-form-label">' + this.escapeHtml(field.name) + '</div>' +
                 '<input ' +
                     'id="' + fieldId + '" ' +
                     'type="' + inputType + '" ' +
