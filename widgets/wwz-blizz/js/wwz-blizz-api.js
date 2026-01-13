@@ -134,8 +134,8 @@
                 }
             }
 
-            // Handle simpleMessage format
-            if (data && data.type === 'simpleMessage') {
+            // Handle simpleMessage format (including simpleMessage-ai)
+            if (data && data.type && data.type.indexOf('simpleMessage') === 0) {
                 return {
                     type: 'simpleMessage',
                     message: data.message || '',
