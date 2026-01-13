@@ -495,6 +495,101 @@
         },
 
         /**
+         * Simple fuzzy match score between query and target string
+         * Returns score 0-1, higher is better match
+         */
+        fuzzyMatchScore: function(query, target) {
+            // Normalize both strings
+            query = query.toLowerCase().trim();
+            target = target.toLowerCase().trim();
+
+            // Exact substring match
+            if (target.indexOf(query) !== -1) return 1.0;
+
+            // Word-based matching
+            var queryWords = query.split(/\s+/);
+            var targetWords = target.split(/\s+/);
+            var matchedWords = 0;
+
+            queryWords.forEach(function(qWord) {
+                if (qWord.length < 3) return; // Skip short words
+                targetWords.forEach(function(tWord) {
+                    if (tWord.indexOf(qWord) !== -1 || qWord.indexOf(tWord) !== -1) {
+                        matchedWords++;
+                    }
+                });
+            });
+
+            return matchedWords / Math.max(queryWords.length, 1);
+        },
+
+        /**
+         * Find best matching video from library
+         * Returns video object or null if no good match
+         */
+        findMatchingVideo: function(text) {
+            var CONFIG = EBB.CONFIG;
+            var self = this;
+
+            if (!CONFIG.videoLibrary || CONFIG.videoLibrary.length === 0) {
+                return null;
+            }
+
+            // Remove "video" keyword from search text
+            var searchText = text.toLowerCase()
+                .replace(/video/gi, '')
+                .trim();
+
+            if (searchText.length < 3) return null;
+
+            var bestMatch = null;
+            var bestScore = 0.3; // Minimum threshold
+
+            CONFIG.videoLibrary.forEach(function(video) {
+                var score = self.fuzzyMatchScore(searchText, video.title);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMatch = video;
+                }
+            });
+
+            console.log('[WWZBlizz] Video search:', searchText, '-> Best match:', bestMatch ? bestMatch.title : 'none', '(score:', bestScore + ')');
+            return bestMatch;
+        },
+
+        /**
+         * Handle matched video from library
+         */
+        handleVideoMatch: function(text, video) {
+            var UI = EBB.UI;
+            var StateManager = EBB.StateManager;
+
+            console.log('[WWZBlizz] Video match found:', video.title);
+
+            StateManager.setLoading(true);
+            UI.showTypingIndicator();
+
+            setTimeout(function() {
+                UI.hideTypingIndicator();
+                StateManager.setLoading(false);
+
+                // Extract video ID from embed URL
+                var videoId = video.url.split('/').pop();
+                var videoData = {
+                    url: 'https://www.youtube.com/watch?v=' + videoId,
+                    thumbnail: 'https://img.youtube.com/vi/' + videoId + '/maxresdefault.jpg',
+                    title: video.title
+                };
+
+                var videoHtml = UI.createVideoWidget(videoData);
+                var botMessage = StateManager.addMessage(videoHtml, false, { isHtml: true });
+                UI.renderMessage(botMessage);
+
+                UI.renderSuggestions(EBB.CONFIG.defaultSuggestions);
+            }, 800);
+        },
+
+        /**
          * Handle shop request with map widget
          */
         handleShopRequest: function(text, shop) {
@@ -576,6 +671,16 @@
 
             // Note: Greeting interceptor removed - all messages go to API
             // This ensures questions like "hello I have doubt about X" are processed properly
+
+            // Check for video keyword - attempt fuzzy match from library
+            if (text.toLowerCase().indexOf('video') !== -1) {
+                var matchedVideo = self.findMatchingVideo(text);
+                if (matchedVideo) {
+                    self.handleVideoMatch(text, matchedVideo);
+                    return;
+                }
+                // If no match found, continue to API
+            }
 
             // Check for YouTube keyword - show dummy video widget
             if (text.toLowerCase().indexOf('youtube') !== -1) {
