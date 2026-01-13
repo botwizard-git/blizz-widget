@@ -365,9 +365,13 @@
                 inputType = 'tel';
             } else if (fieldType === 'time') {
                 inputType = 'time';
+            } else if (fieldType === 'textarea') {
+                inputType = 'textarea';
             }
 
             const isRequired = field['required'];
+
+            const formFieldPlaceholder = field['placeholder']
 
             const errorMsg = field['error message'] || 'Dieses Feld ist erforderlich';
 
@@ -380,7 +384,7 @@
                         name="${this.escapeHtml(field.name)}"
                         class="wwz-ivy-form-input"
                         ${isRequired ? 'required' : ''}
-                        ${inputType === 'text' ? 'placeholder="test123"' : ''}
+                        ${formFieldPlaceholder ? `placeholder="${this.escapeHtml(formFieldPlaceholder)}"` : ''}
                         data-error="${this.escapeHtml(errorMsg)}"
                     />
                     <span class="wwz-ivy-form-error"></span>
