@@ -867,18 +867,35 @@
             }
 
             var isRequired = field['required'];
+            var formFieldPlaceholder = field['placeholder'];
             var errorMsg = field['error message'] || 'Dieses Feld ist erforderlich';
 
-            return '<div class="wwz-blizz-form-field">' +
-                '<div class="wwz-blizz-form-label">' + this.escapeHtml(field.name) + '</div>' +
-                '<input ' +
+            var inputElement;
+            if (inputType === 'textarea') {
+                inputElement = '<textarea ' +
+                    'id="' + fieldId + '" ' +
+                    'name="' + this.escapeHtml(field.name) + '" ' +
+                    'class="wwz-blizz-form-input" ' +
+                    (isRequired ? 'required ' : '') +
+                    (formFieldPlaceholder ? 'placeholder="' + this.escapeHtml(formFieldPlaceholder) + '" ' : '') +
+                    'data-error="' + this.escapeHtml(errorMsg) + '" ' +
+                    'rows="3"' +
+                '></textarea>';
+            } else {
+                inputElement = '<input ' +
                     'id="' + fieldId + '" ' +
                     'type="' + inputType + '" ' +
                     'name="' + this.escapeHtml(field.name) + '" ' +
                     'class="wwz-blizz-form-input" ' +
                     (isRequired ? 'required ' : '') +
+                    (formFieldPlaceholder ? 'placeholder="' + this.escapeHtml(formFieldPlaceholder) + '" ' : '') +
                     'data-error="' + this.escapeHtml(errorMsg) + '" ' +
-                '/>' +
+                '/>';
+            }
+
+            return '<div class="wwz-blizz-form-field">' +
+                '<div class="wwz-blizz-form-label">' + this.escapeHtml(field.name) + '</div>' +
+                inputElement +
                 '<span class="wwz-blizz-form-error"></span>' +
                 '</div>';
         },

@@ -371,13 +371,25 @@
 
             const isRequired = field['required'];
 
-            const formFieldPlaceholder = field['placeholder']
+            const formFieldPlaceholder = field['placeholder'];
 
             const errorMsg = field['error message'] || 'Dieses Feld ist erforderlich';
 
-            return `
-                <div class="wwz-ivy-form-field">
-                    <div class="wwz-ivy-form-label">${this.escapeHtml(field.name)}</div>
+            let inputElement;
+            if (inputType === 'textarea') {
+                inputElement = `
+                    <textarea
+                        id="${fieldId}"
+                        name="${this.escapeHtml(field.name)}"
+                        class="wwz-ivy-form-input"
+                        ${isRequired ? 'required' : ''}
+                        ${formFieldPlaceholder ? `placeholder="${this.escapeHtml(formFieldPlaceholder)}"` : ''}
+                        data-error="${this.escapeHtml(errorMsg)}"
+                        rows="3"
+                    ></textarea>
+                `;
+            } else {
+                inputElement = `
                     <input
                         id="${fieldId}"
                         type="${inputType}"
@@ -387,6 +399,13 @@
                         ${formFieldPlaceholder ? `placeholder="${this.escapeHtml(formFieldPlaceholder)}"` : ''}
                         data-error="${this.escapeHtml(errorMsg)}"
                     />
+                `;
+            }
+
+            return `
+                <div class="wwz-ivy-form-field">
+                    <div class="wwz-ivy-form-label">${this.escapeHtml(field.name)}</div>
+                    ${inputElement}
                     <span class="wwz-ivy-form-error"></span>
                 </div>
             `;
