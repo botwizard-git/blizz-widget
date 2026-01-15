@@ -20,6 +20,7 @@ const fetch = require('node-fetch');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const { sendErrorAlert } = require('./utils/slackHelper');
 // Note: CORS is handled by nginx, not Express
 
 // Global config
@@ -448,7 +449,34 @@ app.post('/:widgetId/chat', requireValidSession, async (req, res) => {
                 console.log(`[${widgetId}/Chat] Returning fallback response`);
                 return res.json(data);
             }
+            // Send Slack alert for API failures
+            sendErrorAlert(`${widgetId} Error: API Request Failed`, `EnterpriseBot API returned status ${response.status}`, {
+                sessionId: blizzSessionId,
+                origin: req.headers.origin || req.headers.referer,
+                endpoint: endpoint,
+                userMessage: blizzUserMsg,
+                additionalContext: {
+                    'Widget': widgetId,
+                    'Status Code': response.status,
+                    'Response': data ? JSON.stringify(data).substring(0, 200) : 'No response body'
+                }
+            });
             return res.status(response.status).json({ error: 'API request failed' });
+        }
+
+        // Check for empty/fallback response (296 bytes issue)
+        if (data && !data.simpleMessage && !data.message && !data.text && (!data.replies || data.replies.length === 0)) {
+            console.warn(`[${widgetId}/Chat] Empty response from EnterpriseBot`);
+            sendErrorAlert(`${widgetId} Error: Empty Response`, 'EnterpriseBot returned empty/malformed response', {
+                sessionId: blizzSessionId,
+                origin: req.headers.origin || req.headers.referer,
+                endpoint: endpoint,
+                userMessage: blizzUserMsg,
+                additionalContext: {
+                    'Widget': widgetId,
+                    'Response Data': JSON.stringify(data).substring(0, 500)
+                }
+            });
         }
 
         console.log(`[${widgetId}/Chat] Response received`);
@@ -456,6 +484,18 @@ app.post('/:widgetId/chat', requireValidSession, async (req, res) => {
 
     } catch (error) {
         console.error(`[Chat] Error:`, error.message);
+        // Send Slack alert for exceptions
+        const { widgetId } = req.params;
+        sendErrorAlert(`${widgetId} Error: Server Exception`, error.message, {
+            sessionId: req.body?.blizzSessionId,
+            origin: req.headers.origin || req.headers.referer,
+            userMessage: req.body?.blizzUserMsg,
+            additionalContext: {
+                'Widget': widgetId,
+                'Error Type': error.name || 'Unknown',
+                'Stack': error.stack ? error.stack.substring(0, 300) : 'No stack trace'
+            }
+        });
         res.status(500).json({ error: 'Internal server error' });
     }
 });
