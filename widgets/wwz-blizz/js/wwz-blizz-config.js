@@ -20,6 +20,7 @@
         feedbackEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/feedback',
         contactEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/contact',
         initEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/init',
+        logErrorsEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/log_errors',
         shopsEndpoint: 'https://blizz-api.botwizard.ch/shops',
 
         // Internal vs External mode - detected from container class

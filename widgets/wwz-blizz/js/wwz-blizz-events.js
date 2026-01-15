@@ -780,21 +780,25 @@
         handleAPIError: function(error) {
             var UI = EBB.UI;
             var StateManager = EBB.StateManager;
+            var APIService = EBB.APIService;
             var CONFIG = EBB.CONFIG;
 
             StateManager.setError(error);
 
             var errorText;
             var statusText;
+            var errorType;
 
             // Check for timeout error
             if (error && error.message === 'TIMEOUT') {
                 errorText = 'Die Anfrage hat zu lange gedauert. Bitte versuchen Sie es erneut.';
                 statusText = 'Zeitüberschreitung';
+                errorType = 'timeout';
             } else if (error && error.message && error.message.indexOf('API Error: 404') !== -1) {
                 // 404 means the backend couldn't find an answer
                 errorText = 'Entschuldigung, ich konnte keine passende Antwort auf Ihre Frage finden. Bitte formulieren Sie Ihre Frage anders oder wählen Sie eine der Optionen unten.';
                 statusText = 'Keine Antwort gefunden';
+                errorType = 'no_answer';
                 // Show default suggestions to help user
                 setTimeout(function() {
                     UI.renderSuggestions(CONFIG.suggestions);
@@ -802,10 +806,19 @@
             } else if (error && error.message && error.message.indexOf('API Error') !== -1) {
                 errorText = 'Der Server ist momentan nicht erreichbar. Bitte versuchen Sie es später erneut.';
                 statusText = 'Server nicht erreichbar';
+                errorType = 'server_error';
             } else {
                 errorText = 'Es tut mir leid, es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.';
                 statusText = 'Verbindung fehlgeschlagen';
+                errorType = 'unknown';
             }
+
+            // Log the error to server
+            APIService.logError(error, {
+                errorType: errorType,
+                statusText: statusText,
+                lastUserMessage: StateManager.getLastUserMessageText()
+            });
 
             var errorMessage = StateManager.addMessage(errorText, false);
             UI.renderMessage(errorMessage);

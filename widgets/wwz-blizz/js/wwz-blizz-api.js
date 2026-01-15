@@ -400,6 +400,43 @@
         },
 
         /**
+         * Log client-side errors to the server
+         */
+        logError: function(error, context) {
+            var self = this;
+
+            return this.ensureSession().then(function() {
+                var payload = {
+                    error: error.message || String(error),
+                    stack: error.stack || null,
+                    context: context || {},
+                    timestamp: new Date().toISOString(),
+                    sessionId: SessionService.getSessionId(),
+                    widgetId: CONFIG.widgetId,
+                    userAgent: navigator.userAgent,
+                    url: window.location.href
+                };
+
+                return self.fetchWithTimeout(CONFIG.logErrorsEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }, 5000); // Short timeout for error logging
+            })
+            .then(function(response) {
+                return response.ok;
+            })
+            .catch(function(err) {
+                // Silently fail - don't cause more errors while logging errors
+                console.warn('[WWZBlizz] Failed to log error:', err);
+                return false;
+            });
+        },
+
+        /**
          * Submit contact form
          */
         submitContactForm: function(formData) {

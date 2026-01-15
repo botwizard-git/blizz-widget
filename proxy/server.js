@@ -6,11 +6,12 @@
  * GitHub secrets override defaults when deployed via CI/CD
  *
  * Routes:
- *   /:widgetId/chat     - Per-widget chat endpoint
- *   /:widgetId/feedback - Per-widget feedback endpoint
- *   /:widgetId/contact  - Per-widget contact form endpoint
- *   /:widgetId/botflow  - Per-widget botflow endpoint
- *   /chat, /feedback, /contact, /botflow - Legacy endpoints (backward compatible)
+ *   /:widgetId/chat       - Per-widget chat endpoint
+ *   /:widgetId/feedback   - Per-widget feedback endpoint
+ *   /:widgetId/contact    - Per-widget contact form endpoint
+ *   /:widgetId/botflow    - Per-widget botflow endpoint
+ *   /:widgetId/log_errors - Per-widget client error logging endpoint
+ *   /chat, /feedback, /contact, /botflow, /log_errors - Legacy endpoints (backward compatible)
  */
 
 require('dotenv').config();
@@ -579,6 +580,30 @@ app.post('/:widgetId/botflow', requireValidSession, async (req, res) => {
     }
 });
 
+/**
+ * Per-widget Error logging endpoint
+ * POST /:widgetId/log_errors
+ */
+app.post('/:widgetId/log_errors', requireValidSession, (req, res) => {
+    const { widgetId } = req.params;
+    const { error, stack, context, timestamp, sessionId, userAgent } = req.body;
+
+    if (!error) {
+        return res.status(400).json({ error: 'error field is required' });
+    }
+
+    console.error(`[${widgetId}/ClientError]`, {
+        error,
+        stack: stack || 'N/A',
+        context: context || {},
+        timestamp: timestamp || new Date().toISOString(),
+        sessionId: sessionId || 'unknown',
+        userAgent: userAgent || req.headers['user-agent']
+    });
+
+    res.json({ success: true, message: 'Error logged' });
+});
+
 // =============================================================================
 // LEGACY ROUTES: /chat, /feedback, /contact, /botflow (backward compatibility)
 // =============================================================================
@@ -759,6 +784,30 @@ app.post('/botflow', requireValidSession, async (req, res) => {
         console.error('[Botflow] Error:', error.message);
         res.status(500).json({ error: 'Internal server error' });
     }
+});
+
+/**
+ * Legacy Error logging endpoint
+ * POST /log_errors
+ */
+app.post('/log_errors', requireValidSession, (req, res) => {
+    const { error, stack, context, widgetId, timestamp, sessionId, userAgent } = req.body;
+
+    if (!error) {
+        return res.status(400).json({ error: 'error field is required' });
+    }
+
+    console.error('[ClientError]', {
+        error,
+        stack: stack || 'N/A',
+        context: context || {},
+        widgetId: widgetId || 'unknown',
+        timestamp: timestamp || new Date().toISOString(),
+        sessionId: sessionId || 'unknown',
+        userAgent: userAgent || req.headers['user-agent']
+    });
+
+    res.json({ success: true, message: 'Error logged' });
 });
 
 // =============================================================================
