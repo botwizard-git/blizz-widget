@@ -41,16 +41,25 @@
             // Initialize state from localStorage
             StateManager.init();
 
-            // Check collapsed state
+            // Check collapsed state and restore session if exists
             if (StateManager.isCollapsed()) {
                 UI.showCollapsed();
             } else {
                 UI.showExpanded();
-                UI.showWelcomeScreen();
-            }
 
-            // Render welcome suggestions
-            UI.renderWelcomeSuggestions(CONFIG.defaultSuggestions);
+                // Check if there's an existing session with messages to restore
+                var messages = StateManager.getMessages();
+                if (messages && messages.length > 0) {
+                    // Restore existing conversation
+                    UI.showChatScreen();
+                    UI.renderMessages(messages);
+                    console.log('[WWZBlizz] Restored', messages.length, 'messages from previous session');
+                } else {
+                    // No existing session, show welcome screen
+                    UI.showWelcomeScreen();
+                    UI.renderWelcomeSuggestions(CONFIG.defaultSuggestions);
+                }
+            }
 
             console.log('[WWZBlizz] Initialization complete');
         },

@@ -8,11 +8,42 @@
     var CONFIG = EBB.CONFIG;
     var SessionService = EBB.SessionService;
 
+    var STORAGE_KEYS = EBB.STORAGE_KEYS;
+
     EBB.APIService = {
         /**
-         * Track if session cookie is initialized
+         * Track if session cookie is initialized (in-memory flag)
          */
         _sessionInitialized: false,
+
+        /**
+         * Check if server cookie is still valid based on stored init time
+         */
+        _isCookieValid: function() {
+            var initTime = localStorage.getItem(STORAGE_KEYS.COOKIE_INIT_TIME);
+            if (!initTime) {
+                return false;
+            }
+
+            var elapsed = Date.now() - parseInt(initTime, 10);
+            var maxAge = CONFIG.cookieMaxAge || (23 * 60 * 60 * 1000); // 23 hours default
+
+            return elapsed < maxAge;
+        },
+
+        /**
+         * Store cookie init time
+         */
+        _setCookieInitTime: function() {
+            localStorage.setItem(STORAGE_KEYS.COOKIE_INIT_TIME, Date.now().toString());
+        },
+
+        /**
+         * Clear cookie init time (on session clear)
+         */
+        _clearCookieInitTime: function() {
+            localStorage.removeItem(STORAGE_KEYS.COOKIE_INIT_TIME);
+        },
 
         /**
          * Fetch with timeout support (includes credentials for cookies)
@@ -45,21 +76,36 @@
         /**
          * Initialize session with server (get cookie)
          * Called once when widget loads
+         * @param {boolean} forceRefresh - Force a new init call even if already initialized
          */
-        initSession: function() {
+        initSession: function(forceRefresh) {
             var self = this;
 
-            if (this._sessionInitialized) {
+            // Already initialized in this page session
+            if (this._sessionInitialized && !forceRefresh) {
+                return Promise.resolve(true);
+            }
+
+            // Check if we have a valid cookie from previous page load
+            // Skip /init call if cookie is still valid (avoids unnecessary API call on refresh)
+            if (!forceRefresh && this._isCookieValid()) {
+                console.log('[WWZBlizz] Using existing valid session cookie (skipping /init)');
+                this._sessionInitialized = true;
                 return Promise.resolve(true);
             }
 
             console.log('[WWZBlizz] Initializing session...');
 
-            return this.fetchWithTimeout(CONFIG.initEndpoint, {
+            // Add cache-busting timestamp to prevent browser caching
+            var initUrl = CONFIG.initEndpoint + '?_t=' + Date.now();
+
+            return this.fetchWithTimeout(initUrl, {
                 method: 'GET',
                 headers: {
-                    'Accept': 'application/json'
-                }
+                    'Accept': 'application/json',
+                    'Cache-Control': 'no-cache'
+                },
+                cache: 'no-store'
             })
             .then(function(response) {
                 if (!response.ok) {
@@ -67,6 +113,7 @@
                     return false;
                 }
                 self._sessionInitialized = true;
+                self._setCookieInitTime(); // Remember when we got the cookie
                 console.log('[WWZBlizz] Session initialized successfully');
                 return true;
             })
@@ -163,7 +210,7 @@
         /**
          * Send message to API
          */
-        sendMessage: function(message) {
+        sendMessage: function(message, isRetry) {
             var self = this;
 
             // Ensure session cookie exists before sending
@@ -188,6 +235,15 @@
                 // Handle 403 - session expired or invalid
                 if (response.status === 403) {
                     self._sessionInitialized = false;
+                    self._clearCookieInitTime(); // Cookie is invalid, clear stored time
+
+                    // Retry once with fresh init
+                    if (!isRetry) {
+                        console.log('[WWZBlizz] Session expired, re-initializing and retrying...');
+                        return self.initSession(true).then(function() {
+                            return self.sendMessage(message, true);
+                        });
+                    }
                     throw new Error('SESSION_EXPIRED');
                 }
                 if (!response.ok) {

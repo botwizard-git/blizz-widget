@@ -339,11 +339,17 @@ app.get(['/init', '/:widgetId/init'], (req, res) => {
     const cookieValue = `${config.COOKIE_NAME}=${signedToken}; HttpOnly; Secure; SameSite=None; Max-Age=${config.COOKIE_MAX_AGE}; Path=/`;
     res.setHeader('Set-Cookie', cookieValue);
 
+    // Prevent caching of init response so UI changes reflect immediately
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     console.log('[Init] Session created for origin:', origin);
 
     res.json({
         status: 'ok',
-        message: 'Session initialized'
+        message: 'Session initialized',
+        timestamp: Date.now()
     });
 });
 

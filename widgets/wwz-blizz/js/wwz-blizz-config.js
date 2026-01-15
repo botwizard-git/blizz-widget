@@ -233,8 +233,19 @@
             sessionId: 'wwz_blizz_sessionId',
             messages: 'wwz_blizz_messages',
             sessionMeta: 'wwz_blizz_sessionMeta',
-            collapsed: 'wwz_blizz_collapsed'
+            collapsed: 'wwz_blizz_collapsed',
+            sessionStartTime: 'wwz_blizz_sessionStartTime',
+            cookieInitTime: 'wwz_blizz_cookieInitTime'
         },
+
+        // Server cookie validity (should match server's COOKIE_MAX_AGE)
+        // Server sets 24 hours, we use 23 hours as buffer
+        cookieMaxAge: 23 * 60 * 60 * 1000, // 23 hours in milliseconds
+
+        // Session timeout configuration
+        // Session persists until user manually ends it OR this timeout is reached
+        // Set to 0 or null to disable timeout (session persists indefinitely until manual end)
+        sessionTimeout: 30 * 60 * 1000, // 30 minutes in milliseconds (configurable)
 
         // Timing
         typingDelay: 500,
@@ -263,7 +274,9 @@
         SESSION_ID: window.WWZBlizz.CONFIG.storageKeys.sessionId,
         MESSAGES: window.WWZBlizz.CONFIG.storageKeys.messages,
         SESSION_METADATA: window.WWZBlizz.CONFIG.storageKeys.sessionMeta,
-        COLLAPSED: window.WWZBlizz.CONFIG.storageKeys.collapsed
+        COLLAPSED: window.WWZBlizz.CONFIG.storageKeys.collapsed,
+        SESSION_START_TIME: window.WWZBlizz.CONFIG.storageKeys.sessionStartTime,
+        COOKIE_INIT_TIME: window.WWZBlizz.CONFIG.storageKeys.cookieInitTime
     };
 
     console.log('[WWZBlizz] Config loaded');

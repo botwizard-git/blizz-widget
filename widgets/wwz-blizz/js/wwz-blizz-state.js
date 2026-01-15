@@ -28,12 +28,24 @@
     EBB.StateManager = {
         /**
          * Initialize state from localStorage
+         * Checks for session expiry and clears expired sessions
          */
         init: function() {
             state.userId = SessionService.getUserId();
-            state.sessionId = SessionService.getSessionId();
-            state.messages = SessionService.getMessages();
             state.isCollapsed = SessionService.isCollapsed();
+
+            // Check if existing session is still valid (not expired)
+            if (SessionService.hasExistingSession()) {
+                // Session is valid, restore it
+                state.sessionId = SessionService.getSessionId();
+                state.messages = SessionService.getMessages();
+                console.log('[WWZBlizz] Valid session restored');
+            } else {
+                // No valid session or expired - start fresh
+                state.sessionId = null;
+                state.messages = [];
+                console.log('[WWZBlizz] No valid session, starting fresh');
+            }
 
             console.log('[WWZBlizz] State initialized:', {
                 userId: state.userId,
@@ -41,6 +53,20 @@
                 messageCount: state.messages.length,
                 isCollapsed: state.isCollapsed
             });
+        },
+
+        /**
+         * Check if current session is expired
+         */
+        isSessionExpired: function() {
+            return SessionService.isSessionExpired();
+        },
+
+        /**
+         * Get remaining session time in milliseconds
+         */
+        getRemainingSessionTime: function() {
+            return SessionService.getRemainingSessionTime();
         },
 
         /**
@@ -241,10 +267,11 @@
         },
 
         /**
-         * Check if there's an existing session with messages
+         * Check if there's an existing valid (non-expired) session with messages
          */
         hasExistingSession: function() {
-            return !!(state.sessionId && state.messages.length > 0);
+            // Use SessionService which checks for expiry
+            return SessionService.hasExistingSession();
         },
 
         /**
@@ -274,8 +301,9 @@
 
         /**
          * Reset state for new conversation
+         * Optionally force re-initialization of server session
          */
-        reset: function() {
+        reset: function(reinitServerSession) {
             SessionService.clearSession();
 
             state.sessionId = null;
@@ -288,7 +316,26 @@
             state.lastUserMessage = null;
             state.messageFeedback = {};
 
+            // Reset the API session initialized flag so it re-initializes on next call
+            if (EBB.APIService) {
+                EBB.APIService._sessionInitialized = false;
+            }
+
+            // Optionally force re-init server session immediately
+            if (reinitServerSession && EBB.APIService) {
+                EBB.APIService.initSession(true);
+            }
+
             console.log('[WWZBlizz] State reset');
+        },
+
+        /**
+         * Manually end the session (user action)
+         * This clears all session data
+         */
+        endSession: function() {
+            this.reset(false);
+            console.log('[WWZBlizz] Session ended by user');
         }
     };
 
