@@ -99,10 +99,12 @@
         },
 
         /**
-         * Send message to chat API
+         * Send message to chat API (with auto-retry on session error)
          */
-        sendMessage: function(message) {
+        sendMessage: function(message, retryCount) {
             var self = this;
+            var currentRetry = retryCount || 0;
+            var MAX_RETRIES = 1;
 
             return this.ensureSession().then(function(hasSession) {
                 if (!hasSession) {
@@ -123,6 +125,17 @@
             .then(function(response) {
                 // Handle 403 - session expired or invalid
                 if (response.status === 403) {
+                    // Auto-retry with fresh session
+                    if (currentRetry < MAX_RETRIES) {
+                        console.log('[WWZIvy] Session expired, reinitializing...');
+                        self._sessionInitialized = false;
+                        return self.initSession().then(function(success) {
+                            if (success) {
+                                return self.sendMessage(message, currentRetry + 1);
+                            }
+                            throw new Error('SESSION_EXPIRED');
+                        });
+                    }
                     self._sessionInitialized = false;
                     throw new Error('SESSION_EXPIRED');
                 }
@@ -205,10 +218,12 @@
         },
 
         /**
-         * Submit feedback
+         * Submit feedback (with auto-retry on session error)
          */
-        submitFeedback: function(feedbackData, sessionId) {
+        submitFeedback: function(feedbackData, sessionId, retryCount) {
             var self = this;
+            var currentRetry = retryCount || 0;
+            var MAX_RETRIES = 1;
             // Feedback endpoint - via blizz-proxy
             var feedbackEndpoint = Config.apiEndpoint.replace('/chat', '/feedback');
 
@@ -239,7 +254,19 @@
             })
             .then(function(response) {
                 if (response.status === 403) {
+                    // Auto-retry with fresh session
+                    if (currentRetry < MAX_RETRIES) {
+                        console.log('[WWZIvy] Session expired on feedback, reinitializing...');
+                        self._sessionInitialized = false;
+                        return self.initSession().then(function(success) {
+                            if (success) {
+                                return self.submitFeedback(feedbackData, sessionId, currentRetry + 1);
+                            }
+                            return false;
+                        });
+                    }
                     self._sessionInitialized = false;
+                    return false;
                 }
                 return response.ok;
             })
@@ -250,10 +277,12 @@
         },
 
         /**
-         * Submit contact form
+         * Submit contact form (with auto-retry on session error)
          */
-        submitContactForm: function(formData) {
+        submitContactForm: function(formData, retryCount) {
             var self = this;
+            var currentRetry = retryCount || 0;
+            var MAX_RETRIES = 1;
 
             return this.ensureSession().then(function() {
                 // Format payload as expected by blizz-proxy
@@ -275,6 +304,17 @@
             })
             .then(function(response) {
                 if (response.status === 403) {
+                    // Auto-retry with fresh session
+                    if (currentRetry < MAX_RETRIES) {
+                        console.log('[WWZIvy] Session expired on contact form, reinitializing...');
+                        self._sessionInitialized = false;
+                        return self.initSession().then(function(success) {
+                            if (success) {
+                                return self.submitContactForm(formData, currentRetry + 1);
+                            }
+                            throw new Error('SESSION_EXPIRED');
+                        });
+                    }
                     self._sessionInitialized = false;
                     throw new Error('SESSION_EXPIRED');
                 }

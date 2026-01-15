@@ -147,7 +147,28 @@ function parseCookies(cookieHeader) {
 }
 
 /**
+ * List of allowed origins for requests without cookie (Safari ITP fallback)
+ */
+const ALLOWED_ORIGINS = [
+    'https://www.wwz.ch',
+    'https://wwz.ch',
+    'https://blizz.botwizard.ch',
+    'https://blizz-uat.botwizard.ch'
+];
+
+/**
+ * Check if origin is in allowed list
+ */
+function isAllowedOrigin(origin) {
+    if (!origin) return false;
+    // Normalize origin (remove trailing slash)
+    const normalizedOrigin = origin.replace(/\/$/, '');
+    return ALLOWED_ORIGINS.some(allowed => normalizedOrigin.startsWith(allowed));
+}
+
+/**
  * Middleware to validate session cookie on protected routes
+ * Cookie is optional - allows requests from allowed origins without cookie (Safari ITP fix)
  */
 function requireValidSession(req, res, next) {
     const cookies = parseCookies(req.headers.cookie);
@@ -156,17 +177,28 @@ function requireValidSession(req, res, next) {
 
     const tokenData = validateSessionToken(sessionToken, origin);
 
-    if (!tokenData) {
-        console.log('[Auth] Request blocked - invalid or missing session cookie');
-        return res.status(403).json({
-            error: 'Invalid session',
-            code: 'SESSION_REQUIRED',
-            message: 'Please reload the widget to continue'
-        });
+    if (tokenData) {
+        // Valid cookie - proceed normally
+        req.sessionData = tokenData;
+        req.authMethod = 'cookie';
+        return next();
     }
 
-    req.sessionData = tokenData;
-    next();
+    // No valid cookie - check if origin is allowed (Safari ITP fallback)
+    if (isAllowedOrigin(origin)) {
+        console.log('[Auth] No cookie but allowed origin, proceeding:', origin);
+        req.sessionData = null;
+        req.authMethod = 'origin';
+        return next();
+    }
+
+    // Neither valid cookie nor allowed origin - block request
+    console.log('[Auth] Request blocked - no valid cookie and origin not allowed:', origin);
+    return res.status(403).json({
+        error: 'Invalid session',
+        code: 'SESSION_REQUIRED',
+        message: 'Please reload the widget to continue'
+    });
 }
 
 // Per-widget endpoint configurations
