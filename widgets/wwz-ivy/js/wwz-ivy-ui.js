@@ -40,7 +40,7 @@
          * Initialize UI
          */
         init: function(container) {
-            console.log("BLIZZ WIDGET version 2026-01-15 15:32")
+            console.log("BLIZZ WIDGET version 2026-01-15 15:32");
             this.container = container;
             this.render();
             this.cacheElements();
