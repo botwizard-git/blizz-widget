@@ -1,0 +1,396 @@
+{
+  "boards": [
+    {
+      "name": "WWZ Ivy Widget - Overview",
+      "description": "Main dashboard for monitoring the Ivy chatbot widget performance and user behavior",
+      "reports": [
+        {
+          "name": "Daily Active Sessions",
+          "description": "Unique sessions per day",
+          "type": "insights",
+          "query": {
+            "event": "Session Started",
+            "aggregation": "total",
+            "groupBy": [],
+            "timeRange": "30 days"
+          }
+        },
+        {
+          "name": "Widget Open Rate",
+          "description": "How often users open the widget",
+          "type": "insights",
+          "query": {
+            "event": "Widget Opened",
+            "aggregation": "total",
+            "groupBy": ["source"],
+            "timeRange": "30 days"
+          }
+        },
+        {
+          "name": "Messages Sent (Daily)",
+          "description": "Total messages sent by users per day",
+          "type": "insights",
+          "query": {
+            "event": "Message Sent",
+            "aggregation": "total",
+            "groupBy": [],
+            "timeRange": "30 days"
+          }
+        },
+        {
+          "name": "API Errors",
+          "description": "Track API errors and timeouts",
+          "type": "insights",
+          "query": {
+            "event": "API Error",
+            "aggregation": "total",
+            "groupBy": ["isTimeout", "errorMessage"],
+            "timeRange": "7 days"
+          }
+        }
+      ]
+    },
+    {
+      "name": "WWZ Ivy Widget - User Engagement",
+      "description": "Detailed user engagement metrics",
+      "reports": [
+        {
+          "name": "Terms Acceptance Rate",
+          "description": "Terms accepted vs declined",
+          "type": "insights",
+          "query": {
+            "events": ["Terms Accepted", "Terms Declined"],
+            "aggregation": "total",
+            "groupBy": [],
+            "timeRange": "30 days"
+          }
+        },
+        {
+          "name": "Messages per Session",
+          "description": "Average message count distribution",
+          "type": "insights",
+          "query": {
+            "event": "Message Sent",
+            "aggregation": "total",
+            "groupBy": ["sessionId"],
+            "timeRange": "7 days"
+          }
+        },
+        {
+          "name": "Suggestion Click Rate",
+          "description": "How often users click on suggestions",
+          "type": "insights",
+          "query": {
+            "event": "Suggestion Clicked",
+            "aggregation": "total",
+            "groupBy": ["suggestion"],
+            "timeRange": "30 days"
+          }
+        },
+        {
+          "name": "Voice Input Usage",
+          "description": "Voice input adoption and success rate",
+          "type": "insights",
+          "query": {
+            "event": "Voice Input Completed",
+            "aggregation": "total",
+            "groupBy": ["success"],
+            "timeRange": "30 days"
+          }
+        },
+        {
+          "name": "Contact Form Submissions",
+          "description": "Contact form submission success rate",
+          "type": "insights",
+          "query": {
+            "event": "Contact Form Submitted",
+            "aggregation": "total",
+            "groupBy": ["success"],
+            "timeRange": "30 days"
+          }
+        }
+      ]
+    },
+    {
+      "name": "WWZ Ivy Widget - Performance",
+      "description": "Response times and error monitoring",
+      "reports": [
+        {
+          "name": "Average Response Time",
+          "description": "Bot response time in milliseconds",
+          "type": "insights",
+          "query": {
+            "event": "Message Received",
+            "aggregation": "average",
+            "property": "responseTimeMs",
+            "groupBy": [],
+            "timeRange": "7 days"
+          }
+        },
+        {
+          "name": "Response Time Distribution",
+          "description": "Response time percentiles",
+          "type": "insights",
+          "query": {
+            "event": "Message Received",
+            "aggregation": "median",
+            "property": "responseTimeMs",
+            "groupBy": [],
+            "timeRange": "7 days"
+          }
+        },
+        {
+          "name": "Error Rate Over Time",
+          "description": "API errors trend",
+          "type": "insights",
+          "query": {
+            "event": "API Error",
+            "aggregation": "total",
+            "groupBy": [],
+            "timeRange": "7 days",
+            "interval": "hour"
+          }
+        },
+        {
+          "name": "Timeout vs Other Errors",
+          "description": "Breakdown of error types",
+          "type": "insights",
+          "query": {
+            "event": "API Error",
+            "aggregation": "total",
+            "groupBy": ["isTimeout"],
+            "timeRange": "7 days"
+          }
+        }
+      ]
+    },
+    {
+      "name": "WWZ Ivy Widget - Feedback",
+      "description": "User feedback and satisfaction metrics",
+      "reports": [
+        {
+          "name": "Feedback Rating Distribution",
+          "description": "Distribution of feedback ratings",
+          "type": "insights",
+          "query": {
+            "event": "Feedback Rating Selected",
+            "aggregation": "total",
+            "groupBy": ["rating"],
+            "timeRange": "30 days"
+          }
+        },
+        {
+          "name": "Feedback Completion Rate",
+          "description": "Submitted vs skipped feedback",
+          "type": "insights",
+          "query": {
+            "events": ["Feedback Submitted", "Feedback Skipped"],
+            "aggregation": "total",
+            "groupBy": [],
+            "timeRange": "30 days"
+          }
+        },
+        {
+          "name": "Average Feedback Rating",
+          "description": "Average rating over time",
+          "type": "insights",
+          "query": {
+            "event": "Feedback Submitted",
+            "aggregation": "average",
+            "property": "rating",
+            "groupBy": [],
+            "timeRange": "30 days"
+          }
+        },
+        {
+          "name": "Feedback with Comments",
+          "description": "How many users leave additional feedback",
+          "type": "insights",
+          "query": {
+            "event": "Feedback Submitted",
+            "aggregation": "total",
+            "groupBy": ["hasAdditionalFeedback"],
+            "timeRange": "30 days"
+          }
+        }
+      ]
+    },
+    {
+      "name": "WWZ Ivy Widget - User Funnel",
+      "description": "User journey through the widget",
+      "reports": [
+        {
+          "name": "Main User Funnel",
+          "description": "Session > Widget Open > Terms > Message > Feedback",
+          "type": "funnels",
+          "query": {
+            "steps": [
+              {"event": "Session Started"},
+              {"event": "Widget Opened"},
+              {"event": "Terms Accepted"},
+              {"event": "Message Sent"},
+              {"event": "Message Received"},
+              {"event": "Feedback Submitted"}
+            ],
+            "timeRange": "30 days",
+            "conversionWindow": "1 day"
+          }
+        },
+        {
+          "name": "Widget Engagement Funnel",
+          "description": "Open > Message > Close flow",
+          "type": "funnels",
+          "query": {
+            "steps": [
+              {"event": "Widget Opened"},
+              {"event": "Message Sent"},
+              {"event": "Widget Closed"}
+            ],
+            "timeRange": "30 days",
+            "conversionWindow": "1 hour"
+          }
+        }
+      ]
+    }
+  ],
+  "savedReports": [
+    {
+      "name": "Sessions by Page URL",
+      "type": "insights",
+      "query": {
+        "event": "Session Started",
+        "aggregation": "total",
+        "groupBy": ["pageUrl"],
+        "timeRange": "30 days"
+      }
+    },
+    {
+      "name": "Error Details",
+      "type": "insights",
+      "query": {
+        "event": "API Error",
+        "aggregation": "total",
+        "groupBy": ["errorMessage", "sessionId"],
+        "timeRange": "7 days"
+      }
+    },
+    {
+      "name": "Top Suggestions Clicked",
+      "type": "insights",
+      "query": {
+        "event": "Suggestion Clicked",
+        "aggregation": "total",
+        "groupBy": ["suggestion"],
+        "timeRange": "30 days",
+        "limit": 20
+      }
+    },
+    {
+      "name": "Messages with References",
+      "type": "insights",
+      "query": {
+        "event": "Message Received",
+        "aggregation": "total",
+        "groupBy": ["hasReferences"],
+        "timeRange": "30 days"
+      }
+    },
+    {
+      "name": "Contact Form Responses",
+      "type": "insights",
+      "query": {
+        "event": "Message Received",
+        "aggregation": "total",
+        "groupBy": ["isContactForm"],
+        "timeRange": "30 days"
+      }
+    }
+  ],
+  "customEvents": [
+    {
+      "name": "Session Started",
+      "description": "User starts a new session",
+      "properties": ["isNewSession", "sessionId", "userId", "pageUrl", "timestamp"]
+    },
+    {
+      "name": "Session Resumed",
+      "description": "Returning user resumes session",
+      "properties": ["isNewSession", "sessionId", "userId", "pageUrl", "timestamp"]
+    },
+    {
+      "name": "Widget Opened",
+      "description": "User opens the chat widget",
+      "properties": ["source", "termsAccepted", "hasExistingMessages", "sessionId", "pageUrl"]
+    },
+    {
+      "name": "Widget Closed",
+      "description": "User closes the widget",
+      "properties": ["messageCount", "sessionId", "pageUrl"]
+    },
+    {
+      "name": "Widget Minimized",
+      "description": "User minimizes the widget",
+      "properties": ["sessionId", "pageUrl"]
+    },
+    {
+      "name": "Terms Accepted",
+      "description": "User accepts terms and conditions",
+      "properties": ["sessionId", "pageUrl"]
+    },
+    {
+      "name": "Terms Declined",
+      "description": "User declines terms and conditions",
+      "properties": ["sessionId", "pageUrl"]
+    },
+    {
+      "name": "Message Sent",
+      "description": "User sends a message",
+      "properties": ["messageLength", "wasSuggestion", "sessionId", "pageUrl"]
+    },
+    {
+      "name": "Message Received",
+      "description": "Bot responds to user",
+      "properties": ["hasReferences", "hasSuggestions", "isContactForm", "responseTimeMs", "sessionId", "pageUrl"]
+    },
+    {
+      "name": "Suggestion Clicked",
+      "description": "User clicks on a suggestion chip",
+      "properties": ["suggestion", "sessionId", "pageUrl"]
+    },
+    {
+      "name": "API Error",
+      "description": "API call failed",
+      "properties": ["endpoint", "statusCode", "errorMessage", "isTimeout", "sessionId", "pageUrl"]
+    },
+    {
+      "name": "Feedback Rating Selected",
+      "description": "User selects a feedback rating",
+      "properties": ["rating", "sessionId", "pageUrl"]
+    },
+    {
+      "name": "Feedback Submitted",
+      "description": "User submits feedback",
+      "properties": ["rating", "hasOptions", "optionCount", "hasAdditionalFeedback", "sessionId", "pageUrl"]
+    },
+    {
+      "name": "Feedback Skipped",
+      "description": "User skips feedback",
+      "properties": ["sessionId", "pageUrl"]
+    },
+    {
+      "name": "Voice Input Started",
+      "description": "User starts voice input",
+      "properties": ["sessionId", "pageUrl"]
+    },
+    {
+      "name": "Voice Input Completed",
+      "description": "Voice input finished",
+      "properties": ["success", "transcriptLength", "sessionId", "pageUrl"]
+    },
+    {
+      "name": "Contact Form Submitted",
+      "description": "User submits contact form",
+      "properties": ["success", "sessionId", "pageUrl"]
+    }
+  ]
+}

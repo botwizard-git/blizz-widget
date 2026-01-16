@@ -110,6 +110,15 @@
             const state = State.get();
             State.set({ isCollapsed: false });
 
+            // Track widget open
+            if (window.WWZIvy.Analytics) {
+                window.WWZIvy.Analytics.trackWidgetOpen({
+                    source: 'launcher_click',
+                    termsAccepted: state.termsAccepted,
+                    hasExistingMessages: state.messages.length > 0
+                });
+            }
+
             if (state.termsAccepted) {
                 UI.showScreen('chat');
                 if (state.messages.length > 0) {
@@ -140,6 +149,11 @@
          * Handle minimize
          */
         handleMinimize: function() {
+            // Track widget minimize
+            if (window.WWZIvy.Analytics) {
+                window.WWZIvy.Analytics.trackWidgetMinimize();
+            }
+
             State.set({ isCollapsed: true });
             UI.hideWidget();
         },
@@ -149,6 +163,14 @@
          */
         handleClose: function() {
             const state = State.get();
+
+            // Track widget close
+            if (window.WWZIvy.Analytics) {
+                window.WWZIvy.Analytics.trackWidgetClose({
+                    messageCount: state.messages.length
+                });
+            }
+
             // Only show feedback if user has sent at least one message
             const hasUserMessage = state.messages.some(msg => msg.role === 'user');
             if (hasUserMessage) {
@@ -170,6 +192,11 @@
          * Handle accept terms
          */
         handleAcceptTerms: function() {
+            // Track terms accepted
+            if (window.WWZIvy.Analytics) {
+                window.WWZIvy.Analytics.trackTermsAccepted();
+            }
+
             State.acceptTerms();
             UI.showScreen('chat');
 
@@ -185,6 +212,11 @@
          * Handle decline terms
          */
         handleDeclineTerms: function() {
+            // Track terms declined
+            if (window.WWZIvy.Analytics) {
+                window.WWZIvy.Analytics.trackTermsDeclined();
+            }
+
             State.declineTerms();
             UI.hideWidget();
         },
@@ -222,6 +254,16 @@
             const message = UI.getInputValue();
             if (!message || State.get().isLoading) return;
 
+            const startTime = Date.now();
+
+            // Track message sent
+            if (window.WWZIvy.Analytics) {
+                window.WWZIvy.Analytics.trackMessageSent({
+                    messageLength: message.length,
+                    wasSuggestion: false
+                });
+            }
+
             // Add user message
             const userMessage = State.addMessage({
                 role: 'user',
@@ -238,6 +280,7 @@
             try {
                 // Send to API
                 const response = await API.sendMessage(message);
+                const responseTimeMs = Date.now() - startTime;
 
                 // Hide typing
                 UI.hideTyping();
@@ -245,10 +288,30 @@
 
                 // Check if this is a contact form response
                 if (response.type === 'contactForm') {
+                    // Track message received (contact form)
+                    if (window.WWZIvy.Analytics) {
+                        window.WWZIvy.Analytics.trackMessageReceived({
+                            hasReferences: false,
+                            hasSuggestions: false,
+                            isContactForm: true,
+                            responseTimeMs: responseTimeMs
+                        });
+                    }
+
                     UI.addMessage(response);
                     // Setup form event listeners after rendering
                     this.setupContactFormListeners();
                 } else {
+                    // Track message received
+                    if (window.WWZIvy.Analytics) {
+                        window.WWZIvy.Analytics.trackMessageReceived({
+                            hasReferences: (response.references && response.references.length > 0) || false,
+                            hasSuggestions: (response.suggestions && response.suggestions.length > 0) || false,
+                            isContactForm: false,
+                            responseTimeMs: responseTimeMs
+                        });
+                    }
+
                     // Add bot response
                     const botMessage = State.addMessage({
                         role: 'bot',
@@ -265,6 +328,15 @@
                 }
 
             } catch (error) {
+                // Track API error
+                if (window.WWZIvy.Analytics) {
+                    window.WWZIvy.Analytics.trackAPIError({
+                        endpoint: 'chat',
+                        errorMessage: error.message,
+                        isTimeout: error.message === 'TIMEOUT'
+                    });
+                }
+
                 UI.hideTyping();
                 State.setLoading(false);
                 State.setError(error.message);
@@ -282,6 +354,11 @@
          * Handle suggestion click
          */
         handleSuggestionClick: function(suggestion) {
+            // Track suggestion clicked
+            if (window.WWZIvy.Analytics) {
+                window.WWZIvy.Analytics.trackSuggestionClicked(suggestion);
+            }
+
             UI.getElements().input.value = suggestion;
             UI.updateSendButton();
             this.handleSendMessage();
@@ -294,6 +371,11 @@
             if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
                 alert('Spracherkennung wird von Ihrem Browser nicht unterstützt.');
                 return;
+            }
+
+            // Track voice input started
+            if (window.WWZIvy.Analytics) {
+                window.WWZIvy.Analytics.trackVoiceInputStarted();
             }
 
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -311,10 +393,26 @@
                 UI.getElements().input.value = transcript;
                 UI.updateSendButton();
                 micBtn.style.background = '';
+
+                // Track voice input completed successfully
+                if (window.WWZIvy.Analytics) {
+                    window.WWZIvy.Analytics.trackVoiceInputCompleted({
+                        success: true,
+                        transcriptLength: transcript.length
+                    });
+                }
             };
 
             recognition.onerror = () => {
                 micBtn.style.background = '';
+
+                // Track voice input failed
+                if (window.WWZIvy.Analytics) {
+                    window.WWZIvy.Analytics.trackVoiceInputCompleted({
+                        success: false,
+                        transcriptLength: 0
+                    });
+                }
             };
 
             recognition.onend = () => {
@@ -392,6 +490,11 @@
          * Handle rating select
          */
         handleRatingSelect: function(rating) {
+            // Track feedback rating selected
+            if (window.WWZIvy.Analytics) {
+                window.WWZIvy.Analytics.trackFeedbackRatingSelected(rating);
+            }
+
             State.setFeedbackRating(rating);
             UI.selectRating(rating);
         },
@@ -409,8 +512,17 @@
                 const selected = elements.feedbackOptions.querySelectorAll('.wwz-ivy-feedback-option.wwz-ivy-selected');
                 selected.forEach(btn => selectedOptions.push(btn.dataset.option));
             }
-            
+
             const additionalFeedback = elements.feedbackTextInput ? elements.feedbackTextInput.value.trim() : '';
+
+            // Track feedback submitted
+            if (window.WWZIvy.Analytics) {
+                window.WWZIvy.Analytics.trackFeedbackSubmitted({
+                    rating: rating,
+                    options: selectedOptions,
+                    additionalFeedback: additionalFeedback
+                });
+            }
 
             // Submit feedback to API
             await API.submitFeedback({
@@ -435,8 +547,17 @@
                     const selected = elements.feedbackOptions.querySelectorAll('.wwz-ivy-feedback-option.wwz-ivy-selected');
                     selected.forEach(btn => selectedOptions.push(btn.dataset.option));
                 }
-                
+
                 const additionalFeedback = elements.feedbackTextInput ? elements.feedbackTextInput.value.trim() : '';
+
+                // Track feedback submitted
+                if (window.WWZIvy.Analytics) {
+                    window.WWZIvy.Analytics.trackFeedbackSubmitted({
+                        rating: rating,
+                        options: selectedOptions,
+                        additionalFeedback: additionalFeedback
+                    });
+                }
 
                 await API.submitFeedback({
                     rating: rating,
@@ -464,6 +585,11 @@
          * Handle feedback skip
          */
         handleFeedbackSkip: function() {
+            // Track feedback skipped
+            if (window.WWZIvy.Analytics) {
+                window.WWZIvy.Analytics.trackFeedbackSkipped();
+            }
+
             // Skip feedback and start new session
             State.startNewSession();
             State.set({ isCollapsed: true, feedbackRating: null });
@@ -559,6 +685,13 @@
                 // Submit form data to API
                 const success = await API.submitContactForm(data);
 
+                // Track contact form submitted
+                if (window.WWZIvy.Analytics) {
+                    window.WWZIvy.Analytics.trackContactFormSubmitted({
+                        success: success
+                    });
+                }
+
                 if (success) {
                     // Disable the form
                     UI.disableContactForm();
@@ -578,6 +711,13 @@
                     UI.addMessage(errorMessage);
                 }
             } catch (error) {
+                // Track contact form error
+                if (window.WWZIvy.Analytics) {
+                    window.WWZIvy.Analytics.trackContactFormSubmitted({
+                        success: false
+                    });
+                }
+
                 console.error('WWZIvy: Contact form submission error', error);
                 if (submitBtn) {
                     submitBtn.disabled = false;

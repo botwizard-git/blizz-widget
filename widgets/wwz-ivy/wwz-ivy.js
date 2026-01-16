@@ -21,6 +21,7 @@
     const modules = [
         'js/wwz-ivy-config.js',
         'js/wwz-ivy-storage.js',
+        'js/wwz-ivy-analytics.js',
         'js/wwz-ivy-api.js',
         'js/wwz-ivy-state.js',
         'js/wwz-ivy-ui.js',
@@ -146,6 +147,12 @@
 
         // Initialize modules
         window.WWZIvy.State.init();
+
+        // Initialize Analytics (fail-safe, won't block if it fails)
+        if (window.WWZIvy.Analytics) {
+            window.WWZIvy.Analytics.init();
+        }
+
         window.WWZIvy.UI.init(container);
         window.WWZIvy.Events.init();
 
