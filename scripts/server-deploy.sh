@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# WWZ Widgets - Server Deployment Script
-# This script is executed on the production server after git pull
+# WWZ Widgets - UAT (v2) Server Deployment Script
+# This script is executed on the UAT server after git pull
 
 set -e
 
 echo "=========================================="
-echo "WWZ Widgets - Deployment Script"
+echo "WWZ Widgets (v2) - UAT Deployment Script"
 echo "=========================================="
 echo "Timestamp: $(date)"
 echo ""
@@ -28,8 +28,9 @@ if [ $? -eq 0 ]; then
     echo "=========================================="
     echo ""
     echo "Widgets are now available at:"
-    echo "  - https://blizz.botwizard.ch/wwz-blizz/wwz-blizz.js"
-    echo "  - https://blizz.botwizard.ch/wwz-ivy/wwz-ivy.js"
+    echo "  - https://blizz-uat.botwizard.ch/wwz-blizz/wwz-blizz.js"
+    echo "  - https://blizz-uat.botwizard.ch/wwz-blizz-v2/wwz-blizz-v2.js"
+    echo "  - https://blizz-uat.botwizard.ch/wwz-ivy/wwz-ivy.js"
     echo ""
 else
     echo "ERROR: Nginx configuration test failed!!"
