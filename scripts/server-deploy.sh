@@ -29,7 +29,7 @@ if [ $? -eq 0 ]; then
     echo ""
     echo "Widgets are now available at:"
     echo "  - https://blizz-uat.botwizard.ch/wwz-blizz/wwz-blizz.js"
-    echo "  - https://blizz-uat.botwizard.ch/wwz-blizz-v2/wwz-blizz-v2.js"
+    echo "  - https://blizz-uat.botwizard.ch/wwz-blizz-v2/wwz-blizz.js"
     echo "  - https://blizz-uat.botwizard.ch/wwz-ivy/wwz-ivy.js"
     echo ""
 else
