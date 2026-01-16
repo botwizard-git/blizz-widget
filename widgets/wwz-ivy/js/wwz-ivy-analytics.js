@@ -12,7 +12,7 @@
     // Mixpanel configuration
     var MIXPANEL_TOKEN = '7d8aa98dbd591a75b705d74b57cb23fd';
     var MIXPANEL_CONFIG = {
-        autocapture: true,
+        autocapture: false,  // Disable auto-tracking of page events (scrolls, clicks, etc.)
         record_sessions_percent: 100,
         api_host: 'https://api-eu.mixpanel.com'
     };
