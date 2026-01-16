@@ -1,0 +1,3418 @@
+/**
+ * WWZBlizz - Polished Widget Styles
+ * Matching wwz-chatbot design with prefixed classes
+ */
+
+/* ========================================
+   GOOGLE FONTS - Albert Sans
+   ======================================== */
+@import url('https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700&display=swap');
+
+/* ========================================
+   CSS VARIABLES
+   ======================================== */
+.wwz-blizz-app-container {
+    --eb-primary: #147bd1;
+    --eb-primary-hover: #1069b5;
+    --eb-text: #333333;
+    --eb-text-muted: #666666;
+    --eb-text-light: #808080;
+    --eb-bg: #ffffff;
+    --eb-bg-secondary: #f5f5f5;
+    --eb-border: #d0d7de;
+    --eb-border-light: #e5e5e5;
+    --eb-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --eb-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --eb-radius-sm: 6px;
+    --eb-radius-md: 18px;
+    --eb-radius-lg: 24px;
+    --eb-radius-full: 50%;
+}
+
+/* ========================================
+   RESET & BASE
+   ======================================== */
+.wwz-blizz-app-container *,
+.wwz-blizz-app-container *::before,
+.wwz-blizz-app-container *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.wwz-blizz-app-container {
+    font-family: 'Albert Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--eb-text);
+    background: var(--eb-bg);
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hidden utility */
+.wwz-blizz-hidden {
+    display: none !important;
+}
+
+/* ========================================
+   COLLAPSED BAR
+   ======================================== */
+.wwz-blizz-collapsed-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--eb-bg);
+    border: 1px solid var(--eb-border-light);
+    border-radius: var(--eb-radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--eb-shadow);
+}
+
+.wwz-blizz-collapsed-bar:hover {
+    border-color: var(--eb-primary);
+    box-shadow: var(--eb-shadow-lg);
+}
+
+.wwz-blizz-collapsed-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--eb-text);
+}
+
+.wwz-blizz-expand-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: var(--eb-text-muted);
+    border-radius: var(--eb-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.wwz-blizz-expand-btn:hover {
+    background: var(--eb-bg-secondary);
+    color: var(--eb-primary);
+}
+
+/* ========================================
+   MAIN CONTENT
+   ======================================== */
+.wwz-blizz-main-content {
+    display: flex;
+    flex-direction: column;
+    background: var(--eb-bg);
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--eb-radius-sm);
+    box-shadow: var(--eb-shadow-lg);
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.wwz-blizz-chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: transparent;
+    border-bottom: none;
+    min-height: 80px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    pointer-events: none;
+    /* Allow clicks through empty space */
+}
+
+.wwz-blizz-header-spacer {
+    flex: 1;
+}
+
+.wwz-blizz-header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    pointer-events: auto;
+    /* Re-enable pointer events for buttons */
+}
+
+.wwz-blizz-new-chat-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--eb-bg);
+    border: 1px solid #000;
+    border-radius: 20px;
+    color: #000;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.wwz-blizz-new-chat-btn:hover {
+    background: #f5f5f5;
+}
+
+.wwz-blizz-new-chat-icon {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.wwz-blizz-help-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: transparent;
+    border: 1.5px solid #000;
+    /* Added border */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.wwz-blizz-help-btn img {
+    width: 20px;
+    /* Reduced from 100% to fit inside border */
+    height: 20px;
+}
+
+.wwz-blizz-help-btn:hover {
+    transform: scale(1.05);
+}
+
+/* ========================================
+   CHAT CONTENT
+   ======================================== */
+.wwz-blizz-chat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* ========================================
+   WELCOME SCREEN
+   ======================================== */
+.wwz-blizz-welcome-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 100px 24px 180px 24px;
+    /* Top padding for header, bottom for input */
+    overflow-y: auto;
+    align-items: center;
+}
+
+.wwz-blizz-welcome-content {
+    text-align: center;
+    max-width: 600px;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.wwz-blizz-welcome-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    color: #000;
+}
+
+.wwz-blizz-welcome-subtitle {
+    font-size: 18px;
+    color: #666;
+    margin: 0 0 16px 0;
+    font-weight: 500;
+}
+
+.wwz-blizz-welcome-text {
+    font-size: 15px;
+    color: #444;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.wwz-blizz-welcome-intro .wwz-blizz-message-content {
+    padding-left: 12px;
+    /* Apply uniform spacing for all children (bubble, links, feedback) */
+}
+
+.wwz-blizz-welcome-intro .wwz-blizz-message-avatar {
+    background: transparent;
+    width: 32px;
+    height: 32px;
+    align-self: flex-start;
+    margin-top: 4px;
+}
+
+.wwz-blizz-welcome-intro ol {
+    margin: 16px 0;
+    padding-left: 20px;
+}
+
+.wwz-blizz-welcome-intro li {
+    margin-bottom: 16px;
+    padding-left: 8px;
+}
+
+.wwz-blizz-welcome-intro strong {
+    font-weight: 700;
+}
+
+.wwz-blizz-welcome-intro a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+/* Welcome Links */
+.wwz-blizz-welcome-links {
+    max-width: 600px;
+    width: 100%;
+    margin-bottom: 32px;
+    margin-top: 12px;
+    /* Remove offset, strict align with container */
+    padding-left: 0;
+    /* Reset for natural nested alignment */
+    background: transparent;
+}
+
+.wwz-blizz-welcome-links h4 {
+    font-size: 16px;
+    /* Matched to normal text size */
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #000;
+    margin-left: 0;
+    /* Remove offset, strict align with container */
+}
+
+.wwz-blizz-link-item {
+    display: flex;
+    align-items: flex-start;
+    /* Align icon with first line of text */
+    gap: 10px;
+    /* Slightly more breathing room */
+    margin-bottom: 8px;
+    text-decoration: none;
+    /* Remove default underline from container */
+    color: #000;
+    font-size: 16px;
+    background: transparent;
+    /* Explicitly no background */
+}
+
+.wwz-blizz-link-text {
+    text-decoration: underline;
+    /* Underline only the text */
+    text-underline-offset: 2px;
+}
+
+.wwz-blizz-link-item:hover {
+    color: var(--eb-primary);
+}
+
+.wwz-blizz-file-icon,
+.wwz-blizz-link-icon {
+    text-decoration: none;
+    font-size: 0;
+    /* Removing font size impact on layout */
+    display: block;
+    margin-top: 2px;
+    /* Optically center with text line-height */
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    /* Prevent overlapping or shrinking */
+}
+
+/* Feedback Buttons */
+.wwz-blizz-welcome-feedback {
+    display: flex;
+    gap: 16px;
+    padding-left: 0;
+    /* Reset for natural nested alignment */
+    width: 100%;
+    max-width: 600px;
+}
+
+.wwz-blizz-thumbs-up-btn {
+    background: transparent;
+    /* Default transparent */
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    color: #000;
+    /* Default icon color */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    transition: all 0.2s ease;
+}
+
+.wwz-blizz-thumbs-up-btn.wwz-blizz-active {
+    background: #7c5dfa;
+    /* Purple only when active */
+    color: #fff;
+}
+
+.wwz-blizz-thumbs-up-btn:hover {
+    background: rgba(124, 93, 250, 0.1);
+    /* Subtle hover */
+}
+
+.wwz-blizz-thumbs-up-btn.wwz-blizz-active:hover {
+    background: #6b4ce6;
+    /* Darker purple on active hover */
+}
+
+.wwz-blizz-thumbs-down-btn,
+.wwz-blizz-comment-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #000;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    /* Consistent width */
+    height: 32px;
+}
+
+.wwz-blizz-thumbs-down-btn:hover,
+.wwz-blizz-comment-btn:hover {
+    color: #666;
+}
+
+
+/* ========================================
+   CHAT SCREEN
+   ======================================== */
+.wwz-blizz-chat-screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ========================================
+   MESSAGES CONTAINER
+   ======================================== */
+.wwz-blizz-messages-container {
+    flex: 1;
+    flex: 1;
+    overflow-y: auto;
+    padding: 100px 24px 180px 24px;
+    /* Increased top padding to clear header */
+    /* Space for input area (scroll btn + input + disclaimer) */
+    display: flex;
+    flex-direction: column;
+    scroll-behavior: smooth;
+    /* Enable native smooth scrolling */
+    gap: 24px;
+    justify-content: flex-start;
+    /* Messages start at top like ChatGPT */
+}
+
+.wwz-blizz-messages-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.wwz-blizz-messages-container::-webkit-scrollbar-thumb {
+    background: var(--eb-border);
+    border-radius: 3px;
+}
+
+.wwz-blizz-messages-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* ========================================
+   SCROLL TO BOTTOM BUTTON (ChatGPT-style)
+   ======================================== */
+.wwz-blizz-scroll-to-bottom {
+    position: absolute;
+    top: -50px;
+    bottom: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    z-index: 10;
+    color: var(--eb-text-muted);
+}
+
+.wwz-blizz-scroll-to-bottom.wwz-blizz-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.wwz-blizz-scroll-to-bottom:hover {
+    background: var(--eb-bg-secondary);
+    border-color: var(--eb-primary);
+    color: var(--eb-primary);
+    transform: translateX(-50%) scale(1.1);
+}
+
+.wwz-blizz-scroll-to-bottom:active {
+    transform: translateX(-50%) scale(0.95);
+}
+
+/* Mobile adjustments for scroll button */
+@media (max-width: 640px) {
+    .wwz-blizz-scroll-to-bottom {
+        bottom: 90px;
+        width: 32px;
+        height: 32px;
+    }
+}
+
+/* ========================================
+   MESSAGE STYLES
+   ======================================== */
+.wwz-blizz-message {
+    display: flex;
+    gap: 12px;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.wwz-blizz-message-user {
+    flex-direction: row-reverse;
+}
+
+.wwz-blizz-message-bot {
+    flex-direction: row;
+}
+
+/* Avatar */
+.wwz-blizz-message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    /* Make circular */
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
+
+.wwz-blizz-message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.wwz-blizz-message-user .wwz-blizz-message-avatar {
+    background: #f0f0f0;
+    color: #333;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.wwz-blizz-message-bot .wwz-blizz-message-avatar {
+    background: transparent;
+}
+
+/* Message Content */
+.wwz-blizz-message-content {
+    display: flex;
+    flex-direction: column;
+    max-width: calc(100% - 52px);
+}
+
+.wwz-blizz-message-user .wwz-blizz-message-content {
+    align-items: flex-end;
+}
+
+/* Message Bubble */
+.wwz-blizz-message-bubble {
+    padding: 16px 20px;
+    font-size: 16px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.wwz-blizz-message-user .wwz-blizz-message-bubble {
+    background: #1a1a1a;
+    color: #fff;
+    border-radius: 8px;
+    padding: 6px 10px;
+}
+
+.wwz-blizz-message-bot .wwz-blizz-message-bubble {
+    background: transparent;
+    color: #000;
+    border-radius: 0;
+    padding: 0;
+    /* Remove padding to align flush with avatar gap */
+}
+
+/* Links in bot messages */
+.wwz-blizz-message-bot .wwz-blizz-message-bubble a {
+    color: var(--eb-primary);
+    text-decoration: underline;
+}
+
+.wwz-blizz-message-bot .wwz-blizz-message-bubble a:hover {
+    color: var(--eb-primary-hover);
+}
+
+/* HTML content in bot messages */
+.wwz-blizz-message-bot .wwz-blizz-message-bubble p {
+    margin: 0 0 12px 0;
+}
+
+.wwz-blizz-message-bot .wwz-blizz-message-bubble p:last-child {
+    margin-bottom: 0;
+}
+
+.wwz-blizz-message-bot .wwz-blizz-message-bubble ul,
+.wwz-blizz-message-bot .wwz-blizz-message-bubble ol {
+    margin: 12px 0;
+    padding-left: 24px;
+}
+
+.wwz-blizz-message-bot .wwz-blizz-message-bubble li {
+    margin: 6px 0;
+}
+
+/* List markers */
+.wwz-blizz-message-bot .wwz-blizz-message-bubble ul {
+    list-style-type: disc;
+}
+
+.wwz-blizz-message-bot .wwz-blizz-message-bubble ol {
+    list-style-type: decimal;
+}
+
+.wwz-blizz-message-bot .wwz-blizz-message-bubble strong {
+    font-weight: 700;
+}
+
+/* Message Actions */
+.wwz-blizz-message-actions {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+    opacity: 1;
+}
+
+.wwz-blizz-action-btn {
+    padding: 6px 8px;
+    background: transparent;
+    border: none;
+    color: var(--eb-text-light);
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.wwz-blizz-action-btn:hover {
+    background: var(--eb-bg-secondary);
+    color: var(--eb-text);
+}
+
+/* Thumbs Up/Down Feedback Buttons */
+.wwz-blizz-thumbs-up-btn:hover {
+    color: var(--eb-primary);
+}
+
+.wwz-blizz-thumbs-down-btn:hover {
+    color: #ef4444;
+}
+
+/* Selected state for Like/Dislike */
+.wwz-blizz-action-btn.wwz-blizz-selected {
+    background: #9747FF;
+    /* Purple color from image */
+    color: #fff;
+    border-radius: 50%;
+    border-color: #9747FF;
+    padding: 8px;
+    /* Ensure circle shape */
+    aspect-ratio: 1;
+    width: 32px;
+    height: 32px;
+}
+
+.wwz-blizz-action-btn.wwz-blizz-selected:hover {
+    background: #7e22ce;
+    color: #fff;
+}
+
+/* Legacy styles removed to fix purple design */
+
+.wwz-blizz-thumbs-up-btn.wwz-blizz-disabled,
+.wwz-blizz-thumbs-down-btn.wwz-blizz-disabled {
+    opacity: 0.3;
+    pointer-events: none;
+    cursor: default;
+}
+
+/* Thumbs Down Feedback Popup */
+.wwz-blizz-thumbs-popup {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    margin-bottom: 8px;
+    z-index: 100;
+    animation: wwz-blizz-popup-fade-in 0.2s ease-out;
+}
+
+@keyframes wwz-blizz-popup-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.wwz-blizz-thumbs-popup-content {
+    background: var(--eb-bg);
+    border: 1px solid var(--eb-border);
+    border-radius: var(--eb-radius-sm);
+    box-shadow: var(--eb-shadow-lg);
+    padding: 12px;
+    min-width: 260px;
+    max-width: 320px;
+}
+
+.wwz-blizz-thumbs-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--eb-text);
+}
+
+.wwz-blizz-thumbs-popup-close {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: var(--eb-text-muted);
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.wwz-blizz-thumbs-popup-close:hover {
+    color: var(--eb-text);
+}
+
+.wwz-blizz-thumbs-popup-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--eb-border);
+    border-radius: var(--eb-radius-sm);
+    font-size: 0.8125rem;
+    font-family: 'Albert Sans', sans-serif;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+.wwz-blizz-thumbs-popup-textarea:focus {
+    border-color: var(--eb-primary);
+}
+
+.wwz-blizz-thumbs-popup-textarea::placeholder {
+    color: var(--eb-text-light);
+}
+
+.wwz-blizz-thumbs-popup-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.wwz-blizz-thumbs-popup-skip,
+.wwz-blizz-thumbs-popup-submit {
+    padding: 6px 14px;
+    border-radius: var(--eb-radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.wwz-blizz-thumbs-popup-skip {
+    background: transparent;
+    border: 1px solid var(--eb-border);
+    color: var(--eb-text-muted);
+}
+
+.wwz-blizz-thumbs-popup-skip:hover {
+    background: var(--eb-bg-secondary);
+    border-color: var(--eb-text-muted);
+}
+
+.wwz-blizz-thumbs-popup-submit {
+    background: var(--eb-primary);
+    border: none;
+    color: var(--eb-bg);
+}
+
+.wwz-blizz-thumbs-popup-submit:hover {
+    background: var(--eb-primary-hover);
+}
+
+@media (max-width: 640px) {
+    .wwz-blizz-thumbs-popup {
+        left: auto;
+        right: 0;
+    }
+
+    .wwz-blizz-thumbs-popup-content {
+        min-width: 240px;
+    }
+}
+
+/* ========================================
+   BOTTOM INPUT AREA
+   ======================================== */
+/* ========================================
+   FLOATING INPUT AREA
+   ======================================== */
+.wwz-blizz-floating-input-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 24px 24px 24px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 40%);
+    box-shadow: none;
+    pointer-events: none;
+    /* Let clicks pass through the top faded part if needed, but we need input interaction */
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Ensure interactive elements inside wrapper are clickable */
+.wwz-blizz-floating-input-wrapper>* {
+    pointer-events: auto;
+}
+
+.wwz-blizz-scroll-indicator {
+    margin-bottom: 16px;
+    cursor: pointer;
+    /* No animation on still design, or subtle bounce */
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-5px);
+    }
+
+    60% {
+        transform: translateY(-3px);
+    }
+}
+
+.wwz-blizz-input-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 8px 8px 24px;
+    background: #fff;
+    border: 1px solid #000;
+    border-radius: 40px;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #000;
+    border-radius: 40px;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.wwz-blizz-input-container textarea {
+    flex: 1;
+    padding: 8px 0;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    font-family: 'Albert Sans', sans-serif;
+    resize: none;
+    outline: none;
+    min-height: 24px;
+    max-height: 120px;
+    line-height: 1.5;
+    color: #333;
+}
+
+.wwz-blizz-input-container textarea::placeholder {
+    color: #999;
+}
+
+/* Input Actions */
+.wwz-blizz-input-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.wwz-blizz-send-btn {
+    background: #000 !important;
+    width: 40px;
+    height: 40px;
+    border-radius: 50% !important;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.wwz-blizz-send-btn:hover {
+    transform: scale(1.05);
+    background: #333 !important;
+}
+
+.wwz-blizz-send-btn img {
+    margin-left: 2px;
+    /* Optical adjustment */
+}
+
+/* Disclaimer */
+.wwz-blizz-disclaimer {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    margin-top: 16px;
+}
+
+.wwz-blizz-disclaimer a {
+    color: #666;
+    text-decoration: underline;
+}
+
+/* ========================================
+   TYPING INDICATOR
+   ======================================== */
+.wwz-blizz-typing-indicator {
+    display: flex;
+    gap: 5px;
+    padding: 12px 0;
+}
+
+.wwz-blizz-typing-indicator span {
+    width: 8px;
+    height: 8px;
+    background: var(--eb-text-light);
+    border-radius: var(--eb-radius-full);
+    animation: wwz-blizz-typing 1.4s infinite;
+}
+
+.wwz-blizz-typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.wwz-blizz-typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes wwz-blizz-typing {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.5;
+    }
+
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   OVERLAY SCREENS
+   ======================================== */
+.wwz-blizz-overlay-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--eb-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.wwz-blizz-overlay-content {
+    text-align: center;
+    padding: 32px;
+    max-width: 400px;
+}
+
+.wwz-blizz-overlay-content h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--eb-text);
+    margin-bottom: 20px;
+}
+
+.wwz-blizz-overlay-content p {
+    font-size: 1rem;
+    color: var(--eb-text-muted);
+    margin-bottom: 16px;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+.wwz-blizz-primary-btn {
+    background: var(--eb-primary);
+    color: var(--eb-bg);
+    border: none;
+    padding: 12px 28px;
+    border-radius: var(--eb-radius-sm);
+    cursor: pointer;
+    font-size: 0.9375rem;
+    font-family: 'Albert Sans', sans-serif;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.wwz-blizz-primary-btn:hover {
+    background: var(--eb-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(20, 123, 209, 0.25);
+}
+
+.wwz-blizz-secondary-btn {
+    background: transparent;
+    color: var(--eb-text-muted);
+    border: 1px solid var(--eb-border);
+    padding: 12px 28px;
+    border-radius: var(--eb-radius-sm);
+    cursor: pointer;
+    font-size: 0.9375rem;
+    font-family: 'Albert Sans', sans-serif;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.wwz-blizz-secondary-btn:hover {
+    background: var(--eb-bg-secondary);
+    border-color: var(--eb-text-muted);
+}
+
+/* ========================================
+   FEEDBACK FORM
+   ======================================== */
+.wwz-blizz-feedback-content {
+    max-width: 420px;
+}
+
+.wwz-blizz-feedback-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--eb-text);
+    margin-bottom: 24px;
+}
+
+.wwz-blizz-feedback-smileys {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.wwz-blizz-smiley-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.wwz-blizz-smiley-btn {
+    width: 48px;
+    height: 48px;
+    border: 2px solid var(--eb-border);
+    border-radius: var(--eb-radius-full);
+    background: var(--eb-bg);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--eb-text-muted);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wwz-blizz-smiley-btn:hover {
+    border-color: var(--eb-primary);
+    color: var(--eb-primary);
+    transform: scale(1.1);
+}
+
+.wwz-blizz-smiley-wrapper.wwz-blizz-selected .wwz-blizz-smiley-btn {
+    background: var(--eb-primary);
+    border-color: var(--eb-primary);
+    color: var(--eb-bg);
+    transform: scale(1.1);
+}
+
+.wwz-blizz-smiley-label {
+    font-size: 0.6875rem;
+    color: var(--eb-text-light);
+    margin-top: 6px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.wwz-blizz-smiley-wrapper:hover .wwz-blizz-smiley-label,
+.wwz-blizz-smiley-wrapper.wwz-blizz-selected .wwz-blizz-smiley-label {
+    opacity: 1;
+}
+
+.wwz-blizz-feedback-textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--eb-border);
+    border-radius: var(--eb-radius-sm);
+    font-size: 0.9375rem;
+    font-family: 'Albert Sans', sans-serif;
+    resize: vertical;
+    min-height: 80px;
+    margin-bottom: 20px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.wwz-blizz-feedback-textarea:focus {
+    border-color: var(--eb-primary);
+}
+
+.wwz-blizz-feedback-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* ========================================
+   THANK YOU SCREEN
+   ======================================== */
+.wwz-blizz-thank-you-icon {
+    margin-bottom: 20px;
+}
+
+.wwz-blizz-thank-you-icon svg {
+    width: 64px;
+    height: 64px;
+}
+
+/* ========================================
+   NOTIFICATIONS (Toast)
+   ======================================== */
+.wwz-blizz-notification {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    border-radius: var(--eb-radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    z-index: 1000;
+    animation: wwz-blizz-slideUp 0.3s ease-out;
+    box-shadow: var(--eb-shadow-lg);
+}
+
+.wwz-blizz-notification-success {
+    background: #10b981;
+    color: #ffffff;
+}
+
+.wwz-blizz-notification-error {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.wwz-blizz-notification-info {
+    background: var(--eb-primary);
+    color: #ffffff;
+}
+
+@keyframes wwz-blizz-slideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* ========================================
+   ERROR MESSAGE
+   ======================================== */
+/* Error Container */
+.wwz-blizz-error-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: var(--eb-radius-sm);
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.wwz-blizz-error-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #dc2626;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.wwz-blizz-error-status svg {
+    flex-shrink: 0;
+}
+
+.wwz-blizz-error-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.wwz-blizz-error-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--eb-radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    font-family: 'Albert Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+}
+
+.wwz-blizz-error-btn-primary {
+    background: var(--eb-primary);
+    color: white;
+    border: none;
+}
+
+.wwz-blizz-error-btn-primary:hover {
+    background: var(--eb-primary-hover);
+}
+
+.wwz-blizz-error-btn-secondary {
+    background: white;
+    color: var(--eb-text);
+    border: 1px solid var(--eb-border);
+}
+
+.wwz-blizz-error-btn-secondary:hover {
+    background: var(--eb-bg-secondary);
+}
+
+/* Legacy error message (keep for backwards compatibility) */
+.wwz-blizz-error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    padding: 12px 16px;
+    background: #fef2f2;
+    border-radius: var(--eb-radius-sm);
+    margin-bottom: 12px;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 640px) {
+
+    /* Full screen on mobile - use dvh for dynamic viewport height */
+    .wwz-blizz-app-container {
+        height: 100vh;
+        height: 100dvh;
+        /* Dynamic viewport height - accounts for mobile browser UI */
+        max-height: 100vh;
+        max-height: 100dvh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 9999;
+        border-radius: 0;
+    }
+
+    .wwz-blizz-main-content {
+        height: 100%;
+        max-height: 100%;
+    }
+
+    .wwz-blizz-chat-content {
+        flex: 1;
+        min-height: 0;
+        /* Important for flex child scrolling */
+        overflow: hidden;
+    }
+
+    .wwz-blizz-chat-screen {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .wwz-blizz-messages-container {
+        flex: 1;
+        min-height: 0;
+        /* Enables proper scrolling in flex container */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        /* Smooth scrolling on iOS */
+        padding: 8px 16px 50px 16px;
+        /* Increased bottom padding for thumbs visibility */
+    }
+
+    .wwz-blizz-welcome-screen {
+        padding: 32px 16px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .wwz-blizz-welcome-title {
+        font-size: 1.5rem;
+    }
+
+    .wwz-blizz-welcome-avatar {
+        width: 60px;
+        height: 60px;
+    }
+
+    .wwz-blizz-bottom-input-wrapper {
+        padding: 12px 16px 16px;
+        flex-shrink: 0;
+        /* Prevent input from shrinking */
+    }
+
+    .wwz-blizz-feedback-smileys {
+        gap: 8px;
+    }
+
+    .wwz-blizz-smiley-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 0.875rem;
+    }
+
+    /* Header stays fixed at top */
+    .wwz-blizz-chat-header {
+        flex-shrink: 0;
+    }
+}
+
+/* ========================================
+   CONTACT FORM
+   ======================================== */
+/* Override overlay-screen for contact form to allow scroll */
+#enterprisebot-blizz-contact-form {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
+.enterprisebot-blizz-contact-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: var(--eb-bg);
+    border-bottom: 1px solid var(--eb-border-light);
+    min-height: 56px;
+    flex-shrink: 0;
+}
+
+.enterprisebot-blizz-contact-header-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--eb-text);
+}
+
+.enterprisebot-blizz-contact-close-btn {
+    padding: 8px;
+    background: transparent;
+    border: none;
+    color: var(--eb-text-muted);
+    cursor: pointer;
+    border-radius: var(--eb-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-contact-close-btn:hover {
+    background: var(--eb-bg-secondary);
+    color: var(--eb-text);
+}
+
+.enterprisebot-blizz-contact-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 20px;
+}
+
+.enterprisebot-blizz-contact-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.enterprisebot-blizz-contact-content::-webkit-scrollbar-thumb {
+    background: var(--eb-border);
+    border-radius: 3px;
+}
+
+.enterprisebot-blizz-contact-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.enterprisebot-blizz-contact-form-body {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.enterprisebot-blizz-form-group {
+    margin-bottom: 8px;
+    /* Reduced from 14px */
+}
+
+.enterprisebot-blizz-form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--eb-text);
+    margin-bottom: 4px;
+    /* Reduced from 6px */
+}
+
+.enterprisebot-blizz-form-group input,
+.enterprisebot-blizz-form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--eb-border);
+    border-radius: var(--eb-radius-sm);
+    font-size: 0.9375rem;
+    font-family: inherit;
+    background: var(--eb-bg);
+    color: var(--eb-text);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+.enterprisebot-blizz-form-group input:focus,
+.enterprisebot-blizz-form-group textarea:focus {
+    outline: none;
+    border-color: var(--eb-primary);
+    box-shadow: 0 0 0 3px rgba(20, 123, 209, 0.1);
+}
+
+.enterprisebot-blizz-form-group input::placeholder,
+.enterprisebot-blizz-form-group textarea::placeholder {
+    color: var(--eb-text-muted);
+}
+
+.enterprisebot-blizz-form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Time Range */
+.enterprisebot-blizz-time-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.enterprisebot-blizz-time-range input[type="time"] {
+    flex: 1;
+    padding: 10px 12px;
+}
+
+.enterprisebot-blizz-time-separator {
+    color: var(--eb-text-muted);
+    font-weight: 500;
+}
+
+/* Required Note */
+.enterprisebot-blizz-required-note {
+    font-size: 0.75rem;
+    color: var(--eb-text-muted);
+    text-align: right;
+    margin-bottom: 16px;
+}
+
+/* Submit Button */
+.enterprisebot-blizz-contact-submit-btn {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.enterprisebot-blizz-contact-submit-btn:disabled {
+    background: var(--eb-text-muted);
+    cursor: not-allowed;
+}
+
+/* Form Validation */
+.enterprisebot-blizz-form-group input:invalid:not(:placeholder-shown),
+.enterprisebot-blizz-form-group textarea:invalid:not(:placeholder-shown) {
+    border-color: #ef4444;
+}
+
+/* Contact Form Responsive */
+@media (max-width: 640px) {
+    .enterprisebot-blizz-contact-content {
+        padding: 20px 16px;
+    }
+
+    .enterprisebot-blizz-contact-header {
+        padding: 12px 16px;
+    }
+
+    .enterprisebot-blizz-time-range {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .enterprisebot-blizz-time-range input[type="time"] {
+        width: 100%;
+    }
+
+    .enterprisebot-blizz-time-separator {
+        display: none;
+    }
+}
+
+/* ========================================
+   INFO BUTTON & PRIVACY POPUP
+   ======================================== */
+.enterprisebot-blizz-info-btn {
+    color: var(--eb-primary);
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-info-btn:hover {
+    opacity: 1;
+    background: rgba(20, 123, 209, 0.1);
+}
+
+/* Privacy Popup - Enhanced Floating Card */
+.enterprisebot-blizz-privacy-popup {
+    position: absolute;
+    top: 70px;
+    right: 16px;
+    width: 320px;
+    max-width: calc(100% - 32px);
+    padding: 24px;
+    background: var(--eb-bg);
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border-left: 4px solid var(--eb-primary);
+    z-index: 100;
+    animation: enterprisebot-blizz-privacySlideIn 0.3s ease-out;
+}
+
+@keyframes enterprisebot-blizz-privacySlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header with avatar */
+.enterprisebot-blizz-privacy-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding-right: 30px;
+}
+
+.enterprisebot-blizz-privacy-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--eb-radius-full);
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.enterprisebot-blizz-privacy-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--eb-text);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Close button - subtle */
+.enterprisebot-blizz-privacy-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    border-radius: var(--eb-radius-full);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--eb-text-light);
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-privacy-close-btn:hover {
+    background: var(--eb-bg-secondary);
+    color: var(--eb-text);
+}
+
+/* Text */
+.enterprisebot-blizz-privacy-text {
+    font-size: 0.8125rem;
+    color: var(--eb-text-muted);
+    line-height: 1.6;
+    margin: 0 0 18px 0;
+}
+
+/* Link button - pill style */
+.enterprisebot-blizz-privacy-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: var(--eb-bg-secondary);
+    border: none;
+    border-radius: 20px;
+    color: var(--eb-text);
+    text-decoration: none;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-privacy-link:hover {
+    background: var(--eb-primary);
+    color: white;
+}
+
+.enterprisebot-blizz-privacy-link svg {
+    transition: transform 0.2s ease;
+}
+
+.enterprisebot-blizz-privacy-link:hover svg {
+    transform: translateX(3px);
+}
+
+/* Privacy Popup Responsive */
+@media (max-width: 640px) {
+    .enterprisebot-blizz-privacy-popup {
+        top: 60px;
+        right: 8px;
+        left: 8px;
+        width: auto;
+        max-width: none;
+    }
+}
+
+/* ========================================
+   END CHAT BUTTON
+   ======================================== */
+.enterprisebot-blizz-end-chat-btn {
+    display: block;
+    width: 100%;
+    max-width: 800px;
+    margin: 12px auto 0;
+    padding: 10px 16px;
+    background: transparent;
+    border: 1px solid var(--eb-border);
+    border-radius: var(--eb-radius-sm);
+    color: var(--eb-text-muted);
+    font-size: 0.875rem;
+    font-family: 'Albert Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.enterprisebot-blizz-end-chat-btn:hover {
+    background: var(--eb-bg-secondary);
+    border-color: var(--eb-text-muted);
+    color: var(--eb-text);
+}
+
+/* ========================================
+   VIDEO WIDGET
+   ======================================== */
+.enterprisebot-blizz-video-widget {
+    margin-top: 8px;
+}
+
+.enterprisebot-blizz-video-widget p {
+    margin: 0 0 12px 0;
+    font-size: 0.9375rem;
+}
+
+.enterprisebot-blizz-video-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 0;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.enterprisebot-blizz-video-link.playing {
+    cursor: default;
+}
+
+.enterprisebot-blizz-video-link.playing:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.enterprisebot-blizz-video-iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 0;
+    border: none;
+    display: block;
+}
+
+.enterprisebot-blizz-video-thumbnail {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 0;
+    overflow: hidden;
+}
+
+.enterprisebot-blizz-video-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.enterprisebot-blizz-video-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 0, 0, 0.9);
+    border-radius: var(--eb-radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.enterprisebot-blizz-video-link:hover .enterprisebot-blizz-video-play-icon {
+    transform: translate(-50%, -50%) scale(1.1);
+    background: rgba(255, 0, 0, 1);
+}
+
+.enterprisebot-blizz-video-play-icon svg {
+    margin-left: 4px;
+}
+
+.enterprisebot-blizz-video-title {
+    display: none;
+    /* Hidden to prevent black line below video */
+}
+
+/* ========================================
+   LOCATION CARD
+   ======================================== */
+.enterprisebot-blizz-location-card {
+    margin-top: 8px;
+    margin-top: 8px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+    box-shadow: none;
+}
+
+.enterprisebot-blizz-location-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    gap: 10px;
+    padding: 0 0 14px 0;
+    background: transparent;
+    border-bottom: none;
+    flex-wrap: wrap;
+}
+
+.enterprisebot-blizz-location-icon {
+    color: var(--eb-primary);
+    flex-shrink: 0;
+}
+
+.enterprisebot-blizz-location-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--eb-text);
+    flex: 1;
+}
+
+/* Status Badge */
+.enterprisebot-blizz-location-status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.enterprisebot-blizz-status-open {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.enterprisebot-blizz-status-closed {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Body - side by side container */
+.enterprisebot-blizz-location-body {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.enterprisebot-blizz-location-map {
+    width: 100%;
+    height: 180px;
+    background: var(--eb-bg-secondary);
+    position: relative;
+}
+
+.enterprisebot-blizz-location-map iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Info Section */
+.enterprisebot-blizz-location-info {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid var(--eb-border-light);
+}
+
+/* Info Rows (address, phone, email) */
+.enterprisebot-blizz-location-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.8125rem;
+    color: var(--eb-text);
+    text-decoration: none;
+}
+
+.enterprisebot-blizz-location-row-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--eb-text-muted);
+    margin-top: 1px;
+}
+
+/* Clickable links (phone, email) */
+.enterprisebot-blizz-location-link {
+    color: var(--eb-primary);
+    cursor: pointer;
+}
+
+.enterprisebot-blizz-location-link:hover {
+    text-decoration: underline;
+}
+
+/* Opening Hours */
+.enterprisebot-blizz-location-hours {
+    margin-top: 4px;
+}
+
+.enterprisebot-blizz-location-hours-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--eb-text);
+    margin-bottom: 6px;
+}
+
+.enterprisebot-blizz-location-hours-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding-left: 26px;
+}
+
+.enterprisebot-blizz-hours-row {
+    display: flex;
+    gap: 12px;
+    font-size: 0.75rem;
+    color: var(--eb-text-muted);
+}
+
+.enterprisebot-blizz-hours-day {
+    min-width: 20px;
+    color: var(--eb-text);
+    font-weight: 500;
+}
+
+.enterprisebot-blizz-hours-time {
+    text-align: right;
+}
+
+.enterprisebot-blizz-hours-closed {
+    color: #ef4444;
+}
+
+/* Directions Button - floating on map */
+.enterprisebot-blizz-location-btn {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: var(--eb-primary) !important;
+    color: #ffffff !important;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8125rem !important;
+    font-weight: 500;
+    font-family: 'Albert Sans', sans-serif;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    line-height: 1.2;
+}
+
+.enterprisebot-blizz-location-btn:hover {
+    background: var(--eb-primary-hover) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(20, 123, 209, 0.4);
+    color: #ffffff !important;
+}
+
+.enterprisebot-blizz-location-btn svg {
+    flex-shrink: 0;
+    display: inline-block;
+}
+
+.enterprisebot-blizz-location-btn span {
+    color: #ffffff !important;
+    display: inline;
+}
+
+/* Override link styles from message bubble */
+.enterprisebot-blizz-message-bubble .enterprisebot-blizz-location-btn,
+.enterprisebot-blizz-message-bubble .enterprisebot-blizz-location-btn:hover {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+/* Desktop: Side-by-side layout */
+@media (min-width: 500px) {
+    .enterprisebot-blizz-location-body {
+        flex-direction: row;
+    }
+
+    .enterprisebot-blizz-location-map {
+        width: 45%;
+        height: 240px;
+        flex-shrink: 0;
+    }
+
+    .enterprisebot-blizz-location-info {
+        width: 55%;
+        border-top: none;
+        border-left: 1px solid var(--eb-border-light);
+        padding: 14px 16px;
+    }
+}
+
+/* Responsive adjustments for widgets */
+@media (max-width: 640px) {
+    .enterprisebot-blizz-video-thumbnail {
+        max-width: 100%;
+    }
+
+    .enterprisebot-blizz-location-map {
+        height: 160px;
+    }
+
+    .enterprisebot-blizz-location-info {
+        padding: 14px;
+        gap: 8px;
+    }
+
+    .enterprisebot-blizz-location-btn {
+        bottom: 10px;
+        left: 10px;
+        padding: 8px 14px;
+        font-size: 0.75rem;
+    }
+}
+
+/* ============================================================================
+   CONTACT FORM STYLES
+   ============================================================================ */
+
+.wwz-blizz-contact-form {
+    width: 100%;
+}
+
+.wwz-blizz-form-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #1f2937;
+}
+
+.wwz-blizz-form-field {
+    margin-bottom: 8px;
+    /* Reduced from 16px */
+}
+
+.wwz-blizz-form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #374151;
+}
+
+.wwz-blizz-form-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #000000;
+    border-radius: 0 !important;
+    appearance: none;
+    -webkit-appearance: none;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1f2937;
+    background: #ffffff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+
+.wwz-blizz-form-input.wwz-blizz-invalid {
+    border-color: #ef4444;
+}
+
+/* Remove default focus ring and use black border */
+.wwz-blizz-form-input:focus {
+    outline: none;
+    border-color: #000000;
+    box-shadow: none;
+}
+
+.wwz-blizz-form-input.wwz-blizz-invalid:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.wwz-blizz-form-input:disabled {
+    background: #f3f4f6;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.wwz-blizz-form-error {
+    display: block;
+    font-size: 12px;
+    color: #ef4444;
+    margin-top: 4px;
+    min-height: 16px;
+}
+
+.wwz-blizz-form-submit {
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 0 !important;
+    appearance: none;
+    -webkit-appearance: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    box-sizing: border-box;
+}
+
+.wwz-blizz-form-submit:hover:not(:disabled) {
+    background: #333333;
+}
+
+.wwz-blizz-form-submit:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+
+.wwz-blizz-form-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.wwz-blizz-form-bubble {
+    min-width: 280px;
+    max-width: 100%;
+}
+
+.wwz-blizz-form-submitted .wwz-blizz-form-input {
+    background: #f9fafb;
+}
+
+.wwz-blizz-form-success-message {
+    margin-top: 12px;
+    padding: 12px;
+    background: #d1fae5;
+    color: #065f46;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.wwz-blizz-form-success-message span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ============================================================================
+   FEEDBACK TRIGGER BUTTON
+   ============================================================================ */
+
+.wwz-blizz-feedback-trigger-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.wwz-blizz-feedback-trigger-btn:hover {
+    border-color: #3b82c4;
+    color: #3b82c4;
+    background: #f0f7ff;
+}
+
+/* ============================================================================
+   FEEDBACK SCREEN
+   ============================================================================ */
+
+.wwz-blizz-feedback-content {
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.wwz-blizz-feedback-question {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 28px;
+    color: #1f2937;
+    line-height: 1.4;
+}
+
+.wwz-blizz-rating {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 36px;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.wwz-blizz-rating-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    flex: 0 0 42px;
+    width: 42px;
+    max-width: 60px;
+    min-width: 42px;
+    padding: 0;
+    transition: transform 0.3s ease;
+    box-sizing: border-box;
+}
+
+.wwz-blizz-rating-item:hover {
+    transform: translateY(-2px);
+}
+
+.wwz-blizz-rating-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid #d1d5db;
+    background: #ffffff;
+    color: #374151;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 0;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.wwz-blizz-rating-btn:hover {
+    border-color: #3b82c4;
+    color: #3b82c4;
+    transform: scale(1.1) translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.wwz-blizz-rating-btn:active {
+    transform: scale(0.95);
+}
+
+/* Rating colors when selected */
+.wwz-blizz-rating-1.wwz-blizz-selected {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0.15), 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.wwz-blizz-rating-1:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+.wwz-blizz-rating-2.wwz-blizz-selected {
+    background: #f97316;
+    border-color: #f97316;
+    color: #ffffff;
+    box-shadow: 0 0 0 6px rgba(249, 115, 22, 0.15), 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+.wwz-blizz-rating-2:hover {
+    border-color: #f97316;
+    color: #f97316;
+}
+
+.wwz-blizz-rating-3.wwz-blizz-selected {
+    background: #eab308;
+    border-color: #eab308;
+    color: #ffffff;
+    box-shadow: 0 0 0 6px rgba(234, 179, 8, 0.15), 0 4px 12px rgba(234, 179, 8, 0.3);
+}
+
+.wwz-blizz-rating-3:hover {
+    border-color: #eab308;
+    color: #eab308;
+}
+
+.wwz-blizz-rating-4.wwz-blizz-selected {
+    background: #22c55e;
+    border-color: #22c55e;
+    color: #ffffff;
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.15), 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.wwz-blizz-rating-4:hover {
+    border-color: #22c55e;
+    color: #22c55e;
+}
+
+.wwz-blizz-rating-5.wwz-blizz-selected {
+    background: #10b981;
+    border-color: #10b981;
+    color: #ffffff;
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.15), 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.wwz-blizz-rating-5:hover {
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.wwz-blizz-rating-label {
+    font-size: 11px;
+    color: #6b7280;
+    text-align: center;
+    max-width: 60px;
+    line-height: 1.2;
+    word-wrap: break-word;
+    opacity: 0;
+    height: 0;
+    transform: translateY(-10px);
+    overflow: hidden;
+    margin-top: 0;
+}
+
+.wwz-blizz-rating-btn.wwz-blizz-selected+.wwz-blizz-rating-label {
+    opacity: 1;
+    transform: translateY(0);
+    height: auto;
+    margin-top: 6px;
+}
+
+.wwz-blizz-rating-1.wwz-blizz-selected+.wwz-blizz-rating-label {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.wwz-blizz-rating-2.wwz-blizz-selected+.wwz-blizz-rating-label {
+    color: #f97316;
+    font-weight: 600;
+}
+
+.wwz-blizz-rating-3.wwz-blizz-selected+.wwz-blizz-rating-label {
+    color: #eab308;
+    font-weight: 600;
+}
+
+/* ========================================
+   SUGGESTION BUTTONS (Chips)
+   ======================================== */
+.wwz-blizz-suggestions-container,
+.wwz-blizz-welcome-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+    justify-content: center;
+}
+
+.wwz-blizz-suggestions-container {
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+    overflow-x: auto;
+    /* Horizontal scroll if needed */
+    flex-wrap: nowrap;
+    /* Single line */
+    padding: 5px 0 12px 0;
+    /* Align flush with input */
+    margin-top: 0;
+    -webkit-overflow-scrolling: touch;
+}
+
+.wwz-blizz-suggestions-container:empty {
+    display: none;
+    padding: 0;
+}
+
+.wwz-blizz-suggestion-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    background: #fff;
+    border: 1px solid #000;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    /* Keep nowrap for horiz-scroll in chat */
+    display: inline-flex;
+    align-items: center;
+}
+
+.wwz-blizz-suggestion-btn:hover {
+    background: #f5f5f5;
+    color: #000;
+    transform: translateY(-1px);
+    border-color: #000;
+
+    box-shadow: 0 2px 4px rgba(20, 123, 209, 0.2);
+}
+
+.wwz-blizz-suggestion-btn:active {
+    transform: translateY(1px);
+}
+
+.wwz-blizz-rating-4.wwz-blizz-selected+.wwz-blizz-rating-label {
+    color: #22c55e;
+    font-weight: 600;
+}
+
+.wwz-blizz-rating-5.wwz-blizz-selected+.wwz-blizz-rating-label {
+    color: #10b981;
+    font-weight: 600;
+}
+
+.wwz-blizz-feedback-second-question {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.wwz-blizz-feedback-second-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: #1f2937;
+}
+
+.wwz-blizz-feedback-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.wwz-blizz-feedback-option {
+    padding: 14px 18px;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 500;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+.wwz-blizz-feedback-option:hover {
+    border-color: #3b82c4;
+    background: #f0f7ff;
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.wwz-blizz-feedback-option.wwz-blizz-selected {
+    border-color: #3b82c4;
+    background: #3b82c4;
+    color: #ffffff;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(59, 130, 196, 0.3);
+}
+
+.wwz-blizz-feedback-text-toggle-wrapper {
+    margin-bottom: 16px;
+}
+
+.wwz-blizz-feedback-text-toggle-wrapper.wwz-blizz-hidden {
+    display: none;
+}
+
+.wwz-blizz-btn-outline {
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    color: #374151;
+}
+
+.wwz-blizz-btn-outline:hover {
+    border-color: #147bd1;
+    background: #f8fbfe;
+    color: #147bd1;
+}
+
+/* Base button styles */
+.wwz-blizz-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Primary button - filled blue */
+.wwz-blizz-btn-primary {
+    background: #147bd1;
+    border-color: transparent;
+    /* Changed from blue to transparent */
+    color: #ffffff;
+}
+
+.wwz-blizz-btn-primary:hover {
+    background: #1069b5;
+    border-color: #1069b5;
+}
+
+.wwz-blizz-btn-primary:active {
+    background: #0d5a9e;
+    border-color: #0d5a9e;
+}
+
+.wwz-blizz-feedback-text-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, margin 0.3s ease;
+    text-align: left;
+    margin-bottom: 0;
+}
+
+.wwz-blizz-feedback-text-panel.wwz-blizz-expanded {
+    max-height: 200px;
+    margin-bottom: 24px;
+}
+
+.wwz-blizz-feedback-text-input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 80px;
+    color: #1f2937;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.wwz-blizz-feedback-text-input:focus {
+    outline: none;
+    border-color: #3b82c4;
+    box-shadow: 0 0 0 3px rgba(59, 130, 196, 0.1);
+}
+
+.wwz-blizz-feedback-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 100%;
+}
+
+.wwz-blizz-feedback-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    background: none;
+    color: #147bd1;
+}
+
+.wwz-blizz-feedback-btn:hover {
+    background: #e8f4fc;
+}
+
+/* Continue/Weiter button - light blue filled */
+.wwz-blizz-feedback-continue {
+    background: #e8f4fc;
+    border: 2px solid #e8f4fc;
+    color: #147bd1;
+    font-weight: 600;
+}
+
+.wwz-blizz-feedback-continue:hover {
+    background: #d4ebf8;
+    border-color: #d4ebf8;
+}
+
+/* ============================================================================
+   THANK YOU SCREEN - Animated Checkmark
+   ============================================================================ */
+
+.wwz-blizz-thankyou-content {
+    padding: 48px 24px;
+}
+
+/* Checkmark wrapper */
+.wwz-blizz-checkmark-wrapper {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    background: #ecfdf5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: wwz-blizz-scale-in 0.3s ease-out;
+}
+
+/* Main checkmark SVG */
+.wwz-blizz-checkmark {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: #10b981;
+    stroke-miterlimit: 10;
+}
+
+/* Circle animation */
+.wwz-blizz-checkmark-circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: #10b981;
+    fill: none;
+    animation: wwz-blizz-stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+/* Checkmark path animation */
+.wwz-blizz-checkmark-check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    animation: wwz-blizz-stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.4s forwards;
+}
+
+/* Circle stroke animation */
+@keyframes wwz-blizz-stroke {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Scale in animation */
+@keyframes wwz-blizz-scale-in {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Title styling */
+.wwz-blizz-thankyou-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #1f2937;
+    line-height: 1.3;
+    animation: wwz-blizz-fade-up 0.4s ease-out 0.3s both;
+}
+
+/* Description styling */
+.wwz-blizz-thankyou-desc {
+    font-size: 15px;
+    color: #6b7280;
+    margin-bottom: 32px;
+    line-height: 1.6;
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: wwz-blizz-fade-up 0.4s ease-out 0.4s both;
+}
+
+/* Fade up animation */
+@keyframes wwz-blizz-fade-up {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Button animation */
+.wwz-blizz-thankyou-content .wwz-blizz-btn {
+    animation: wwz-blizz-fade-up 0.4s ease-out 0.5s both;
+}
+
+/* ============================================================================
+   AGGREGATED MAP VIEW - All Shop Locations
+   ============================================================================ */
+
+.wwz-blizz-aggregated-map-container {
+    margin-top: 8px;
+    background: var(--eb-bg);
+    border: 1px solid var(--eb-border-light);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.wwz-blizz-aggregated-map-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #3b82c4 0%, #1e5a8a 100%);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.wwz-blizz-aggregated-map-header svg {
+    fill: #ffffff;
+    flex-shrink: 0;
+}
+
+.wwz-blizz-aggregated-map-body {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 500px) {
+    .wwz-blizz-aggregated-map-body {
+        flex-direction: row;
+    }
+}
+
+.wwz-blizz-aggregated-map-canvas {
+    width: 100%;
+    height: 250px;
+    background: #f3f4f6;
+    position: relative;
+}
+
+@media (min-width: 500px) {
+    .wwz-blizz-aggregated-map-canvas {
+        width: 60%;
+        height: 300px;
+    }
+}
+
+.wwz-blizz-aggregated-map-list {
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    border-top: 1px solid var(--eb-border-light);
+}
+
+@media (min-width: 500px) {
+    .wwz-blizz-aggregated-map-list {
+        width: 40%;
+        max-height: 300px;
+        border-top: none;
+        border-left: 1px solid var(--eb-border-light);
+    }
+}
+
+.wwz-blizz-map-list-item {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--eb-border-light);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.wwz-blizz-map-list-item:last-child {
+    border-bottom: none;
+}
+
+.wwz-blizz-map-list-item:hover,
+.wwz-blizz-map-list-item.wwz-blizz-highlighted {
+    background: #f0f7ff;
+}
+
+.wwz-blizz-map-list-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: #1f2937;
+    margin-bottom: 2px;
+}
+
+.wwz-blizz-map-list-address {
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.wwz-blizz-map-list-status {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.wwz-blizz-map-list-status.enterprisebot-blizz-status-open {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.wwz-blizz-map-list-status.enterprisebot-blizz-status-closed {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Google Maps info window override */
+.gm-style-iw {
+    padding: 0 !important;
+}
+
+.gm-style-iw-d {
+    overflow: hidden !important;
+}
+
+/* ========================================
+   DYNAMIC CONTENT STYLES
+   ======================================== */
+
+/* Contact Form Message Bubble */
+.wwz-blizz-form-bubble {
+    width: 100%;
+    max-width: 100%;
+    background: transparent !important;
+    border: none;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: none;
+}
+
+.wwz-blizz-contact-form {
+    width: 100%;
+}
+
+.wwz-blizz-form-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--eb-text);
+}
+
+.wwz-blizz-form-field {
+    margin-bottom: 16px;
+}
+
+.wwz-blizz-form-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--eb-text-muted);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.wwz-blizz-form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--eb-border);
+    border-radius: var(--eb-radius-sm);
+    font-size: 0.9375rem;
+    font-family: 'Albert Sans', sans-serif;
+    transition: all 0.2s ease;
+    background: #f9fafb;
+}
+
+.wwz-blizz-form-input:focus {
+    border-color: var(--eb-primary);
+    background: #fff;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.wwz-blizz-form-input[type="date"],
+.wwz-blizz-form-input[type="time"] {
+    appearance: none;
+    /* Remove default browser styling */
+    min-height: 48px;
+}
+
+textarea.wwz-blizz-form-input {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.wwz-blizz-form-submit {
+    width: 100%;
+    margin-top: 8px;
+    background: #000;
+    /* Black button as per design */
+    color: #fff;
+}
+
+.wwz-blizz-form-submit:hover {
+    background: #333;
+}
+
+/* Privacy/Help Popup (Bubble Style) */
+.enterprisebot-blizz-privacy-popup {
+    position: absolute;
+    top: 70px;
+    /* Below header */
+    right: 20px;
+    width: 320px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    padding: 24px;
+    z-index: 2000;
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.2s ease;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.enterprisebot-blizz-privacy-popup.wwz-blizz-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+
+/* Arrow for bubble */
+.enterprisebot-blizz-privacy-popup::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: 20px;
+    /* Align with question mark */
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    transform: rotate(45deg);
+    border-left: 1px solid rgba(0, 0, 0, 0.05);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.enterprisebot-blizz-privacy-header {
+    margin-bottom: 12px;
+}
+
+.enterprisebot-blizz-privacy-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    color: #000;
+}
+
+.enterprisebot-blizz-privacy-text {
+    font-size: 0.9375rem;
+    color: var(--eb-text-muted);
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.enterprisebot-blizz-privacy-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px;
+    background: #000;
+    color: #fff;
+    border-radius: 99px;
+    /* Pill shape */
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    transition: background 0.2s ease;
+}
+
+.enterprisebot-blizz-privacy-link:hover {
+    background: #333;
+    text-decoration: none;
+}
+
+.enterprisebot-blizz-privacy-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #999;
+}
+
+.enterprisebot-blizz-privacy-close-btn:hover {
+    color: #000;
+}
+
+/* Video Widget */
+.enterprisebot-blizz-video-widget {
+    margin-top: 8px;
+    border-radius: 0;
+    overflow: hidden;
+    background: #000;
+    position: relative;
+    width: 100%;
+}
+
+.enterprisebot-blizz-video-thumbnail {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    /* 16:9 aspect ratio */
+}
+
+.enterprisebot-blizz-video-thumbnail img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    max-width: none !important;
+    max-height: none !important;
+    min-width: 100%;
+    min-height: 100%;
+    opacity: 0.8;
+}
+
+.enterprisebot-blizz-video-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 0, 0, 0.9);
+    /* YouTube Red */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.enterprisebot-blizz-video-title {
+    display: none;
+    /* Hidden to prevent black line and title overlay */
+}
+
+/* ========================================
+   FORM STYLES (Radio, Checkbox, etc.)
+   ======================================== */
+.wwz-blizz-radio-group {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.wwz-blizz-radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--eb-text);
+}
+
+/* Hide default radio */
+.wwz-blizz-radio-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Custom radio circle */
+.wwz-blizz-radio-custom {
+    height: 20px;
+    width: 20px;
+    background-color: transparent;
+    border: 2px solid #000;
+    border-radius: 50%;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+/* Hover state */
+.wwz-blizz-radio-option:hover .wwz-blizz-radio-custom {
+    border-color: var(--eb-primary);
+}
+
+/* Checked state */
+.wwz-blizz-radio-option input:checked~.wwz-blizz-radio-custom {
+    border-color: #000;
+}
+
+/* Dot inside */
+.wwz-blizz-radio-option input:checked~.wwz-blizz-radio-custom:after {
+    content: "";
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #000;
+}
+
+.wwz-blizz-form-field {
+    margin-bottom: 20px;
+}
+
+.wwz-blizz-form-label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #000;
+}
+
+.wwz-blizz-form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--eb-border);
+    border-radius: var(--eb-radius-sm);
+    /* 6px */
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--eb-text);
+    background: var(--eb-bg);
+    transition: all 0.2s ease;
+}
+
+.wwz-blizz-form-input:focus {
+    outline: none;
+    border-color: #000;
+}
+
+/* Date Input specific styling to match generic input */
+input[type="date"].wwz-blizz-form-input {
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+/* ========================================
+   MOBILE RESPONSIVENESS
+   ======================================== */
+@media (max-width: 640px) {
+
+    .wwz-blizz-app-container,
+    .wwz-blizz-main-content {
+        width: 100% !important;
+        max-width: 100vw !important;
+        overflow-x: hidden;
+        border-radius: 0;
+    }
+
+    .wwz-blizz-chat-header {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-right: 16px;
+        /* Ensure padding prevents button cutoff */
+    }
+
+    .enterprisebot-blizz-privacy-popup {
+        top: 80px;
+        left: 16px;
+        right: 16px;
+        width: auto;
+        padding: 20px;
+    }
+
+    .wwz-blizz-floating-input-wrapper {
+        padding: 16px 16px 24px 16px;
+    }
+
+    .wwz-blizz-messages-container {
+        padding: 100px 16px 160px 16px;
+        /* Increased top padding to clear header */
+    }
+
+    .wwz-blizz-welcome-screen {
+        padding: 80px 16px 160px 16px;
+    }
+
+    /* Mobile adjustments for Welcome Mode */
+    .wwz-blizz-mode-welcome .wwz-blizz-welcome-title {
+        font-size: 28px;
+        /* Reduced from 44px */
+        margin-top: 80px;
+        /* Force title down from Help Icon */
+        text-align: center;
+        width: 100%;
+    }
+
+    .wwz-blizz-mode-welcome .wwz-blizz-welcome-screen {
+        padding-top: 20px !important;
+        /* Reset padding, use title margin instead */
+    }
+
+    .wwz-blizz-mode-welcome .wwz-blizz-input-container {
+        margin-bottom: 24px !important;
+    }
+}
+
+/* ========================================
+   WELCOME MODE (Centered Layout)
+   ======================================== */
+/* ========================================
+   WELCOME MODE (Centered Layout)
+   ======================================== */
+.wwz-blizz-mode-welcome .wwz-blizz-floating-input-wrapper {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Start centered */
+    bottom: auto;
+    width: 100%;
+    max-width: 800px;
+    padding: 0 24px;
+    background: transparent;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* 1. Input Container (Top) */
+.wwz-blizz-mode-welcome .wwz-blizz-input-container {
+    order: 1 !important;
+    margin-bottom: 48px !important;
+    /* Large gap below input */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    position: relative;
+    z-index: 20;
+}
+
+/* 2. Suggestions (Middle) */
+.wwz-blizz-mode-welcome .wwz-blizz-suggestions-container {
+    order: 2 !important;
+    display: flex !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 16px !important;
+    margin-top: 0 !important;
+    margin-bottom: 40px !important;
+    /* Gap before disclaimer */
+    width: 100%;
+    max-width: 650px;
+    /* Ensure 3 cards fit */
+}
+
+/* 3. Disclaimer (Bottom) */
+.wwz-blizz-mode-welcome .wwz-blizz-disclaimer {
+    order: 3 !important;
+    margin-top: 0 !important;
+    position: relative;
+    z-index: 10;
+}
+
+/* Hide scroll button */
+.wwz-blizz-mode-welcome .wwz-blizz-scroll-to-bottom {
+    display: none !important;
+}
+
+/* WELCOME TITLE Styling */
+.wwz-blizz-mode-welcome .wwz-blizz-welcome-screen {
+    justify-content: flex-start;
+    padding-top: 5% !important;
+    /* Moved significantly up */
+    padding-bottom: 0;
+    pointer-events: none;
+    /* Let clicks pass to input */
+    position: relative;
+    z-index: 5;
+    /* Behind input if overlapping */
+}
+
+.wwz-blizz-mode-welcome .wwz-blizz-welcome-content {
+    margin-bottom: 0;
+    pointer-events: auto;
+}
+
+.wwz-blizz-mode-welcome .wwz-blizz-welcome-title {
+    font-size: 44px;
+    /* Big title size */
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    color: #000;
+}
+
+/* Hide subtitle/text */
+.wwz-blizz-mode-welcome .wwz-blizz-welcome-subtitle,
+.wwz-blizz-mode-welcome .wwz-blizz-welcome-text {
+    display: none !important;
+}
+
+/* Suggestion Cards Styling */
+.wwz-blizz-mode-welcome .wwz-blizz-suggestion-btn {
+    border: 1px solid #000 !important;
+    border-radius: 6px !important;
+    color: #000 !important;
+    background: #fff !important;
+    /* White background */
+    padding: 12px 16px !important;
+    white-space: normal !important;
+    text-align: left !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 140px;
+    max-width: 200px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    hyphens: auto !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.wwz-blizz-mode-welcome .wwz-blizz-suggestion-btn:hover {
+    background: #f5f5f5 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Default State: Hide New Chat Button (Show only in active chat) */
+#wwz-blizz-new-chat-btn {
+    display: none;
+}
+
+/* Default State: Hide Welcome Description Text (Only show Title) */
+.wwz-blizz-welcome-text {
+    display: none;
+}
+
+/* Video message styling - maintain proper alignment with larger video display */
+.wwz-blizz-message-has-video .wwz-blizz-message-content {
+    min-width: min(480px, calc(100vw - 100px));
+    max-width: min(600px, calc(100% - 52px));
+    /* Responsive: min-width adapts to narrow screens */
+}
+
+.wwz-blizz-message-has-video .enterprisebot-blizz-video-widget {
+    margin-top: 8px;
+    width: 100%;
+    /* Video takes full width of message content */
+}
+
+.enterprisebot-blizz-video-link {
+    display: block;
+    width: 100%;
+}
