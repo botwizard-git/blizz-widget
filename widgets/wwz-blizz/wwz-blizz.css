@@ -2458,3 +2458,129 @@
 .wwz-blizz-thankyou-content .wwz-blizz-btn {
     animation: wwz-blizz-fade-up 0.4s ease-out 0.5s both;
 }
+
+/* ============================================================================
+   AGGREGATED MAP VIEW - All Shop Locations
+   ============================================================================ */
+
+.wwz-blizz-aggregated-map-container {
+    margin-top: 8px;
+    background: var(--eb-bg);
+    border: 1px solid var(--eb-border-light);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.wwz-blizz-aggregated-map-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #3b82c4 0%, #1e5a8a 100%);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.wwz-blizz-aggregated-map-header svg {
+    fill: #ffffff;
+    flex-shrink: 0;
+}
+
+.wwz-blizz-aggregated-map-body {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 500px) {
+    .wwz-blizz-aggregated-map-body {
+        flex-direction: row;
+    }
+}
+
+.wwz-blizz-aggregated-map-canvas {
+    width: 100%;
+    height: 250px;
+    background: #f3f4f6;
+    position: relative;
+}
+
+@media (min-width: 500px) {
+    .wwz-blizz-aggregated-map-canvas {
+        width: 60%;
+        height: 300px;
+    }
+}
+
+.wwz-blizz-aggregated-map-list {
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    border-top: 1px solid var(--eb-border-light);
+}
+
+@media (min-width: 500px) {
+    .wwz-blizz-aggregated-map-list {
+        width: 40%;
+        max-height: 300px;
+        border-top: none;
+        border-left: 1px solid var(--eb-border-light);
+    }
+}
+
+.wwz-blizz-map-list-item {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--eb-border-light);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.wwz-blizz-map-list-item:last-child {
+    border-bottom: none;
+}
+
+.wwz-blizz-map-list-item:hover,
+.wwz-blizz-map-list-item.wwz-blizz-highlighted {
+    background: #f0f7ff;
+}
+
+.wwz-blizz-map-list-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: #1f2937;
+    margin-bottom: 2px;
+}
+
+.wwz-blizz-map-list-address {
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.wwz-blizz-map-list-status {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.wwz-blizz-map-list-status.enterprisebot-blizz-status-open {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.wwz-blizz-map-list-status.enterprisebot-blizz-status-closed {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Google Maps info window override */
+.gm-style-iw {
+    padding: 0 !important;
+}
+
+.gm-style-iw-d {
+    overflow: hidden !important;
+}

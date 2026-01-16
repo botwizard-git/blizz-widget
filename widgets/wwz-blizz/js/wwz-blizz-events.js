@@ -755,11 +755,31 @@
                         });
                     }
 
+                    // Handle showAllShops - render aggregated map view with all shop pins
+                    if (response.showAllShops && CONFIG.wwzShopsMapPins && CONFIG.wwzShopsMapPins.length > 0) {
+                        var mapDelay = (response.replies ? response.replies.length : 1) * 300 + 200;
+                        // Add extra delay if individual shop cards are being rendered
+                        if (response.shopList && response.shopList.length > 0) {
+                            mapDelay += response.shopList.length * 400 + 200;
+                        }
+                        setTimeout(function() {
+                            var aggregatedMapHtml = UI.createAggregatedMapView(CONFIG.wwzShopsMapPins);
+                            if (aggregatedMapHtml) {
+                                var mapMessage = StateManager.addMessage(aggregatedMapHtml, false, { isHtml: true });
+                                UI.renderMessage(mapMessage);
+                            }
+                        }, mapDelay);
+                    }
+
                     if (response.suggestions && response.suggestions.length > 0) {
                         var suggestDelay = (response.replies ? response.replies.length : 1) * 300 + 100;
                         // Add extra delay if shop cards are being rendered
                         if (response.shopList && response.shopList.length > 0) {
                             suggestDelay += response.shopList.length * 400 + 200;
+                        }
+                        // Add extra delay if aggregated map is being rendered
+                        if (response.showAllShops && CONFIG.wwzShopsMapPins && CONFIG.wwzShopsMapPins.length > 0) {
+                            suggestDelay += 500;
                         }
                         setTimeout(function() {
                             UI.renderSuggestions(response.suggestions);

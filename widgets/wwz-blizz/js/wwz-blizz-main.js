@@ -27,9 +27,10 @@
             });
 
             // Load shop locations (async, doesn't block UI)
-            APIService.fetchShops().then(function(shopsMap) {
-                CONFIG.wwzShops = shopsMap;
-                console.log('[WWZBlizz] Shops loaded into config');
+            APIService.fetchShops().then(function(result) {
+                CONFIG.wwzShops = result.shops;
+                CONFIG.wwzShopsMapPins = result.mapPins;
+                console.log('[WWZBlizz] Shops loaded:', Object.keys(result.shops).length, 'shops,', result.mapPins.length, 'map pins');
             });
 
             // Initialize UI element references

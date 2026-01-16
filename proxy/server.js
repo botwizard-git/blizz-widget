@@ -21,6 +21,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const { sendErrorAlert } = require('./utils/slackHelper');
+const { fetchAllShopsDetails, mergeShopData, generateMapPins } = require('./utils/googlePlacesHelper');
 // Note: CORS is handled by nginx, not Express
 
 // Global config
@@ -154,7 +155,8 @@ const ALLOWED_ORIGINS = [
     'https://www.wwz.ch',
     'https://wwz.ch',
     'https://blizz.botwizard.ch',
-    'https://blizz-uat.botwizard.ch'
+    'https://blizz-uat.botwizard.ch',
+    'http://localhost:3000'
 ];
 
 /**
@@ -274,18 +276,169 @@ app.get('/health', (req, res) => {
 // =============================================================================
 
 const SHOPS_FILE = path.join(__dirname, 'data', 'wwz-shops.json');
+const SHOPS_CACHE_FILE = path.join(__dirname, 'data', 'wwz-shops-cache.json');
+const SHOPS_CACHE_TTL = parseInt(process.env.SHOPS_CACHE_TTL, 10) || 60 * 60 * 1000; // 1 hour default
+
+// In-memory cache for shops data
+const shopsCache = {
+    data: null,
+    lastFetched: null,
+    isRefreshing: false
+};
+
+/**
+ * Load cache from file on startup
+ */
+function loadShopsCacheFromFile() {
+    try {
+        if (fs.existsSync(SHOPS_CACHE_FILE)) {
+            const cached = JSON.parse(fs.readFileSync(SHOPS_CACHE_FILE, 'utf8'));
+            const cacheAge = Date.now() - new Date(cached.metadata.lastUpdated).getTime();
+            // Use file cache if less than 24 hours old
+            if (cacheAge < 24 * 60 * 60 * 1000) {
+                shopsCache.data = cached;
+                shopsCache.lastFetched = new Date(cached.metadata.lastUpdated).getTime();
+                console.log('[Shops] Loaded cache from file, age:', Math.round(cacheAge / 60000), 'minutes');
+                return true;
+            }
+        }
+    } catch (e) {
+        console.log('[Shops] No valid cache file found');
+    }
+    return false;
+}
+
+/**
+ * Save cache to file
+ */
+function saveShopsCacheToFile(data) {
+    try {
+        fs.writeFileSync(SHOPS_CACHE_FILE, JSON.stringify(data, null, 2), 'utf8');
+        console.log('[Shops] Cache saved to file');
+    } catch (e) {
+        console.error('[Shops] Failed to save cache file:', e.message);
+    }
+}
+
+/**
+ * Check if cache is valid
+ */
+function isShopsCacheValid() {
+    if (!shopsCache.data || !shopsCache.lastFetched) return false;
+    return (Date.now() - shopsCache.lastFetched) < SHOPS_CACHE_TTL;
+}
+
+/**
+ * Refresh shops data from Google Places API
+ */
+async function refreshShopsFromGoogle() {
+    if (shopsCache.isRefreshing) {
+        console.log('[Shops] Refresh already in progress, skipping');
+        return shopsCache.data;
+    }
+
+    shopsCache.isRefreshing = true;
+    console.log('[Shops] Refreshing from Google Places API...');
+
+    try {
+        // Read static data
+        const staticData = JSON.parse(fs.readFileSync(SHOPS_FILE, 'utf8'));
+
+        // Fetch from Google Places API
+        const googleDataMap = await fetchAllShopsDetails(staticData.shops);
+
+        // Merge static data with Google data
+        const mergedShops = {};
+        for (const shop of staticData.shops) {
+            const googleData = googleDataMap.get(shop.id);
+            const mergedShop = mergeShopData(shop, googleData);
+            mergedShops[shop.id] = mergedShop;
+        }
+
+        // Generate map pins array
+        const mapPins = generateMapPins(mergedShops);
+
+        const result = {
+            shops: mergedShops,
+            mapPins: mapPins,
+            metadata: {
+                lastUpdated: new Date().toISOString(),
+                cacheExpiresAt: new Date(Date.now() + SHOPS_CACHE_TTL).toISOString(),
+                version: staticData.metadata.version,
+                googleDataFetched: googleDataMap.size > 0
+            }
+        };
+
+        // Update cache
+        shopsCache.data = result;
+        shopsCache.lastFetched = Date.now();
+
+        // Persist to file
+        saveShopsCacheToFile(result);
+
+        console.log('[Shops] Cache refreshed with', Object.keys(mergedShops).length, 'shops,', mapPins.length, 'map pins');
+        return result;
+
+    } catch (error) {
+        console.error('[Shops] Google refresh failed:', error.message);
+        // Return cached data if available, otherwise fall back to static
+        if (shopsCache.data) {
+            return shopsCache.data;
+        }
+        throw error;
+    } finally {
+        shopsCache.isRefreshing = false;
+    }
+}
+
+/**
+ * Get shops data with fallback to static
+ */
+async function getShopsData() {
+    // Check if cache is valid
+    if (isShopsCacheValid()) {
+        console.log('[Shops] Returning cached data');
+        return shopsCache.data;
+    }
+
+    // Try to refresh from Google
+    try {
+        return await refreshShopsFromGoogle();
+    } catch (error) {
+        console.error('[Shops] Falling back to static data:', error.message);
+        // Fall back to static data
+        const staticData = JSON.parse(fs.readFileSync(SHOPS_FILE, 'utf8'));
+        // Convert array to object keyed by id
+        const shopsMap = {};
+        for (const shop of staticData.shops) {
+            shopsMap[shop.id] = shop;
+        }
+        return {
+            shops: shopsMap,
+            mapPins: [],
+            metadata: {
+                ...staticData.metadata,
+                googleDataFetched: false,
+                fallback: true
+            }
+        };
+    }
+}
+
+// Load cache on startup
+loadShopsCacheFromFile();
 
 /**
  * Get all shop locations
  * GET /shops
  */
-app.get('/shops', (req, res) => {
+app.get('/shops', async (req, res) => {
     try {
-        const shopsData = JSON.parse(fs.readFileSync(SHOPS_FILE, 'utf8'));
-        console.log('[Shops] Returning', shopsData.shops.length, 'shops');
+        const shopsData = await getShopsData();
+        console.log('[Shops] Returning', Object.keys(shopsData.shops).length, 'shops');
         res.json(shopsData);
     } catch (error) {
-        console.error('[Shops] Error reading shops file:', error.message);
+        console.error('[Shops] Error:', error.message);
         res.status(500).json({ error: 'Failed to load shops data' });
     }
 });
@@ -352,6 +505,40 @@ app.post('/shops', (req, res) => {
     } catch (error) {
         console.error('[Shops] Error saving shop:', error.message);
         res.status(500).json({ error: 'Failed to save shop data' });
+    }
+});
+
+/**
+ * Force refresh shops cache from Google Places API
+ * POST /shops/refresh
+ * Header: x-api-key: wwz-shops-admin-2026
+ */
+app.post('/shops/refresh', async (req, res) => {
+    try {
+        // Check API key
+        const apiKey = req.headers['x-api-key'];
+        if (apiKey !== SHOPS_API_KEY) {
+            console.log('[Shops] Unauthorized refresh attempt');
+            return res.status(401).json({ error: 'Invalid API key' });
+        }
+
+        console.log('[Shops] Manual cache refresh requested');
+
+        // Force refresh
+        shopsCache.lastFetched = null;
+        const shopsData = await refreshShopsFromGoogle();
+
+        res.json({
+            success: true,
+            message: 'Cache refreshed',
+            shopsCount: Object.keys(shopsData.shops).length,
+            mapPinsCount: shopsData.mapPins.length,
+            metadata: shopsData.metadata
+        });
+
+    } catch (error) {
+        console.error('[Shops] Refresh error:', error.message);
+        res.status(500).json({ error: 'Failed to refresh shops cache' });
     }
 });
 

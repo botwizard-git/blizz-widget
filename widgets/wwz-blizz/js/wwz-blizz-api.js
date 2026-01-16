@@ -189,6 +189,7 @@
                     replies: data.message ? [data.message] : [],
                     suggestions: data.suggestions || [],
                     shopList: data.shopList || [],
+                    showAllShops: data.showAllShops || false,
                     isHtml: true
                 };
             }
@@ -203,6 +204,7 @@
                 suggestions: response.suggestions || [],
                 sessionId: response.sessionId || null,
                 shopList: response.shopList || data.shopList || [],
+                showAllShops: response.showAllShops || data.showAllShops || false,
                 isHtml: false
             };
         },
@@ -366,6 +368,7 @@
 
         /**
          * Fetch shop locations from API
+         * Returns object with shops (keyed by ID) and mapPins (array)
          */
         fetchShops: function() {
             console.log('[WWZBlizz] Fetching shops...');
@@ -383,19 +386,30 @@
                 return response.json();
             })
             .then(function(data) {
-                // Build lookup map by shop ID
-                var shopsMap = {};
-                if (data.shops && data.shops.length > 0) {
+                var result = {
+                    shops: {},
+                    mapPins: [],
+                    metadata: data.metadata || {}
+                };
+
+                // Handle new format (shops as object, mapPins as array)
+                if (data.shops && typeof data.shops === 'object' && !Array.isArray(data.shops)) {
+                    result.shops = data.shops;
+                    result.mapPins = data.mapPins || [];
+                }
+                // Handle legacy format (shops as array)
+                else if (data.shops && Array.isArray(data.shops)) {
                     data.shops.forEach(function(shop) {
-                        shopsMap[shop.id] = shop;
+                        result.shops[shop.id] = shop;
                     });
                 }
-                console.log('[WWZBlizz] Loaded', Object.keys(shopsMap).length, 'shops');
-                return shopsMap;
+
+                console.log('[WWZBlizz] Loaded', Object.keys(result.shops).length, 'shops,', result.mapPins.length, 'map pins');
+                return result;
             })
             .catch(function(error) {
                 console.error('[WWZBlizz] Failed to fetch shops:', error);
-                return {};
+                return { shops: {}, mapPins: [], metadata: {} };
             });
         },
 

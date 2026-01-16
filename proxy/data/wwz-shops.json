@@ -4,6 +4,7 @@
       "id": "hauptsitz",
       "name": "WWZ AG (Hauptsitz)",
       "shortName": "Hauptsitz",
+      "googlePlaceId": "ChIJR4GaGHeqmkcR9HL3EFba42w",
       "address": {
         "street": "Chollerstrasse 26",
         "plz": "6301",
@@ -37,6 +38,7 @@
       "id": "metalli",
       "name": "WWZ-Shop Zug (EKZ Metalli)",
       "shortName": "Metalli",
+      "googlePlaceId": "ChIJvW53L1iqmkcRhZgGiON75U0",
       "address": {
         "street": "Einkaufs-Allee Metalli, Baarerstrasse 18",
         "plz": "6300",
@@ -72,6 +74,7 @@
       "id": "affoltern",
       "name": "WWZ-Shop Affoltern a.A.",
       "shortName": "Affoltern",
+      "googlePlaceId": "ChIJvczA_DgGkEcR4vCH1GzG0zc",
       "address": {
         "street": "Obere Bahnhofstrasse 13",
         "plz": "8910",
@@ -107,6 +110,7 @@
       "id": "goldau",
       "name": "WWZ-Shop Goldau",
       "shortName": "Goldau",
+      "googlePlaceId": "ChIJzdDKG1ZRhUcRIyY307tqBUk",
       "address": {
         "street": "Mythenstrasse 5a",
         "plz": "6410",
@@ -142,6 +146,7 @@
       "id": "hochdorf",
       "name": "WWZ-Shop Hochdorf",
       "shortName": "Hochdorf",
+      "googlePlaceId": "ChIJm1-BrrUCkEcRMZcFMLDUlC0",
       "address": {
         "street": "Hauptstrasse 18",
         "plz": "6280",
@@ -177,6 +182,7 @@
       "id": "kuessnacht",
       "name": "WWZ-Shop Küssnacht",
       "shortName": "Küssnacht",
+      "googlePlaceId": "ChIJ6948WGj_j0cRZWiH2j0zDjs",
       "address": {
         "street": "Hauptplatz 3",
         "plz": "6403",
@@ -212,6 +218,7 @@
       "id": "reiden",
       "name": "WWZ-Shop Reiden",
       "shortName": "Reiden",
+      "googlePlaceId": "ChIJ_xX5eX4mkEcRKQeQZ5S69C4",
       "address": {
         "street": "Hauptstrasse 34",
         "plz": "6260",
@@ -247,6 +254,7 @@
       "id": "schoeftland",
       "name": "WWZ-Shop Schöftland",
       "shortName": "Schöftland",
+      "googlePlaceId": "ChIJJSeyk0IjkEcRNSy2QJiSnFQ",
       "address": {
         "street": "Ruederstrasse 8",
         "plz": "5040",
@@ -282,6 +290,7 @@
       "id": "unteraegeri",
       "name": "WWZ-Shop Unterägeri",
       "shortName": "Unterägeri",
+      "googlePlaceId": "ChIJdyMTp7qsmkcRYdZlazOjN0Q",
       "address": {
         "street": "Zugerstrasse 25",
         "plz": "6314",
@@ -315,7 +324,7 @@
     }
   ],
   "metadata": {
-    "lastUpdated": "2026-01-08T11:21:41.793Z",
-    "version": "1.0"
+    "lastUpdated": "2026-01-16T10:00:00.000Z",
+    "version": "1.1"
   }
 }

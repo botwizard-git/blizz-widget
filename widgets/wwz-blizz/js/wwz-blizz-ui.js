@@ -721,6 +721,222 @@
         },
 
         /**
+         * Create aggregated map view with all shop locations
+         * Uses Google Maps JavaScript API to show all pins with hover info
+         * @param {Array} mapPins - Array of map pin objects from API
+         */
+        createAggregatedMapView: function(mapPins) {
+            var self = this;
+            var CONFIG = EBB.CONFIG;
+
+            if (!mapPins || mapPins.length === 0) {
+                console.warn('[WWZBlizz] No map pins available for aggregated view');
+                return '';
+            }
+
+            // Generate unique ID for this map instance
+            var mapId = 'wwz-blizz-map-' + Date.now();
+
+            // Calculate center point (average of all coordinates)
+            var centerLat = 0, centerLng = 0;
+            for (var i = 0; i < mapPins.length; i++) {
+                centerLat += mapPins[i].lat;
+                centerLng += mapPins[i].lng;
+            }
+            centerLat /= mapPins.length;
+            centerLng /= mapPins.length;
+
+            // Build list HTML for sidebar
+            var listHtml = '';
+            for (var j = 0; j < mapPins.length; j++) {
+                var pin = mapPins[j];
+                var statusClass = pin.openNow ? 'enterprisebot-blizz-status-open' : 'enterprisebot-blizz-status-closed';
+                var statusText = pin.openNow ? 'Offen' : 'Geschlossen';
+
+                listHtml += '<div class="wwz-blizz-map-list-item" data-shop-id="' + pin.id + '">' +
+                    '<div class="wwz-blizz-map-list-name">' + pin.name + '</div>' +
+                    '<div class="wwz-blizz-map-list-address">' + pin.address + '</div>' +
+                    '<span class="wwz-blizz-map-list-status ' + statusClass + '">' + statusText + '</span>' +
+                    '</div>';
+            }
+
+            // Build the aggregated map container HTML
+            var html = '<div class="wwz-blizz-aggregated-map-container">' +
+                '<div class="wwz-blizz-aggregated-map-header">' +
+                '<svg class="enterprisebot-blizz-location-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">' +
+                '<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>' +
+                '</svg>' +
+                '<span>Unsere Standorte (' + mapPins.length + ')</span>' +
+                '</div>' +
+                '<div class="wwz-blizz-aggregated-map-body">' +
+                '<div class="wwz-blizz-aggregated-map-canvas" id="' + mapId + '"></div>' +
+                '<div class="wwz-blizz-aggregated-map-list">' + listHtml + '</div>' +
+                '</div>' +
+                '</div>';
+
+            // Load Google Maps and initialize after DOM is ready
+            setTimeout(function() {
+                self.initGoogleMap(mapId, mapPins, centerLat, centerLng);
+            }, 100);
+
+            return html;
+        },
+
+        /**
+         * Initialize Google Maps with markers
+         * @param {string} mapId - DOM element ID for the map
+         * @param {Array} mapPins - Array of map pin objects
+         * @param {number} centerLat - Center latitude
+         * @param {number} centerLng - Center longitude
+         */
+        initGoogleMap: function(mapId, mapPins, centerLat, centerLng) {
+            var self = this;
+            var CONFIG = EBB.CONFIG;
+
+            // Check if Google Maps is already loaded
+            if (window.google && window.google.maps) {
+                self.createMapWithMarkers(mapId, mapPins, centerLat, centerLng);
+                return;
+            }
+
+            // Load Google Maps JavaScript API
+            if (!window.wwzBlizzGoogleMapsLoading) {
+                window.wwzBlizzGoogleMapsLoading = true;
+
+                var script = document.createElement('script');
+                script.src = 'https://maps.googleapis.com/maps/api/js?key=' + CONFIG.googleMapsApiKey + '&callback=wwzBlizzInitMap';
+                script.async = true;
+                script.defer = true;
+
+                // Store pending map data for callback
+                window.wwzBlizzPendingMaps = window.wwzBlizzPendingMaps || [];
+                window.wwzBlizzPendingMaps.push({ mapId: mapId, mapPins: mapPins, centerLat: centerLat, centerLng: centerLng });
+
+                // Global callback for Google Maps
+                window.wwzBlizzInitMap = function() {
+                    var pending = window.wwzBlizzPendingMaps || [];
+                    for (var i = 0; i < pending.length; i++) {
+                        var data = pending[i];
+                        EBB.UI.createMapWithMarkers(data.mapId, data.mapPins, data.centerLat, data.centerLng);
+                    }
+                    window.wwzBlizzPendingMaps = [];
+                };
+
+                document.head.appendChild(script);
+            } else {
+                // API already loading, add to pending
+                window.wwzBlizzPendingMaps = window.wwzBlizzPendingMaps || [];
+                window.wwzBlizzPendingMaps.push({ mapId: mapId, mapPins: mapPins, centerLat: centerLat, centerLng: centerLng });
+            }
+        },
+
+        /**
+         * Create Google Map with markers once API is loaded
+         */
+        createMapWithMarkers: function(mapId, mapPins, centerLat, centerLng) {
+            var self = this;
+            var CONFIG = EBB.CONFIG;
+
+            var mapElement = document.getElementById(mapId);
+            if (!mapElement) {
+                console.warn('[WWZBlizz] Map element not found:', mapId);
+                return;
+            }
+
+            var map = new google.maps.Map(mapElement, {
+                center: { lat: centerLat, lng: centerLng },
+                zoom: 9,
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: true,
+                zoomControl: true,
+                styles: [
+                    { featureType: 'poi', elementType: 'labels', stylers: [{ visibility: 'off' }] }
+                ]
+            });
+
+            var infoWindow = new google.maps.InfoWindow();
+            var markers = [];
+
+            // Add markers for each shop
+            for (var i = 0; i < mapPins.length; i++) {
+                (function(pin) {
+                    var statusClass = pin.openNow ? 'open' : 'closed';
+                    var statusText = pin.openNow ? 'Jetzt geoffnet' : 'Geschlossen';
+
+                    var marker = new google.maps.Marker({
+                        position: { lat: pin.lat, lng: pin.lng },
+                        map: map,
+                        title: pin.name,
+                        icon: {
+                            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
+                                '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="' + (pin.openNow ? '#22c55e' : '#ef4444') + '">' +
+                                '<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>' +
+                                '</svg>'
+                            ),
+                            scaledSize: new google.maps.Size(32, 32)
+                        }
+                    });
+
+                    markers.push(marker);
+
+                    // Info window content
+                    var infoContent = '<div style="font-family: system-ui, sans-serif; padding: 8px; min-width: 180px;">' +
+                        '<div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">' + pin.name + '</div>' +
+                        '<div style="font-size: 12px; color: #666; margin-bottom: 6px;">' + pin.address + '</div>' +
+                        '<div style="font-size: 11px; font-weight: 500; color: ' + (pin.openNow ? '#22c55e' : '#ef4444') + ';">' + statusText + '</div>' +
+                        '<a href="https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(pin.address) + '" ' +
+                        'target="_blank" rel="noopener noreferrer" ' +
+                        'style="display: inline-block; margin-top: 8px; font-size: 12px; color: #0066cc; text-decoration: none;">Route planen</a>' +
+                        '</div>';
+
+                    marker.addListener('click', function() {
+                        infoWindow.setContent(infoContent);
+                        infoWindow.open(map, marker);
+                    });
+
+                    // Highlight corresponding list item on hover
+                    marker.addListener('mouseover', function() {
+                        var listItem = document.querySelector('.wwz-blizz-map-list-item[data-shop-id="' + pin.id + '"]');
+                        if (listItem) listItem.classList.add('wwz-blizz-highlighted');
+                    });
+
+                    marker.addListener('mouseout', function() {
+                        var listItem = document.querySelector('.wwz-blizz-map-list-item[data-shop-id="' + pin.id + '"]');
+                        if (listItem) listItem.classList.remove('wwz-blizz-highlighted');
+                    });
+                })(mapPins[i]);
+            }
+
+            // Add click handlers to list items
+            var listItems = document.querySelectorAll('.wwz-blizz-map-list-item');
+            for (var k = 0; k < listItems.length; k++) {
+                (function(item, index) {
+                    item.addEventListener('click', function() {
+                        var shopId = item.getAttribute('data-shop-id');
+                        for (var m = 0; m < mapPins.length; m++) {
+                            if (mapPins[m].id === shopId && markers[m]) {
+                                map.panTo(markers[m].getPosition());
+                                map.setZoom(14);
+                                google.maps.event.trigger(markers[m], 'click');
+                                break;
+                            }
+                        }
+                    });
+                })(listItems[k], k);
+            }
+
+            // Fit bounds to show all markers
+            if (markers.length > 1) {
+                var bounds = new google.maps.LatLngBounds();
+                for (var j = 0; j < markers.length; j++) {
+                    bounds.extend(markers[j].getPosition());
+                }
+                map.fitBounds(bounds);
+            }
+        },
+
+        /**
          * Update smiley selection
          */
         updateSmileySelection: function(rating) {

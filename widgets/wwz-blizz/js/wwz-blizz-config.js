@@ -260,7 +260,13 @@
         version: '1.0.0',
 
         // Shop locations (populated dynamically from API)
-        wwzShops: {}
+        wwzShops: {},
+
+        // Map pins for aggregated map view (populated dynamically from API)
+        wwzShopsMapPins: [],
+
+        // Google Maps API Key for aggregated map view
+        googleMapsApiKey: 'AIzaSyBTvcdtHGjy75_BPuBM--cLStR36VBndFY'
     };
 
     // Legacy support - map old property names
