@@ -344,7 +344,7 @@
             }
 
             elements.messages.appendChild(messageEl);
-            this.scrollToBottom();
+            this.scrollToElement(messageEl);
 
             return messageEl;
         },
@@ -450,7 +450,7 @@
             `;
 
             elements.messages.appendChild(messageEl);
-            this.scrollToBottom();
+            this.scrollToElement(messageEl);
 
             return messageEl;
         },
@@ -654,6 +654,15 @@
          */
         scrollToBottom: function() {
             elements.messages.scrollTop = elements.messages.scrollHeight;
+        },
+
+        /**
+         * Scroll to make an element visible with its top in view
+         * @param {HTMLElement} element - The element to scroll into view
+         */
+        scrollToElement: function(element) {
+            if (!element || !elements.messages) return;
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         },
 
         /**

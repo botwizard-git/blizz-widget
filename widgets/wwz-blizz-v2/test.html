@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WWZ Blizz Widget</title>
+    <link rel="stylesheet" href="demo.css">
+    <style>
+        /* Optional: Keep API controls hidden or subtly available if needed for testing, 
+           or just rely on the UI. For now, I'll add a small cleaner styling for them 
+           if we decide to include them, but the prompt implies matching the image. 
+           I will stick to the image layout. */
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="demo-header">
+        <div class="demo-header-left">
+            <a href="#" class="demo-logo">
+                <img src="demo_assets/Logo_Blizz.svg" alt="Blizz">
+            </a>
+            <nav class="demo-nav">
+                <a href="#">Internet + TV</a>
+                <a href="#">Mobile</a>
+                <a href="#">Geräte</a>
+            </nav>
+        </div>
+        <div class="demo-header-right">
+            <a href="#" class="demo-action-link">Hilfe</a>
+            <button class="demo-icon-btn">
+                <img src="demo_assets/shopping_cart.svg" width="20" height="20" alt="Cart">
+            </button>
+            <a href="#" class="demo-login-btn">Anmelden</a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="demo-container">
+        <!-- Sidebar -->
+        <aside class="demo-sidebar">
+            <div class="demo-sidebar-title">Unser Themen</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        Internet
+                        <span class="chevron-down"></span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        TV
+                        <span class="chevron-down"></span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        Festnetz
+                        <span class="chevron-down"></span>
+                    </a>
+                </li>
+                <!-- Expanded Mobile Item -->
+                <li class="sidebar-item expanded">
+                    <a href="#" class="sidebar-link active">
+                        Mobile
+                        <span class="chevron-up"></span>
+                    </a>
+                    <div class="submenu">
+                        <a href="#" class="submenu-link">Wie kann ich zu Blizz Mobile wechseln?</a>
+                        <a href="#" class="submenu-link">Wie kann ich zu Blizz Mobile wechseln?</a>
+                        <a href="#" class="submenu-link">Wie kann ich zu Blizz Mobile wechseln?</a>
+                    </div>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        Cockpit
+                        <span class="chevron-down"></span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        Zahlung & Vertrag
+                        <span class="chevron-down"></span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <h4>Keine passende Antwort gefunden?</h4>
+                <a href="#" class="contact-btn">Kontaktiere uns</a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area (Widget) -->
+        <main class="demo-main">
+            <!-- The widget container matching the ID expected by wwz-blizz.js -->
+            <div id="wwz-blizz-parent" class="wwz-internal"></div>
+        </main>
+    </div>
+
+    <!-- Load the widget -->
+    <script src="wwz-blizz.js"></script>
+
+    <!-- Sidebar Toggle Logic -->
+    <script>
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const item = link.parentElement;
+                const wasExpanded = item.classList.contains('expanded');
+
+                if (wasExpanded) {
+                    item.classList.remove('expanded');
+                    link.querySelector('span').className = 'chevron-down';
+                } else {
+                    item.classList.add('expanded');
+                    link.querySelector('span').className = 'chevron-up';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
