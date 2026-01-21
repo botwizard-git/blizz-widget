@@ -366,6 +366,8 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    scroll-behavior: smooth;
+    scroll-padding-top: 16px;
 }
 
 /* Messages */
