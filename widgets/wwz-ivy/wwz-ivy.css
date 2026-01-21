@@ -1286,6 +1286,19 @@
     width: 100%;
 }
 
+/* Reset global styles that might affect the form */
+#wwz-ivy-contact-form-element {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+#wwz-ivy-contact-form-element * {
+    box-sizing: border-box !important;
+}
+
 .wwz-ivy-form-title {
     font-size: 16px;
     font-weight: 600;
@@ -1295,6 +1308,10 @@
 
 .wwz-ivy-form-field {
     margin-bottom: 16px;
+}
+
+.wwz-ivy-form-field:last-of-type {
+    margin-bottom: 0 !important;
 }
 
 .wwz-ivy-form-label {
