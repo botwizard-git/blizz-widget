@@ -45,11 +45,11 @@ jobs:
             git reset --hard origin/blizz-widget-v2
 
             # Make deployment script executable
-            chmod +x scripts/server-deploy.sh
+            chmod +x scripts/server-deploy-v2.sh
 
             # Run deployment script
             echo "Running deployment script..."
-            ./scripts/server-deploy.sh
+            ./scripts/server-deploy-v2.sh
 
             # Deploy proxy configuration (shared with v1)
             echo "Configuring proxy..."
