@@ -16,7 +16,7 @@
         agentId: 'blitz65aadf8a736349dd9ad6fd93ca69684f',
 
         // API Configuration - all calls go through blizz-proxy
-        apiEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/chat-v2',
+        apiEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz-v2/chat-v2',
         feedbackEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/feedback',
         thumbsFeedbackEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/thumbs-feedback',
         contactEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/contact',

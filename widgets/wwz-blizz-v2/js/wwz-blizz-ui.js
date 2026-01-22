@@ -668,6 +668,7 @@
 
         /**
          * Create search results widget HTML
+         * Simplified inline design - appears within bot message bubble
          * @param {Array} searchResults - Array of {title, url, icon} objects
          */
         createSearchResultsWidget: function(searchResults) {
@@ -675,7 +676,7 @@
                 return '';
             }
 
-            var itemsHtml = '';
+            var linksHtml = '';
             for (var i = 0; i < searchResults.length; i++) {
                 var item = searchResults[i];
                 var iconSvg = '';
@@ -683,49 +684,30 @@
                 if (item.icon === 'doc') {
                     // Document/file icon
                     iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-                        '<path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/>' +
-                        '<path d="M14 2v5a1 1 0 0 0 1 1h5"/>' +
-                        '<path d="M10 9H8"/>' +
-                        '<path d="M16 13H8"/>' +
-                        '<path d="M16 17H8"/>' +
+                        '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
+                        '<polyline points="14 2 14 8 20 8"/>' +
+                        '<line x1="16" y1="13" x2="8" y2="13"/>' +
+                        '<line x1="16" y1="17" x2="8" y2="17"/>' +
+                        '<polyline points="10 9 9 9 8 9"/>' +
                         '</svg>';
                 } else {
-                    // Web/globe icon
+                    // External link icon (box with arrow pointing out)
                     iconSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-                        '<circle cx="12" cy="12" r="10"/>' +
-                        '<path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>' +
-                        '<path d="M2 12h20"/>' +
+                        '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>' +
+                        '<polyline points="15 3 21 3 21 9"/>' +
+                        '<line x1="10" y1="14" x2="21" y2="3"/>' +
                         '</svg>';
                 }
 
-                // Arrow icon for the right side
-                var arrowSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-                    '<path d="M7 17L17 7"/>' +
-                    '<path d="M7 7h10v10"/>' +
-                    '</svg>';
-
-                itemsHtml += '<a href="' + this.escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer" class="wwz-blizz-search-result-item">' +
+                linksHtml += '<a href="' + this.escapeHtml(item.url) + '" target="_blank" rel="noopener noreferrer" class="wwz-blizz-search-result-link">' +
                     '<span class="wwz-blizz-search-result-icon">' + iconSvg + '</span>' +
-                    '<span class="wwz-blizz-search-result-title">' + this.escapeHtml(item.title) + '</span>' +
-                    '<span class="wwz-blizz-search-result-arrow">' + arrowSvg + '</span>' +
+                    '<span class="wwz-blizz-search-result-text">' + this.escapeHtml(item.title) + '</span>' +
                     '</a>';
             }
 
-            // Book icon for header
-            var bookIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-                '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>' +
-                '<path d="M12 6v7"/>' +
-                '<path d="M8 9h8"/>' +
-                '</svg>';
-
-            return '<div class="wwz-blizz-search-results-widget">' +
-                '<div class="wwz-blizz-search-results-header">' +
-                '<span class="wwz-blizz-search-results-header-icon">' + bookIcon + '</span>' +
-                '<span class="wwz-blizz-search-results-header-title">Hilfe zum Nachlesen</span>' +
-                '</div>' +
-                '<div class="wwz-blizz-search-results-list">' +
-                itemsHtml +
-                '</div>' +
+            return '<div class="wwz-blizz-search-results">' +
+                '<div class="wwz-blizz-search-results-title">Hilfe zum Nachlesen</div>' +
+                linksHtml +
                 '</div>';
         },
 
