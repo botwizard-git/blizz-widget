@@ -3416,3 +3416,112 @@ input[type="date"].wwz-blizz-form-input {
     display: block;
     width: 100%;
 }
+
+/* ========================================
+   SEARCH RESULTS WIDGET - "Hilfe zum Nachlesen"
+   ======================================== */
+.wwz-blizz-search-results-widget {
+    margin-top: 8px;
+    background: var(--eb-bg);
+    border: 1px solid var(--eb-border-light);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.wwz-blizz-search-results-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--eb-bg-secondary);
+    border-bottom: 1px solid var(--eb-border-light);
+}
+
+.wwz-blizz-search-results-header-icon {
+    color: var(--eb-primary);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wwz-blizz-search-results-header-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--eb-text);
+}
+
+.wwz-blizz-search-results-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.wwz-blizz-search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: var(--eb-text);
+    border-bottom: 1px solid var(--eb-border-light);
+    transition: background 0.2s ease;
+}
+
+.wwz-blizz-search-result-item:last-child {
+    border-bottom: none;
+}
+
+.wwz-blizz-search-result-item:hover {
+    background: var(--eb-bg-secondary);
+}
+
+.wwz-blizz-search-result-icon {
+    color: var(--eb-text-muted);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wwz-blizz-search-result-title {
+    flex: 1;
+    font-size: 0.875rem;
+    color: var(--eb-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.wwz-blizz-search-result-arrow {
+    color: var(--eb-text-muted);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.6;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.wwz-blizz-search-result-item:hover .wwz-blizz-search-result-arrow {
+    opacity: 1;
+    transform: translate(2px, -2px);
+}
+
+/* Mobile responsive styles for search results */
+@media (max-width: 640px) {
+    .wwz-blizz-search-results-widget {
+        border-radius: 8px;
+    }
+
+    .wwz-blizz-search-results-header {
+        padding: 12px 14px;
+    }
+
+    .wwz-blizz-search-result-item {
+        padding: 10px 14px;
+        gap: 10px;
+    }
+
+    .wwz-blizz-search-result-title {
+        font-size: 0.8125rem;
+    }
+}

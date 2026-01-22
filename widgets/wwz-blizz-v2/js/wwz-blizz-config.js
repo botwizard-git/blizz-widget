@@ -16,8 +16,9 @@
         agentId: 'blitz65aadf8a736349dd9ad6fd93ca69684f',
 
         // API Configuration - all calls go through blizz-proxy
-        apiEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/chat',
+        apiEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/chat-v2',
         feedbackEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/feedback',
+        thumbsFeedbackEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/thumbs-feedback',
         contactEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/contact',
         initEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/init',
         logErrorsEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/log_errors',
@@ -137,6 +138,12 @@
             thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
             title: 'WWZ Video'
         },
+
+        // Demo search_results for testing (used when API doesn't return search_results)
+        demoSearchResults: [
+            { title: "Blizz Mobile", url: "https://www.wwz.ch/-/media/hilfe/anleitungen/mobile-anleitungen/kurznummern_blizz_mobile.pdf", icon: "doc" },
+            { title: "www.wwz.ch", url: "https://www.wwz.ch/de/privatpersonen/telekommunikation/mobile", icon: "web" }
+        ],
 
         // Video library for fuzzy matching
         videoLibrary: [

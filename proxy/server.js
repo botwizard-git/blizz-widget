@@ -210,6 +210,8 @@ const WIDGETS = {
     'wwz-blizz': {
         CHAT_ENDPOINT: process.env.WWZ_BLIZZ_CHAT_ENDPOINT ||
             'https://wwz-blitzico.enterprisebot.co/blitzdcbd6ccec92246ca8120ea00deabe70d',
+        CHAT_ENDPOINT_V2: process.env.WWZ_BLIZZ_CHAT_ENDPOINT_V2 ||
+            'https://wwz-blitzico.enterprisebot.co/blitzdcbd6ccec92246ca8120ea00deabe70d',
         CHAT_ENDPOINT_INTERNAL: process.env.WWZ_BLIZZ_CHAT_ENDPOINT_INTERNAL ||
             'https://wwz-blitzico.enterprisebot.co/blitz155eadfb15e34cd59ad4bb9d7ade6269',
         FORM_ENDPOINT: process.env.WWZ_BLIZZ_FORM_ENDPOINT ||
@@ -219,7 +221,9 @@ const WIDGETS = {
         FEEDBACK_ENDPOINT_INTERNAL: process.env.WWZ_BLIZZ_FEEDBACK_ENDPOINT_INTERNAL ||
             'https://wwz-blitzico.enterprisebot.co/blitz267fe73aa1504f04829e90195b206def',
         BOTFLOW_ENDPOINT: process.env.WWZ_BLIZZ_BOTFLOW_ENDPOINT ||
-            'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f'
+            'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
+        THUMBS_FEEDBACK_ENDPOINT: process.env.WWZ_BLIZZ_THUMBS_FEEDBACK_ENDPOINT ||
+            'https://wwz-blitzico.enterprisebot.co/blitz0a03d969b90c45f9afe3b6557fe9f36b'
     },
     'wwz-ivy': {
         CHAT_ENDPOINT: process.env.WWZ_IVY_CHAT_ENDPOINT ||
@@ -688,6 +692,113 @@ app.post('/:widgetId/chat', requireValidSession, async (req, res) => {
 });
 
 /**
+ * Per-widget Chat V2 endpoint (for wwz-blizz-v2 widget)
+ * POST /:widgetId/chat-v2
+ */
+app.post('/:widgetId/chat-v2', requireValidSession, async (req, res) => {
+    try {
+        const { widgetId } = req.params;
+        const widgetConfig = getWidgetConfig(widgetId);
+
+        if (!widgetConfig) {
+            return res.status(404).json({ error: `Unknown widget: ${widgetId}` });
+        }
+
+        if (!widgetConfig.CHAT_ENDPOINT_V2) {
+            return res.status(404).json({ error: `V2 endpoint not configured for widget: ${widgetId}` });
+        }
+
+        const { blizzUserMsg, blizzSessionId, blizzBotMessageId, clientUrl, agentId, isInternal } = req.body;
+
+        if (!blizzUserMsg) {
+            return res.status(400).json({ error: 'blizzUserMsg is required' });
+        }
+
+        const endpoint = widgetConfig.CHAT_ENDPOINT_V2;
+
+        console.log(`[${widgetId}/Chat-V2] Forwarding message:`, blizzUserMsg.substring(0, 50) + '...');
+
+        const response = await fetchWithTimeout(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, text/plain, */*',
+                'api-key': config.API_KEY
+            },
+            body: JSON.stringify({
+                blizzUserMsg,
+                blizzSessionId,
+                blizzBotMessageId,
+                clientUrl
+            })
+        });
+
+        // EnterpriseBot returns 404 with valid fallback message when it doesn't understand
+        // Try to parse response body even on non-OK status
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+            console.error(`[${widgetId}/Chat-V2] API status:`, response.status);
+            // If we got a valid response body with message, return it anyway
+            if (data && (data.message || data.simpleMessage)) {
+                console.log(`[${widgetId}/Chat-V2] Returning fallback response`);
+                return res.json(data);
+            }
+            // Send Slack alert for API failures
+            sendErrorAlert(`${widgetId} V2 Error: API Request Failed`, `EnterpriseBot API returned status ${response.status}`, {
+                sessionId: blizzSessionId,
+                origin: req.headers.origin || req.headers.referer,
+                endpoint: endpoint,
+                userMessage: blizzUserMsg,
+                additionalContext: {
+                    'Widget': widgetId,
+                    'Endpoint': 'V2',
+                    'Status Code': response.status,
+                    'Response': data ? JSON.stringify(data).substring(0, 200) : 'No response body'
+                }
+            });
+            return res.status(response.status).json({ error: 'API request failed' });
+        }
+
+        // Check for empty/fallback response (296 bytes issue)
+        if (data && !data.simpleMessage && !data.message && !data.text && (!data.replies || data.replies.length === 0)) {
+            console.warn(`[${widgetId}/Chat-V2] Empty response from EnterpriseBot`);
+            sendErrorAlert(`${widgetId} V2 Error: Empty Response`, 'EnterpriseBot returned empty/malformed response', {
+                sessionId: blizzSessionId,
+                origin: req.headers.origin || req.headers.referer,
+                endpoint: endpoint,
+                userMessage: blizzUserMsg,
+                additionalContext: {
+                    'Widget': widgetId,
+                    'Endpoint': 'V2',
+                    'Response Data': JSON.stringify(data).substring(0, 500)
+                }
+            });
+        }
+
+        console.log(`[${widgetId}/Chat-V2] Response received`);
+        res.json(data);
+
+    } catch (error) {
+        console.error(`[Chat-V2] Error:`, error.message);
+        // Send Slack alert for exceptions
+        const { widgetId } = req.params;
+        sendErrorAlert(`${widgetId} V2 Error: Server Exception`, error.message, {
+            sessionId: req.body?.blizzSessionId,
+            origin: req.headers.origin || req.headers.referer,
+            userMessage: req.body?.blizzUserMsg,
+            additionalContext: {
+                'Widget': widgetId,
+                'Endpoint': 'V2',
+                'Error Type': error.name || 'Unknown',
+                'Stack': error.stack ? error.stack.substring(0, 300) : 'No stack trace'
+            }
+        });
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+/**
  * Per-widget Feedback endpoint
  * POST /:widgetId/feedback
  */
@@ -744,6 +855,64 @@ app.post('/:widgetId/feedback', requireValidSession, async (req, res) => {
 
     } catch (error) {
         console.error(`[Feedback] Error:`, error.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+/**
+ * Per-widget Thumbs Feedback endpoint (message-level thumbs up/down)
+ * POST /:widgetId/thumbs-feedback
+ */
+app.post('/:widgetId/thumbs-feedback', requireValidSession, async (req, res) => {
+    try {
+        const { widgetId } = req.params;
+        const widgetConfig = getWidgetConfig(widgetId);
+
+        if (!widgetConfig) {
+            return res.status(404).json({ error: `Unknown widget: ${widgetId}` });
+        }
+
+        if (!widgetConfig.THUMBS_FEEDBACK_ENDPOINT) {
+            return res.status(404).json({ error: `Thumbs feedback endpoint not configured for widget: ${widgetId}` });
+        }
+
+        const { thumb, comment, sessionId } = req.body;
+
+        if (thumb === undefined) {
+            return res.status(400).json({ error: 'thumb is required' });
+        }
+
+        if (!sessionId) {
+            return res.status(400).json({ error: 'sessionId is required' });
+        }
+
+        console.log(`[${widgetId}/ThumbsFeedback] Submitting thumb:`, thumb ? 'up' : 'down');
+
+        const response = await fetchWithTimeout(widgetConfig.THUMBS_FEEDBACK_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, text/plain, */*',
+                'api-key': config.API_KEY
+            },
+            body: JSON.stringify({
+                thumb,
+                comment: comment || '',
+                sessionId
+            })
+        });
+
+        if (!response.ok) {
+            console.error(`[${widgetId}/ThumbsFeedback] API error:`, response.status);
+            return res.status(response.status).json({ error: 'Thumbs feedback submission failed' });
+        }
+
+        const data = await response.json();
+        console.log(`[${widgetId}/ThumbsFeedback] Feedback submitted successfully`);
+        res.json(data);
+
+    } catch (error) {
+        console.error(`[ThumbsFeedback] Error:`, error.message);
         res.status(500).json({ error: 'Internal server error' });
     }
 });

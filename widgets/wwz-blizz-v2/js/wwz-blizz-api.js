@@ -190,6 +190,7 @@
                     suggestions: data.suggestions || [],
                     shopList: data.shopList || [],
                     showAllShops: data.showAllShops || false,
+                    searchResults: data.search_results || [],
                     isHtml: true
                 };
             }
@@ -205,6 +206,7 @@
                 sessionId: response.sessionId || null,
                 shopList: response.shopList || data.shopList || [],
                 showAllShops: response.showAllShops || data.showAllShops || false,
+                searchResults: response.search_results || data.search_results || [],
                 isHtml: false
             };
         },
@@ -318,34 +320,20 @@
          */
         submitMessageFeedback: function(messageId, feedbackType, comment) {
             var self = this;
-            var StateManager = EBB.StateManager;
 
             return this.ensureSession().then(function() {
-                // Get the message text for context
-                var messages = StateManager.getMessages();
-                var message = null;
-                for (var i = 0; i < messages.length; i++) {
-                    if (messages[i].id === messageId) {
-                        message = messages[i];
-                        break;
-                    }
-                }
+                // Convert feedbackType to thumb boolean
+                var thumb = feedbackType === 'positive';
 
                 var payload = {
-                    sessionId: SessionService.getSessionId(),
-                    messageId: messageId,
-                    feedbackType: feedbackType,
+                    thumb: thumb,
                     comment: comment || '',
-                    messageText: message ? message.text : '',
-                    agentId: CONFIG.AGENT_ID,
-                    widgetId: CONFIG.widgetId,
-                    timestamp: new Date().toISOString(),
-                    botName: "BLIZZ"
+                    sessionId: SessionService.getSessionId()
                 };
 
                 console.log('[WWZBlizz] Submitting message feedback:', payload);
 
-                return self.fetchWithTimeout(CONFIG.RATING_API, {
+                return self.fetchWithTimeout(CONFIG.thumbsFeedbackEndpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

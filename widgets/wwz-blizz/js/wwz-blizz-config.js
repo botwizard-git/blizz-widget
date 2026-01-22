@@ -18,6 +18,7 @@
         // API Configuration - all calls go through blizz-proxy
         apiEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/chat',
         feedbackEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/feedback',
+        thumbsFeedbackEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/thumbs-feedback',
         contactEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/contact',
         initEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/init',
         logErrorsEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/log_errors',
