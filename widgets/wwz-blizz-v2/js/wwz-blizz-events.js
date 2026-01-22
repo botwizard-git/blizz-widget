@@ -325,6 +325,39 @@
                     return;
                 }
 
+                // Comment button handler
+                var commentBtn = e.target.closest('.wwz-blizz-comment-btn');
+                if (commentBtn) {
+                    var messageId = commentBtn.getAttribute('data-message-id');
+                    EBB.UI.showCommentPopup(messageId, commentBtn);
+                    return;
+                }
+
+                // Comment popup close button
+                var commentPopupClose = e.target.closest('.wwz-blizz-comment-popup-close');
+                if (commentPopupClose) {
+                    EBB.UI.hideCommentPopup();
+                    return;
+                }
+
+                // Comment popup cancel button
+                var commentPopupCancel = e.target.closest('.wwz-blizz-comment-popup-cancel');
+                if (commentPopupCancel) {
+                    EBB.UI.hideCommentPopup();
+                    return;
+                }
+
+                // Comment popup submit button
+                var commentPopupSubmit = e.target.closest('.wwz-blizz-comment-popup-submit');
+                if (commentPopupSubmit) {
+                    var popup = commentPopupSubmit.closest('.wwz-blizz-comment-popup');
+                    var msgId = popup.getAttribute('data-message-id');
+                    var textarea = popup.querySelector('.wwz-blizz-comment-popup-textarea');
+                    var comment = textarea ? textarea.value.trim() : '';
+                    self.submitComment(msgId, comment);
+                    return;
+                }
+
                 // YouTube video play handler
                 var videoLink = e.target.closest('.enterprisebot-blizz-video-link');
                 if (videoLink && !videoLink.classList.contains('playing')) {
@@ -341,6 +374,14 @@
                 var popup = document.querySelector('.wwz-blizz-thumbs-popup');
                 if (popup && !popup.contains(e.target) && !e.target.closest('.wwz-blizz-thumbs-down-btn')) {
                     EBB.UI.hideThumbsDownPopup();
+                }
+            });
+
+            // Close comment popup when clicking outside
+            document.addEventListener('click', function(e) {
+                var popup = document.querySelector('.wwz-blizz-comment-popup');
+                if (popup && !popup.contains(e.target) && !e.target.closest('.wwz-blizz-comment-btn')) {
+                    EBB.UI.hideCommentPopup();
                 }
             });
 
@@ -1513,6 +1554,37 @@
                 })
                 .catch(function(error) {
                     console.error('[WWZBlizz] Failed to submit feedback:', error);
+                });
+        },
+
+        /**
+         * Submit standalone comment (without thumbs feedback)
+         */
+        submitComment: function(messageId, comment) {
+            var UI = EBB.UI;
+            var APIService = EBB.APIService;
+
+            // Hide popup
+            UI.hideCommentPopup();
+
+            if (!comment) {
+                console.log('[WWZBlizz] Empty comment, skipping submission');
+                return;
+            }
+
+            console.log('[WWZBlizz] Submitting comment for message:', messageId);
+
+            // Submit to API with thumb: null for standalone comment
+            APIService.submitMessageFeedback(messageId, null, comment)
+                .then(function(success) {
+                    if (success) {
+                        console.log('[WWZBlizz] Comment submitted successfully');
+                        UI.showNotification('Kommentar gesendet', 'success');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('[WWZBlizz] Failed to submit comment:', error);
+                    UI.showNotification('Fehler beim Senden', 'error');
                 });
         },
 
