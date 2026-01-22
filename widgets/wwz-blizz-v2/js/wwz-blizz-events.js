@@ -850,9 +850,32 @@
                         UI.renderMessage(defaultReply);
                     }
 
+                    // Handle search_results - render "Hilfe zum Nachlesen" widget
+                    // Use demo data if API doesn't return search_results
+                    var searchResults = (response.searchResults && response.searchResults.length > 0)
+                        ? response.searchResults
+                        : CONFIG.demoSearchResults;
+
+                    if (searchResults && searchResults.length > 0) {
+                        var searchDelay = (response.replies ? response.replies.length : 1) * 300 + 200;
+                        setTimeout(function() {
+                            var searchHtml = UI.createSearchResultsWidget(searchResults);
+                            if (searchHtml) {
+                                var searchMessage = StateManager.addMessage(searchHtml, false, { isHtml: true });
+                                UI.renderMessage(searchMessage);
+                            }
+                        }, searchDelay);
+                    }
+
+                    // Calculate base delay after text replies
+                    var baseDelay = (response.replies ? response.replies.length : 1) * 300 + 200;
+                    // Add delay for search results if present
+                    var hasSearchResults = searchResults && searchResults.length > 0;
+                    var searchResultsDelay = hasSearchResults ? 400 : 0;
+
                     // Handle shopList - render location cards for matched shops
                     if (response.shopList && response.shopList.length > 0) {
-                        var shopDelay = (response.replies ? response.replies.length : 1) * 300 + 200;
+                        var shopDelay = baseDelay + searchResultsDelay;
                         response.shopList.forEach(function(shopId, shopIndex) {
                             setTimeout(function() {
                                 // Normalize shopId to lowercase for lookup
@@ -873,7 +896,7 @@
 
                     // Handle showAllShops - render aggregated map view with all shop pins
                     if (response.showAllShops && CONFIG.wwzShopsMapPins && CONFIG.wwzShopsMapPins.length > 0) {
-                        var mapDelay = (response.replies ? response.replies.length : 1) * 300 + 200;
+                        var mapDelay = baseDelay + searchResultsDelay;
                         // Add extra delay if individual shop cards are being rendered
                         if (response.shopList && response.shopList.length > 0) {
                             mapDelay += response.shopList.length * 400 + 200;
@@ -888,7 +911,7 @@
                     }
 
                     if (response.suggestions && response.suggestions.length > 0) {
-                        var suggestDelay = (response.replies ? response.replies.length : 1) * 300 + 100;
+                        var suggestDelay = baseDelay + searchResultsDelay - 100;
                         // Add extra delay if shop cards are being rendered
                         if (response.shopList && response.shopList.length > 0) {
                             suggestDelay += response.shopList.length * 400 + 200;

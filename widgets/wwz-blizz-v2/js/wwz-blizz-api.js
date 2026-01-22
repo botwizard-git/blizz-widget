@@ -190,6 +190,7 @@
                     suggestions: data.suggestions || [],
                     shopList: data.shopList || [],
                     showAllShops: data.showAllShops || false,
+                    searchResults: data.search_results || [],
                     isHtml: true
                 };
             }
@@ -205,6 +206,7 @@
                 sessionId: response.sessionId || null,
                 shopList: response.shopList || data.shopList || [],
                 showAllShops: response.showAllShops || data.showAllShops || false,
+                searchResults: response.search_results || data.search_results || [],
                 isHtml: false
             };
         },
