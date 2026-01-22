@@ -323,7 +323,13 @@
 
             return this.ensureSession().then(function() {
                 // Convert feedbackType to thumb boolean
-                var thumb = feedbackType === 'positive';
+                // Handle multiple formats: 'up'/'positive' → true, 'down'/'negative' → false, null → null
+                var thumb = null;
+                if (feedbackType === 'up' || feedbackType === 'positive') {
+                    thumb = true;
+                } else if (feedbackType === 'down' || feedbackType === 'negative') {
+                    thumb = false;
+                }
 
                 var payload = {
                     thumb: thumb,
