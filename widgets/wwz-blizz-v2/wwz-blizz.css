@@ -196,6 +196,18 @@
     transform: scale(1.05);
 }
 
+/* Category Label in Header */
+.wwz-blizz-category-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--eb-primary);
+    background: rgba(20, 123, 209, 0.1);
+    padding: 4px 10px;
+    border-radius: 12px;
+    transition: opacity 0.2s ease;
+    pointer-events: auto;
+}
+
 /* ========================================
    CHAT CONTENT
    ======================================== */
@@ -813,121 +825,6 @@
     }
 
     .wwz-blizz-thumbs-popup-content {
-        min-width: 240px;
-    }
-}
-
-/* Comment Popup */
-.wwz-blizz-comment-popup {
-    position: absolute;
-    bottom: 100%;
-    left: 0;
-    margin-bottom: 8px;
-    z-index: 100;
-    animation: wwzPopupIn 0.2s ease-out;
-}
-
-.wwz-blizz-comment-popup-content {
-    background: var(--eb-bg);
-    border: 1px solid var(--eb-border);
-    border-radius: var(--eb-radius-sm);
-    box-shadow: var(--eb-shadow-lg);
-    padding: 12px;
-    min-width: 260px;
-    max-width: 320px;
-}
-
-.wwz-blizz-comment-popup-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--eb-text);
-}
-
-.wwz-blizz-comment-popup-close {
-    background: none;
-    border: none;
-    font-size: 1.25rem;
-    color: var(--eb-text-muted);
-    cursor: pointer;
-    padding: 0 4px;
-    line-height: 1;
-    transition: color 0.2s ease;
-}
-
-.wwz-blizz-comment-popup-close:hover {
-    color: var(--eb-text);
-}
-
-.wwz-blizz-comment-popup-textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid var(--eb-border);
-    border-radius: var(--eb-radius-sm);
-    font-size: 0.8125rem;
-    font-family: inherit;
-    resize: none;
-    outline: none;
-    transition: border-color 0.2s ease;
-    box-sizing: border-box;
-}
-
-.wwz-blizz-comment-popup-textarea:focus {
-    border-color: var(--eb-primary);
-}
-
-.wwz-blizz-comment-popup-textarea::placeholder {
-    color: var(--eb-text-light);
-}
-
-.wwz-blizz-comment-popup-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 10px;
-}
-
-.wwz-blizz-comment-popup-cancel,
-.wwz-blizz-comment-popup-submit {
-    padding: 6px 14px;
-    border-radius: var(--eb-radius-sm);
-    font-size: 0.8125rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.wwz-blizz-comment-popup-cancel {
-    background: transparent;
-    border: 1px solid var(--eb-border);
-    color: var(--eb-text-muted);
-}
-
-.wwz-blizz-comment-popup-cancel:hover {
-    background: var(--eb-bg-secondary);
-    border-color: var(--eb-text-muted);
-}
-
-.wwz-blizz-comment-popup-submit {
-    background: var(--eb-primary);
-    border: none;
-    color: var(--eb-bg);
-}
-
-.wwz-blizz-comment-popup-submit:hover {
-    background: var(--eb-primary-hover);
-}
-
-@media (max-width: 640px) {
-    .wwz-blizz-comment-popup {
-        left: auto;
-        right: 0;
-    }
-
-    .wwz-blizz-comment-popup-content {
         min-width: 240px;
     }
 }
@@ -2983,6 +2880,68 @@
     color: #991b1b;
 }
 
+/* Hours toggle button */
+.wwz-blizz-map-list-hours-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 4px 0;
+    font-size: 11px;
+    color: #3b82f6;
+    cursor: pointer;
+    user-select: none;
+}
+
+.wwz-blizz-map-list-hours-toggle:hover {
+    color: #1d4ed8;
+}
+
+.wwz-blizz-toggle-arrow {
+    transition: transform 0.2s ease;
+}
+
+.wwz-blizz-map-list-hours-toggle.wwz-blizz-expanded .wwz-blizz-toggle-arrow {
+    transform: rotate(180deg);
+}
+
+/* Collapsible hours container - hidden by default */
+.wwz-blizz-map-list-hours {
+    display: none;
+    margin-top: 6px;
+    padding: 8px;
+    background: #f9fafb;
+    border-radius: 6px;
+}
+
+.wwz-blizz-map-list-hours.wwz-blizz-expanded {
+    display: block;
+}
+
+/* Hours row */
+.wwz-blizz-map-hours-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    padding: 2px 0;
+}
+
+.wwz-blizz-map-hours-day {
+    color: #6b7280;
+    font-weight: 500;
+    min-width: 24px;
+}
+
+.wwz-blizz-map-hours-time {
+    color: #374151;
+    text-align: right;
+}
+
+.wwz-blizz-map-hours-time.wwz-blizz-hours-closed {
+    color: #9ca3af;
+    font-style: italic;
+}
+
 /* Google Maps info window override */
 .gm-style-iw {
     padding: 0 !important;
@@ -3533,66 +3492,51 @@ input[type="date"].wwz-blizz-form-input {
 }
 
 /* ========================================
-   SEARCH RESULTS - "Hilfe zum Nachlesen"
-   Simplified inline design (no container)
+   SEARCH RESULTS WIDGET - "Hilfe zum Nachlesen"
    ======================================== */
-.wwz-blizz-search-results {
+.wwz-blizz-search-results-widget {
     margin-top: 16px;
 }
 
-.wwz-blizz-search-results-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: #000;
+.wwz-blizz-search-results-header {
     margin-bottom: 8px;
 }
 
-.wwz-blizz-search-result-link {
+.wwz-blizz-search-results-header-title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--eb-text);
+}
+
+.wwz-blizz-search-results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.wwz-blizz-search-result-item,
+.wwz-blizz-message-bot .wwz-blizz-message-bubble a.wwz-blizz-search-result-item {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 4px;
-    color: #000;
     text-decoration: none;
-    transition: opacity 0.2s ease;
+    color: var(--eb-text);
 }
 
-.wwz-blizz-search-result-link:last-child {
-    margin-bottom: 0;
-}
-
-.wwz-blizz-search-result-link:hover {
-    opacity: 0.7;
+.wwz-blizz-search-result-item:hover,
+.wwz-blizz-message-bot .wwz-blizz-message-bubble a.wwz-blizz-search-result-item:hover {
+    text-decoration: underline;
+    color: var(--eb-text);
 }
 
 .wwz-blizz-search-result-icon {
-    width: 16px;
-    height: 16px;
+    color: var(--eb-text-secondary);
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: #666;
 }
 
-.wwz-blizz-search-result-text {
-    font-size: 14px;
-    color: #000;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-}
-
-/* Mobile responsive styles for search results */
-@media (max-width: 640px) {
-    .wwz-blizz-search-results {
-        margin-top: 12px;
-    }
-
-    .wwz-blizz-search-results-title {
-        font-size: 14px;
-    }
-
-    .wwz-blizz-search-result-text {
-        font-size: 13px;
-    }
+.wwz-blizz-search-result-title {
+    font-size: 0.875rem;
+    color: var(--eb-text);
 }
