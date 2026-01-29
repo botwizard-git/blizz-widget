@@ -246,6 +246,11 @@
                                     '<path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>' +
                                 '</svg>' +
                             '</button>' +
+                            '<button class="wwz-blizz-action-btn wwz-blizz-comment-btn" title="Kommentar" data-message-id="' + message.id + '">' +
+                                '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                                    '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>' +
+                                '</svg>' +
+                            '</button>' +
                         '</div>' +
                     '</div>';
             }
@@ -324,6 +329,64 @@
          */
         hideThumbsDownPopup: function() {
             var existingPopup = document.querySelector('.wwz-blizz-thumbs-popup');
+            if (existingPopup) {
+                existingPopup.remove();
+            }
+        },
+
+        /**
+         * Create comment popup HTML
+         */
+        createCommentPopup: function(messageId) {
+            return '<div class="wwz-blizz-comment-popup" data-message-id="' + messageId + '">' +
+                '<div class="wwz-blizz-comment-popup-content">' +
+                    '<div class="wwz-blizz-comment-popup-header">' +
+                        '<span>Kommentar hinzufugen</span>' +
+                        '<button class="wwz-blizz-comment-popup-close" type="button">&times;</button>' +
+                    '</div>' +
+                    '<textarea class="wwz-blizz-comment-popup-textarea" ' +
+                        'placeholder="Schreiben Sie Ihren Kommentar..." ' +
+                        'rows="3" maxlength="500"></textarea>' +
+                    '<div class="wwz-blizz-comment-popup-actions">' +
+                        '<button class="wwz-blizz-comment-popup-cancel" type="button">Abbrechen</button>' +
+                        '<button class="wwz-blizz-comment-popup-submit" type="button">Senden</button>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        },
+
+        /**
+         * Show comment popup
+         */
+        showCommentPopup: function(messageId, buttonElement) {
+            var self = this;
+
+            // Remove any existing popup
+            this.hideCommentPopup();
+
+            var popup = document.createElement('div');
+            popup.innerHTML = this.createCommentPopup(messageId);
+            var popupElement = popup.firstChild;
+
+            // Position relative to the message actions
+            var messageActions = buttonElement.closest('.wwz-blizz-message-actions');
+            if (messageActions) {
+                messageActions.style.position = 'relative';
+                messageActions.appendChild(popupElement);
+            }
+
+            // Focus the textarea
+            var textarea = popupElement.querySelector('.wwz-blizz-comment-popup-textarea');
+            if (textarea) {
+                setTimeout(function() { textarea.focus(); }, 100);
+            }
+        },
+
+        /**
+         * Hide comment popup
+         */
+        hideCommentPopup: function() {
+            var existingPopup = document.querySelector('.wwz-blizz-comment-popup');
             if (existingPopup) {
                 existingPopup.remove();
             }

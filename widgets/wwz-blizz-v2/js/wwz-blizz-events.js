@@ -325,6 +325,39 @@
                     return;
                 }
 
+                // Comment button handler
+                var commentBtn = e.target.closest('.wwz-blizz-comment-btn');
+                if (commentBtn) {
+                    var messageId = commentBtn.getAttribute('data-message-id');
+                    EBB.UI.showCommentPopup(messageId, commentBtn);
+                    return;
+                }
+
+                // Comment popup close button
+                var commentPopupClose = e.target.closest('.wwz-blizz-comment-popup-close');
+                if (commentPopupClose) {
+                    EBB.UI.hideCommentPopup();
+                    return;
+                }
+
+                // Comment popup cancel button
+                var commentPopupCancel = e.target.closest('.wwz-blizz-comment-popup-cancel');
+                if (commentPopupCancel) {
+                    EBB.UI.hideCommentPopup();
+                    return;
+                }
+
+                // Comment popup submit button
+                var commentPopupSubmit = e.target.closest('.wwz-blizz-comment-popup-submit');
+                if (commentPopupSubmit) {
+                    var popup = commentPopupSubmit.closest('.wwz-blizz-comment-popup');
+                    var msgId = popup.getAttribute('data-message-id');
+                    var textarea = popup.querySelector('.wwz-blizz-comment-popup-textarea');
+                    var comment = textarea ? textarea.value.trim() : '';
+                    self.submitComment(msgId, comment);
+                    return;
+                }
+
                 // YouTube video play handler
                 var videoLink = e.target.closest('.enterprisebot-blizz-video-link');
                 if (videoLink && !videoLink.classList.contains('playing')) {
@@ -341,6 +374,14 @@
                 var popup = document.querySelector('.wwz-blizz-thumbs-popup');
                 if (popup && !popup.contains(e.target) && !e.target.closest('.wwz-blizz-thumbs-down-btn')) {
                     EBB.UI.hideThumbsDownPopup();
+                }
+            });
+
+            // Close comment popup when clicking outside
+            document.addEventListener('click', function(e) {
+                var popup = document.querySelector('.wwz-blizz-comment-popup');
+                if (popup && !popup.contains(e.target) && !e.target.closest('.wwz-blizz-comment-btn')) {
+                    EBB.UI.hideCommentPopup();
                 }
             });
 
@@ -846,50 +887,57 @@
 
                     var isHtml = response.isHtml || false;
 
-                    if (response.replies && response.replies.length > 0) {
-                        response.replies.forEach(function(reply, index) {
-                            setTimeout(function() {
-                                var botMessage = StateManager.addMessage(reply, false, { isHtml: isHtml });
-                                UI.renderMessage(botMessage);
-                            }, index * 300);
-                        });
-                    } else if (response.message) {
-                        var botMessage = StateManager.addMessage(response.message, false, { isHtml: isHtml });
-                        UI.renderMessage(botMessage);
-                    } else {
-                        var defaultReply = StateManager.addMessage(
-                            'Entschuldigung, ich konnte keine passende Antwort finden.',
-                            false
-                        );
-                        UI.renderMessage(defaultReply);
-                    }
-
-                    // Handle search_results - render "Hilfe zum Nachlesen" widget
-                    // Use demo data if API doesn't return search_results
+                    // Get search results - use demo data if API doesn't return search_results
                     var searchResults = (response.searchResults && response.searchResults.length > 0)
                         ? response.searchResults
                         : CONFIG.demoSearchResults;
 
-                    if (searchResults && searchResults.length > 0) {
-                        var searchDelay = (response.replies ? response.replies.length : 1) * 300 + 200;
-                        setTimeout(function() {
-                            var searchHtml = UI.createSearchResultsWidget(searchResults);
-                            if (searchHtml) {
-                                var searchMessage = StateManager.addMessage(searchHtml, false, { isHtml: true });
-                                UI.renderMessage(searchMessage);
-                            }
-                        }, searchDelay);
+                    // Create search results HTML to append to bot message
+                    var searchHtml = (searchResults && searchResults.length > 0)
+                        ? UI.createSearchResultsWidget(searchResults)
+                        : '';
+
+                    if (response.replies && response.replies.length > 0) {
+                        response.replies.forEach(function(reply, index) {
+                            setTimeout(function() {
+                                var replyContent = reply;
+                                var replyIsHtml = isHtml;
+                                // Append search results to the last reply
+                                if (index === response.replies.length - 1 && searchHtml) {
+                                    replyContent = reply + searchHtml;
+                                    replyIsHtml = true; // Force HTML mode since we're adding HTML
+                                }
+                                var botMessage = StateManager.addMessage(replyContent, false, { isHtml: replyIsHtml });
+                                UI.renderMessage(botMessage);
+                            }, index * 300);
+                        });
+                    } else if (response.message) {
+                        var messageContent = response.message;
+                        var messageIsHtml = isHtml;
+                        // Append search results to the message
+                        if (searchHtml) {
+                            messageContent = response.message + searchHtml;
+                            messageIsHtml = true; // Force HTML mode since we're adding HTML
+                        }
+                        var botMessage = StateManager.addMessage(messageContent, false, { isHtml: messageIsHtml });
+                        UI.renderMessage(botMessage);
+                    } else {
+                        var defaultContent = 'Entschuldigung, ich konnte keine passende Antwort finden.';
+                        // Append search results to the default reply
+                        if (searchHtml) {
+                            defaultContent = defaultContent + searchHtml;
+                        }
+                        var defaultReply = StateManager.addMessage(defaultContent, false, { isHtml: !!searchHtml });
+                        UI.renderMessage(defaultReply);
                     }
 
                     // Calculate base delay after text replies
+                    // Search results are now part of the message, so no extra delay needed
                     var baseDelay = (response.replies ? response.replies.length : 1) * 300 + 200;
-                    // Add delay for search results if present
-                    var hasSearchResults = searchResults && searchResults.length > 0;
-                    var searchResultsDelay = hasSearchResults ? 400 : 0;
 
                     // Handle shopList - render location cards for matched shops
                     if (response.shopList && response.shopList.length > 0) {
-                        var shopDelay = baseDelay + searchResultsDelay;
+                        var shopDelay = baseDelay;
                         response.shopList.forEach(function(shopId, shopIndex) {
                             setTimeout(function() {
                                 // Normalize shopId to lowercase for lookup
@@ -910,7 +958,7 @@
 
                     // Handle showAllShops - render aggregated map view with all shop pins
                     if (response.showAllShops && CONFIG.wwzShopsMapPins && CONFIG.wwzShopsMapPins.length > 0) {
-                        var mapDelay = baseDelay + searchResultsDelay;
+                        var mapDelay = baseDelay;
                         // Add extra delay if individual shop cards are being rendered
                         if (response.shopList && response.shopList.length > 0) {
                             mapDelay += response.shopList.length * 400 + 200;
@@ -925,7 +973,7 @@
                     }
 
                     if (response.suggestions && response.suggestions.length > 0) {
-                        var suggestDelay = baseDelay + searchResultsDelay - 100;
+                        var suggestDelay = baseDelay - 100;
                         // Add extra delay if shop cards are being rendered
                         if (response.shopList && response.shopList.length > 0) {
                             suggestDelay += response.shopList.length * 400 + 200;
@@ -1520,6 +1568,37 @@
                 })
                 .catch(function(error) {
                     console.error('[WWZBlizz] Failed to submit feedback:', error);
+                });
+        },
+
+        /**
+         * Submit standalone comment (without thumbs feedback)
+         */
+        submitComment: function(messageId, comment) {
+            var UI = EBB.UI;
+            var APIService = EBB.APIService;
+
+            // Hide popup
+            UI.hideCommentPopup();
+
+            if (!comment) {
+                console.log('[WWZBlizz] Empty comment, skipping submission');
+                return;
+            }
+
+            console.log('[WWZBlizz] Submitting comment for message:', messageId);
+
+            // Submit to API with thumb: null for standalone comment
+            APIService.submitMessageFeedback(messageId, null, comment)
+                .then(function(success) {
+                    if (success) {
+                        console.log('[WWZBlizz] Comment submitted successfully');
+                        UI.showNotification('Kommentar gesendet', 'success');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('[WWZBlizz] Failed to submit comment:', error);
+                    UI.showNotification('Fehler beim Senden', 'error');
                 });
         },
 
