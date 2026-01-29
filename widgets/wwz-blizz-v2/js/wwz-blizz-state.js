@@ -22,7 +22,8 @@
         lastUserMessage: null,
         contactFormSource: null,  // 'welcome' or 'chat'
         endChatFeedback: false,   // true when feedback from end chat button
-        messageFeedback: {}       // { messageId: { type: 'positive'|'negative', comment: '' } }
+        messageFeedback: {},      // { messageId: { type: 'positive'|'negative', comment: '' } }
+        selectedCategory: null    // Selected sidebar category
     };
 
     EBB.StateManager = {
@@ -300,6 +301,20 @@
         },
 
         /**
+         * Set selected category
+         */
+        setSelectedCategory: function(category) {
+            state.selectedCategory = category;
+        },
+
+        /**
+         * Get selected category
+         */
+        getSelectedCategory: function() {
+            return state.selectedCategory;
+        },
+
+        /**
          * Reset state for new conversation
          * Optionally force re-initialization of server session
          */
@@ -315,6 +330,7 @@
             state.retryCount = 0;
             state.lastUserMessage = null;
             state.messageFeedback = {};
+            state.selectedCategory = null;
 
             // Reset the API session initialized flag so it re-initializes on next call
             if (EBB.APIService) {

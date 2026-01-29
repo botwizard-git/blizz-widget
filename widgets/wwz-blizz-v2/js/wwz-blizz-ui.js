@@ -57,6 +57,9 @@
             // Scroll indicator (New)
             this.elements.scrollToBottomBtn = document.getElementById('wwz-blizz-scroll-to-bottom');
 
+            // Category label
+            this.elements.categoryLabel = document.getElementById('wwz-blizz-category-label');
+
             // Initialize scroll listener for/hide scroll indicator
             this.initScrollListener();
 
@@ -646,6 +649,25 @@
         hidePrivacyModal: function() {
             if (this.elements.privacyModal) {
                 this.elements.privacyModal.classList.add('wwz-blizz-hidden');
+            }
+        },
+
+        /**
+         * Show category label
+         */
+        showCategoryLabel: function(categoryName) {
+            if (this.elements.categoryLabel) {
+                this.elements.categoryLabel.textContent = categoryName;
+                this.elements.categoryLabel.classList.remove('wwz-blizz-hidden');
+            }
+        },
+
+        /**
+         * Hide category label
+         */
+        hideCategoryLabel: function() {
+            if (this.elements.categoryLabel) {
+                this.elements.categoryLabel.classList.add('wwz-blizz-hidden');
             }
         },
 

@@ -118,7 +118,9 @@
                 '<main class="wwz-blizz-main-content wwz-blizz-mode-welcome" id="wwz-blizz-main">' +
                     '<!-- Header -->' +
                     '<header class="wwz-blizz-chat-header">' +
-                        '<div class="wwz-blizz-header-spacer"></div>' +
+                        '<div class="wwz-blizz-header-spacer">' +
+                            '<span class="wwz-blizz-category-label wwz-blizz-hidden" id="wwz-blizz-category-label"></span>' +
+                        '</div>' +
                         '<div class="wwz-blizz-header-actions">' +
                             '<button class="wwz-blizz-new-chat-btn" id="wwz-blizz-new-chat-btn">' +
                                 'Neuer Chat <span class="wwz-blizz-new-chat-icon">+</span>' +

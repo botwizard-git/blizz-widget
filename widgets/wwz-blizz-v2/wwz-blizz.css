@@ -196,6 +196,18 @@
     transform: scale(1.05);
 }
 
+/* Category Label in Header */
+.wwz-blizz-category-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--eb-primary);
+    background: rgba(20, 123, 209, 0.1);
+    padding: 4px 10px;
+    border-radius: 12px;
+    transition: opacity 0.2s ease;
+    pointer-events: auto;
+}
+
 /* ========================================
    CHAT CONTENT
    ======================================== */

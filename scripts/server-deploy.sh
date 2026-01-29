@@ -22,6 +22,10 @@ if [ $? -eq 0 ]; then
     echo "Reloading nginx..."
     systemctl reload nginx
 
+    # Restart PM2 process to apply Node.js code changes
+    echo "Restarting blizz-proxy PM2 process..."
+    pm2 restart blizz-proxy
+
     echo ""
     echo "=========================================="
     echo "Deployment successful!"

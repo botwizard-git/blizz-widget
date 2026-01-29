@@ -110,6 +110,14 @@
                 const item = link.parentElement;
                 const wasExpanded = item.classList.contains('expanded');
 
+                // Get category name from link text (excluding chevron)
+                const categoryName = link.textContent.trim().split('\n')[0].trim();
+
+                // Dispatch event to widget
+                document.dispatchEvent(new CustomEvent('wwzBlizzCategorySelected', {
+                    detail: { category: categoryName }
+                }));
+
                 if (wasExpanded) {
                     item.classList.remove('expanded');
                     link.querySelector('span').className = 'chevron-down';

@@ -409,6 +409,20 @@
                 });
             }
 
+            // Listen for category selection from host page
+            document.addEventListener('wwzBlizzCategorySelected', function(e) {
+                if (e.detail && e.detail.category) {
+                    EBB.StateManager.setSelectedCategory(e.detail.category);
+                    EBB.UI.showCategoryLabel(e.detail.category);
+                }
+            });
+
+            // Expose public API for setting category
+            EBB.setCategory = function(categoryName) {
+                EBB.StateManager.setSelectedCategory(categoryName);
+                EBB.UI.showCategoryLabel(categoryName);
+            };
+
             console.log('[WWZBlizz] Events initialized');
         },
 
