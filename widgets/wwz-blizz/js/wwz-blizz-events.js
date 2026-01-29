@@ -1253,7 +1253,6 @@
                         UI.clearMessages();
                         UI.showWelcomeScreen();
                         UI.renderWelcomeSuggestions(EBB.CONFIG.defaultSuggestions);
-                        UI.hideFeedbackScreen();
                         UI.resetFeedbackForm();
                     }, 2000);
                 })
@@ -1267,7 +1266,6 @@
                         UI.clearMessages();
                         UI.showWelcomeScreen();
                         UI.renderWelcomeSuggestions(EBB.CONFIG.defaultSuggestions);
-                        UI.hideFeedbackScreen();
                         UI.resetFeedbackForm();
                     }, 2000);
                 });
