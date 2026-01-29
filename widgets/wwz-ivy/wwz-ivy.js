@@ -241,16 +241,24 @@
 
         // Auto-open if configured (after Main API is exposed)
         // Supports both boolean (legacy) and object (device-specific) config
+        // ONLY auto-open for first-time visitors - respect user's close preference
         var autoOpenConfig = window.WWZIvy.Config.autoOpen;
         var shouldAutoOpen = false;
 
+        // Check if user has ever closed/minimized the widget
+        var hasStoredPreference = localStorage.getItem(window.WWZIvy.Config.storageKeys.collapsed) !== null;
+        var storedCollapsed = window.WWZIvy.Storage.isCollapsed();
+
         if (typeof autoOpenConfig === 'boolean') {
             // Backward compatible: simple boolean
-            shouldAutoOpen = autoOpenConfig;
+            // Only auto-open if user has never interacted with widget OR left it open last time
+            shouldAutoOpen = autoOpenConfig && (!hasStoredPreference || !storedCollapsed);
         } else if (typeof autoOpenConfig === 'object' && autoOpenConfig !== null) {
             // Device-specific config: check viewport width (480px matches CSS mobile breakpoint)
             var isMobile = window.innerWidth <= 480;
-            shouldAutoOpen = isMobile ? autoOpenConfig.mobile : autoOpenConfig.desktop;
+            var configValue = isMobile ? autoOpenConfig.mobile : autoOpenConfig.desktop;
+            // Only auto-open if user has never interacted with widget OR left it open last time
+            shouldAutoOpen = configValue && (!hasStoredPreference || !storedCollapsed);
         }
 
         if (shouldAutoOpen) {
