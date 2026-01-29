@@ -1140,12 +1140,12 @@
             var isEndChat = EBB.StateManager.isEndChatFeedback();
 
             EBB.UI.updateView('thankYou');
-            EBB.StateManager.reset();
 
             // If from end chat button, return to welcome screen after delay
             if (isEndChat) {
                 setTimeout(function() {
                     EBB.UI.updateView('chat');
+                    EBB.StateManager.reset();
                     EBB.UI.clearMessages();
                     EBB.UI.showWelcomeScreen();
                     EBB.UI.renderWelcomeSuggestions(EBB.CONFIG.defaultSuggestions);
@@ -1414,6 +1414,12 @@
                 .then(function() {
                     UI.showThankYou();
                     setTimeout(function() {
+                        // Clean up session and return to welcome screen
+                        UI.updateView('chat');
+                        StateManager.reset();
+                        UI.clearMessages();
+                        UI.showWelcomeScreen();
+                        UI.renderWelcomeSuggestions(EBB.CONFIG.defaultSuggestions);
                         UI.hideFeedbackScreen();
                         UI.resetFeedbackForm();
                     }, 2000);
@@ -1422,6 +1428,12 @@
                     console.error('[WWZBlizz] Feedback submission failed:', error);
                     UI.showThankYou();
                     setTimeout(function() {
+                        // Clean up session and return to welcome screen
+                        UI.updateView('chat');
+                        StateManager.reset();
+                        UI.clearMessages();
+                        UI.showWelcomeScreen();
+                        UI.renderWelcomeSuggestions(EBB.CONFIG.defaultSuggestions);
                         UI.hideFeedbackScreen();
                         UI.resetFeedbackForm();
                     }, 2000);
@@ -1483,10 +1495,11 @@
          */
         handleThankYouClose: function() {
             console.log('[WWZBlizz] Closing thank you screen');
-            // Start a new session
             EBB.UI.updateView('chat');
-            EBB.StateManager.startNewSession();
+            EBB.StateManager.reset();
+            EBB.UI.clearMessages();
             EBB.UI.showWelcomeScreen();
+            EBB.UI.renderWelcomeSuggestions(EBB.CONFIG.defaultSuggestions);
         },
 
         /**
