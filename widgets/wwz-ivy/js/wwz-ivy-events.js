@@ -130,6 +130,12 @@
                         text: Config.welcomeMessage
                     });
                     UI.addMessage(welcomeMessage);
+
+                    // Show default suggestions after welcome message
+                    if (Config.defaultSuggestions && Config.defaultSuggestions.length > 0) {
+                        UI.renderSuggestions(Config.defaultSuggestions);
+                        State.setSuggestions(Config.defaultSuggestions);
+                    }
                 }
             } else {
                 UI.showScreen('welcome');
@@ -206,6 +212,12 @@
                 text: Config.welcomeMessage
             });
             UI.addMessage(welcomeMessage);
+
+            // Show default suggestions after welcome message
+            if (Config.defaultSuggestions && Config.defaultSuggestions.length > 0) {
+                UI.renderSuggestions(Config.defaultSuggestions);
+                State.setSuggestions(Config.defaultSuggestions);
+            }
         },
 
         /**

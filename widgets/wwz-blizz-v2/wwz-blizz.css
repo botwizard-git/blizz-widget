@@ -3540,3 +3540,18 @@ input[type="date"].wwz-blizz-form-input {
     font-size: 0.875rem;
     color: var(--eb-text);
 }
+
+/* Google Maps Widget */
+.wwz-blizz-maps-widget {
+    margin-top: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--eb-bg-secondary);
+}
+
+.wwz-blizz-maps-iframe {
+    display: block;
+    width: 100%;
+    height: 300px;
+    border: none;
+}
