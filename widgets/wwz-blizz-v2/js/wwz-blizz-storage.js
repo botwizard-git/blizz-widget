@@ -160,6 +160,20 @@
         },
 
         /**
+         * Save hasAnswer flag
+         */
+        saveHasAnswer: function(hasAnswer) {
+            localStorage.setItem(STORAGE_KEYS.HAS_ANSWER, hasAnswer ? '1' : '0');
+        },
+
+        /**
+         * Get hasAnswer flag
+         */
+        getHasAnswer: function() {
+            return localStorage.getItem(STORAGE_KEYS.HAS_ANSWER) === '1';
+        },
+
+        /**
          * Clear current session
          */
         clearSession: function() {
@@ -167,6 +181,7 @@
             localStorage.removeItem(STORAGE_KEYS.MESSAGES);
             localStorage.removeItem(STORAGE_KEYS.SESSION_METADATA);
             localStorage.removeItem(STORAGE_KEYS.SESSION_START_TIME);
+            localStorage.removeItem(STORAGE_KEYS.HAS_ANSWER);
             console.log('[WWZBlizz] Session cleared');
         },
 

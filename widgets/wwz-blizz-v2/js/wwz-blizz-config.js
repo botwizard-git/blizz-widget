@@ -243,7 +243,8 @@
             sessionMeta: 'wwz_blizz_sessionMeta',
             collapsed: 'wwz_blizz_collapsed',
             sessionStartTime: 'wwz_blizz_sessionStartTime',
-            cookieInitTime: 'wwz_blizz_cookieInitTime'
+            cookieInitTime: 'wwz_blizz_cookieInitTime',
+            hasAnswer: 'wwz_blizz_hasAnswer'
         },
 
         // Server cookie validity (should match server's COOKIE_MAX_AGE)
@@ -290,7 +291,8 @@
         SESSION_METADATA: window.WWZBlizz.CONFIG.storageKeys.sessionMeta,
         COLLAPSED: window.WWZBlizz.CONFIG.storageKeys.collapsed,
         SESSION_START_TIME: window.WWZBlizz.CONFIG.storageKeys.sessionStartTime,
-        COOKIE_INIT_TIME: window.WWZBlizz.CONFIG.storageKeys.cookieInitTime
+        COOKIE_INIT_TIME: window.WWZBlizz.CONFIG.storageKeys.cookieInitTime,
+        HAS_ANSWER: window.WWZBlizz.CONFIG.storageKeys.hasAnswer
     };
 
     console.log('[WWZBlizz] Config loaded');
