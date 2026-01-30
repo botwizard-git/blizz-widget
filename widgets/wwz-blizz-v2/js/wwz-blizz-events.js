@@ -670,6 +670,46 @@
         },
 
         /**
+         * Handle "video 2" test trigger - renders multiple YouTube videos
+         * This is for testing the youtubeLinks array feature
+         */
+        handleMultipleVideosTest: function(text) {
+            var UI = EBB.UI;
+            var StateManager = EBB.StateManager;
+            var CONFIG = EBB.CONFIG;
+
+            console.log('[WWZBlizz] Testing multiple YouTube videos');
+
+            // Show typing indicator briefly
+            UI.showTypingIndicator();
+
+            setTimeout(function() {
+                UI.hideTypingIndicator();
+
+                // Add intro message
+                var introMessage = StateManager.addMessage('Hier sind mehrere Videos für Sie:', false, { isHtml: false });
+                UI.renderMessage(introMessage);
+
+                // Test videos from the video library
+                var testVideos = [
+                    { url: 'https://www.youtube.com/watch?v=zVmJKCJIoOA', title: 'Installationsvideo WLAN-Router Calix' },
+                    { url: 'https://www.youtube.com/watch?v=2S-mVp0zHzM', title: 'Installationsvideo Glasfasermodem' },
+                    { url: 'https://www.youtube.com/watch?v=K9ez2riI6uc', title: 'Installationsvideo Blizz TV-Box' }
+                ];
+
+                // Render each video with staggered delay
+                testVideos.forEach(function(videoItem, videoIndex) {
+                    setTimeout(function() {
+                        var videoHtml = UI.createVideoWidget(videoItem);
+                        var videoMessage = StateManager.addMessage(videoHtml, false, { isHtml: true });
+                        UI.renderMessage(videoMessage);
+                        StateManager.setHasAnswerInConversation(true);
+                    }, 200 + (videoIndex * 400));
+                });
+            }, 500);
+        },
+
+        /**
          * Simple fuzzy match score between query and target string
          * Returns score 0-1, higher is better match
          */
@@ -864,6 +904,12 @@
             // Check for YouTube keyword - show dummy video widget
             if (text.toLowerCase().indexOf('youtube') !== -1) {
                 self.handleYoutubeRequest(text);
+                return;
+            }
+
+            // Check for "video 2" test trigger - show multiple videos
+            if (text.toLowerCase() === 'video 2') {
+                self.handleMultipleVideosTest(text);
                 return;
             }
 
