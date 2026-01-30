@@ -331,9 +331,19 @@
          * Set hasAnswerInConversation flag
          */
         setHasAnswerInConversation: function(value) {
+            var previousValue = state.hasAnswerInConversation;
             state.hasAnswerInConversation = value;
             // Persist to localStorage
             SessionService.saveHasAnswer(value);
+
+            // Log state transitions
+            if (previousValue !== value) {
+                if (value) {
+                    console.log("there is now at least one message on the window");
+                } else {
+                    console.log("there is now no message on the window");
+                }
+            }
         },
 
         /**
@@ -374,7 +384,7 @@
             state.lastUserMessage = null;
             state.messageFeedback = {};
             state.selectedCategory = null;
-            state.hasAnswerInConversation = false;
+            this.setHasAnswerInConversation(false);
 
             // Reset the API session initialized flag so it re-initializes on next call
             if (EBB.APIService) {

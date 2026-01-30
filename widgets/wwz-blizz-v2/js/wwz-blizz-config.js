@@ -142,12 +142,6 @@
             title: 'WWZ Video'
         },
 
-        // Demo search_results for testing (used when API doesn't return search_results)
-        demoSearchResults: [
-            { title: "Blizz Mobile", url: "https://www.wwz.ch/-/media/hilfe/anleitungen/mobile-anleitungen/kurznummern_blizz_mobile.pdf", icon: "doc" },
-            { title: "www.wwz.ch", url: "https://www.wwz.ch/de/privatpersonen/telekommunikation/mobile", icon: "web" }
-        ],
-
         // Video library for fuzzy matching
         videoLibrary: [
             {"title": "Installationsvideo WLAN-Router Calix GS5229E-2", "url": "https://www.youtube.com/embed/zVmJKCJIoOA"},

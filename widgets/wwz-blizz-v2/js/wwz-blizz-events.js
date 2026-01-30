@@ -895,10 +895,8 @@
 
                     var isHtml = response.isHtml || false;
 
-                    // Get search results - use demo data if API doesn't return search_results
-                    var searchResults = (response.searchResults && response.searchResults.length > 0)
-                        ? response.searchResults
-                        : CONFIG.demoSearchResults;
+                    // Get search results from API response
+                    var searchResults = response.searchResults || [];
 
                     // Create search results HTML to append to bot message
                     var searchHtml = (searchResults && searchResults.length > 0)
@@ -973,6 +971,8 @@
                     // Handle shopList - render location cards for matched shops
                     if (response.shopList && response.shopList.length > 0) {
                         var shopDelay = baseDelay;
+                        var shouldAutoScroll = response.shopList.length === 1 && response.mapsLink;
+
                         response.shopList.forEach(function(shopId, shopIndex) {
                             setTimeout(function() {
                                 // Normalize shopId to lowercase for lookup
@@ -986,6 +986,17 @@
                                     UI.renderMessage(mapMessage);
                                     // Mark that we have an answer in the conversation
                                     StateManager.setHasAnswerInConversation(true);
+
+                                    // Auto-scroll to shop card when single shop + mapsLink
+                                    if (shouldAutoScroll) {
+                                        setTimeout(function() {
+                                            var messagesContainer = document.querySelector('.wwz-blizz-messages');
+                                            if (messagesContainer) {
+                                                // Scroll to show the shop card (scroll to bottom)
+                                                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                            }
+                                        }, 100); // Small delay to ensure DOM is updated
+                                    }
                                 } else {
                                     console.warn('[WWZBlizz] Shop not found:', shopId, '(normalized:', normalizedId + ')');
                                 }
@@ -1011,6 +1022,29 @@
                         }, mapDelay);
                     }
 
+                    // Handle youtubeLinks - render video widgets for each YouTube link
+                    if (response.youtubeLinks && response.youtubeLinks.length > 0) {
+                        var youtubeDelay = baseDelay;
+                        // Add extra delay if shop cards are being rendered
+                        if (response.shopList && response.shopList.length > 0) {
+                            youtubeDelay += response.shopList.length * 400 + 200;
+                        }
+
+                        response.youtubeLinks.forEach(function(videoItem, videoIndex) {
+                            setTimeout(function() {
+                                var videoData = {
+                                    url: videoItem.url,
+                                    title: videoItem.title || 'YouTube Video'
+                                };
+
+                                var videoHtml = UI.createVideoWidget(videoData);
+                                var videoMessage = StateManager.addMessage(videoHtml, false, { isHtml: true });
+                                UI.renderMessage(videoMessage);
+                                StateManager.setHasAnswerInConversation(true);
+                            }, youtubeDelay + (videoIndex * 400));
+                        });
+                    }
+
                     if (response.suggestions && response.suggestions.length > 0) {
                         var suggestDelay = baseDelay - 100;
                         // Add extra delay if shop cards are being rendered
@@ -1020,6 +1054,10 @@
                         // Add extra delay if aggregated map is being rendered
                         if (response.showAllShops && CONFIG.wwzShopsMapPins && CONFIG.wwzShopsMapPins.length > 0) {
                             suggestDelay += 500;
+                        }
+                        // Add extra delay if YouTube videos are being rendered
+                        if (response.youtubeLinks && response.youtubeLinks.length > 0) {
+                            suggestDelay += response.youtubeLinks.length * 400 + 200;
                         }
                         setTimeout(function() {
                             UI.renderSuggestions(response.suggestions);
