@@ -24,6 +24,9 @@
         logErrorsEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/log_errors',
         shopsEndpoint: 'https://blizz-api.botwizard.ch/shops',
 
+        // Google Maps API Configuration
+        googleMapsApiKey: '', // Add your Google Maps Embed API key here
+
         // Internal vs External mode - detected from container class
         isInternal: function() {
             var container = document.getElementById('wwz-blizz-parent');

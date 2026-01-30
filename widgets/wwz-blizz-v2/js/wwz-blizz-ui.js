@@ -827,13 +827,68 @@
                 return '';
             }
 
-            // Ensure the URL is properly formatted for embedding
             var embedUrl = mapsLink;
+            var CONFIG = EBB.CONFIG;
 
-            // If it's a regular Google Maps link, convert to embed format
-            if (mapsLink.indexOf('google.com/maps') !== -1 && mapsLink.indexOf('output=embed') === -1) {
-                // Add output=embed parameter if not present
-                embedUrl = mapsLink + (mapsLink.indexOf('?') !== -1 ? '&' : '?') + 'output=embed';
+            // Handle different Google Maps URL formats
+            if (mapsLink.indexOf('google.com/maps') !== -1) {
+                // Case 1: Already an embed URL - use as-is
+                if (mapsLink.indexOf('/maps/embed') !== -1) {
+                    embedUrl = mapsLink;
+                }
+                // Case 2: My Maps URL (custom maps) - convert to embed format
+                else if (mapsLink.indexOf('/maps/d/') !== -1) {
+                    // Extract map ID from various My Maps URL formats
+                    var midMatch = mapsLink.match(/mid=([^&]+)/);
+                    if (midMatch) {
+                        embedUrl = 'https://www.google.com/maps/d/embed?mid=' + midMatch[1];
+                    } else {
+                        // Try to extract from URL path: /maps/d/viewer?mid=xxx or /maps/d/u/0/viewer?mid=xxx
+                        var urlParts = mapsLink.split('?');
+                        if (urlParts.length > 1) {
+                            var params = urlParts[1];
+                            midMatch = params.match(/mid=([^&]+)/);
+                            if (midMatch) {
+                                embedUrl = 'https://www.google.com/maps/d/embed?mid=' + midMatch[1];
+                            }
+                        }
+                    }
+                }
+                // Case 3: Regular Google Maps URL - convert to Embed API format
+                else {
+                    // Extract query/location information
+                    var query = '';
+
+                    // Try to extract from q parameter
+                    var qMatch = mapsLink.match(/[?&]q=([^&]+)/);
+                    if (qMatch) {
+                        query = decodeURIComponent(qMatch[1].replace(/\+/g, ' '));
+                    }
+                    // Try to extract from place information
+                    else if (mapsLink.indexOf('/place/') !== -1) {
+                        var placeMatch = mapsLink.match(/\/place\/([^\/]+)/);
+                        if (placeMatch) {
+                            query = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
+                        }
+                    }
+                    // Try to extract from search query
+                    else if (mapsLink.indexOf('/search/') !== -1) {
+                        var searchMatch = mapsLink.match(/\/search\/([^\/]+)/);
+                        if (searchMatch) {
+                            query = decodeURIComponent(searchMatch[1].replace(/\+/g, ' '));
+                        }
+                    }
+
+                    // If we have an API key, use the Embed API
+                    if (CONFIG.googleMapsApiKey && query) {
+                        embedUrl = 'https://www.google.com/maps/embed/v1/place?key=' +
+                                   CONFIG.googleMapsApiKey + '&q=' + encodeURIComponent(query);
+                    }
+                    // Fallback: try using the URL as-is (might work for some cases)
+                    else {
+                        embedUrl = mapsLink;
+                    }
+                }
             }
 
             return '<div class="wwz-blizz-maps-widget">' +
@@ -848,7 +903,7 @@
                 'referrerpolicy="no-referrer-when-downgrade" ' +
                 'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\';">' +
                 '</iframe>' +
-                '<a href="' + this.escapeHtml(mapsLink) + '" target="_blank" rel="noopener noreferrer" class="wwz-blizz-maps-fallback-link" style="display:none;padding:16px;text-align:center;">' +
+                '<a href="' + this.escapeHtml(mapsLink) + '" target="_blank" rel="noopener noreferrer" class="wwz-blizz-maps-fallback-link" style="display:none;padding:16px;text-align:center;color:var(--eb-primary);text-decoration:none;font-weight:500;">' +
                 '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:8px;">' +
                 '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>' +
                 '<circle cx="12" cy="10" r="3"/>' +

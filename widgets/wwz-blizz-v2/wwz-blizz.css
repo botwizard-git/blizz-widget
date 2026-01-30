@@ -3595,3 +3595,18 @@ input[type="date"].wwz-blizz-form-input {
     height: 300px;
     border: none;
 }
+
+.wwz-blizz-maps-fallback-link {
+    display: none;
+    padding: 16px;
+    text-align: center;
+    color: var(--eb-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.wwz-blizz-maps-fallback-link:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+    text-decoration: underline;
+}
