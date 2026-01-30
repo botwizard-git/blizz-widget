@@ -676,19 +676,13 @@
         handleMultipleVideosTest: function(text) {
             var UI = EBB.UI;
             var StateManager = EBB.StateManager;
-            var CONFIG = EBB.CONFIG;
 
             console.log('[WWZBlizz] Testing multiple YouTube videos');
 
-            // Show typing indicator briefly
             UI.showTypingIndicator();
 
             setTimeout(function() {
                 UI.hideTypingIndicator();
-
-                // Add intro message
-                var introMessage = StateManager.addMessage('Hier sind mehrere Videos für Sie:', false, { isHtml: false });
-                UI.renderMessage(introMessage);
 
                 // Test videos from the video library
                 var testVideos = [
@@ -697,15 +691,16 @@
                     { url: 'https://www.youtube.com/watch?v=K9ez2riI6uc', title: 'Installationsvideo Blizz TV-Box' }
                 ];
 
-                // Render each video with staggered delay
-                testVideos.forEach(function(videoItem, videoIndex) {
-                    setTimeout(function() {
-                        var videoHtml = UI.createVideoWidget(videoItem);
-                        var videoMessage = StateManager.addMessage(videoHtml, false, { isHtml: true });
-                        UI.renderMessage(videoMessage);
-                        StateManager.setHasAnswerInConversation(true);
-                    }, 200 + (videoIndex * 400));
+                // Build combined HTML for all videos
+                var combinedHtml = '<p style="margin-bottom: 8px; font-weight: 600;">Hier sind mehrere Videos für Sie:</p>';
+                testVideos.forEach(function(videoItem) {
+                    combinedHtml += UI.createVideoWidget(videoItem);
                 });
+
+                // Create ONE message with all videos
+                var videoMessage = StateManager.addMessage(combinedHtml, false, { isHtml: true });
+                UI.renderMessage(videoMessage);
+                StateManager.setHasAnswerInConversation(true);
             }, 500);
         },
 
@@ -941,173 +936,88 @@
 
                     var isHtml = response.isHtml || false;
 
-                    // Get search results from API response
-                    var searchResults = response.searchResults || [];
+                    // Build combined HTML in correct order: Text → Map(s) → Video(s) → Search Results
+                    // This ensures ONE message with ONE avatar and ONE feedback button
+                    var combinedHtml = '';
+                    var hasHtmlContent = false;
 
-                    // Create search results HTML to append to bot message
-                    var searchHtml = (searchResults && searchResults.length > 0)
-                        ? UI.createSearchResultsWidget(searchResults)
-                        : '';
-
-                    // Create Google Maps widget HTML if mapsLink is present
-                    var mapsHtml = response.mapsLink
-                        ? UI.createMapsLinkWidget(response.mapsLink)
-                        : '';
-
+                    // A. Start with text reply
                     if (response.replies && response.replies.length > 0) {
-                        response.replies.forEach(function(reply, index) {
-                            setTimeout(function() {
-                                var replyContent = reply;
-                                var replyIsHtml = isHtml;
-                                // Append maps widget and search results to the last reply
-                                // Order: Text -> Maps Widget -> Search Results
-                                if (index === response.replies.length - 1) {
-                                    if (mapsHtml) {
-                                        replyContent = reply + mapsHtml;
-                                        replyIsHtml = true; // Force HTML mode since we're adding HTML
-                                    }
-                                    if (searchHtml) {
-                                        replyContent = replyContent + searchHtml;
-                                        replyIsHtml = true; // Force HTML mode since we're adding HTML
-                                    }
-                                }
-                                var botMessage = StateManager.addMessage(replyContent, false, { isHtml: replyIsHtml });
-                                UI.renderMessage(botMessage);
-                                // Mark that we have an answer in the conversation
-                                StateManager.setHasAnswerInConversation(true);
-                            }, index * 300);
-                        });
+                        combinedHtml += response.replies.join('<br>');
                     } else if (response.message) {
-                        var messageContent = response.message;
-                        var messageIsHtml = isHtml;
-                        // Append maps widget and search results to the message
-                        // Order: Text -> Maps Widget -> Search Results
-                        if (mapsHtml) {
-                            messageContent = response.message + mapsHtml;
-                            messageIsHtml = true; // Force HTML mode since we're adding HTML
-                        }
-                        if (searchHtml) {
-                            messageContent = messageContent + searchHtml;
-                            messageIsHtml = true; // Force HTML mode since we're adding HTML
-                        }
-                        var botMessage = StateManager.addMessage(messageContent, false, { isHtml: messageIsHtml });
-                        UI.renderMessage(botMessage);
-                        // Mark that we have an answer in the conversation
-                        StateManager.setHasAnswerInConversation(true);
+                        combinedHtml += response.message;
                     } else {
-                        var defaultContent = 'Entschuldigung, ich konnte keine passende Antwort finden.';
-                        // Append maps widget and search results to the default reply
-                        // Order: Text -> Maps Widget -> Search Results
-                        if (mapsHtml) {
-                            defaultContent = defaultContent + mapsHtml;
-                        }
-                        if (searchHtml) {
-                            defaultContent = defaultContent + searchHtml;
-                        }
-                        var defaultReply = StateManager.addMessage(defaultContent, false, { isHtml: !!(searchHtml || mapsHtml) });
-                        UI.renderMessage(defaultReply);
-                        // Mark that we have an answer in the conversation
-                        StateManager.setHasAnswerInConversation(true);
+                        combinedHtml += 'Entschuldigung, ich konnte keine passende Antwort finden.';
                     }
 
-                    // Calculate base delay after text replies
-                    // Search results are now part of the message, so no extra delay needed
-                    var baseDelay = (response.replies ? response.replies.length : 1) * 300 + 200;
+                    // B. Add mapsLink widget (Google Maps embed)
+                    if (response.mapsLink) {
+                        combinedHtml += UI.createMapsLinkWidget(response.mapsLink);
+                        hasHtmlContent = true;
+                    }
 
-                    // Handle shopList - render location cards for matched shops
+                    // C. Add shop cards (combined, not separate messages)
                     if (response.shopList && response.shopList.length > 0) {
-                        var shopDelay = baseDelay;
-                        var shouldAutoScroll = response.shopList.length === 1 && response.mapsLink;
-
-                        response.shopList.forEach(function(shopId, shopIndex) {
-                            setTimeout(function() {
-                                // Normalize shopId to lowercase for lookup
-                                var normalizedId = shopId.toLowerCase();
-                                var shop = CONFIG.wwzShops[normalizedId];
-                                if (shop) {
-                                    // Convert shop data to format expected by createMapWidget
-                                    var shopData = self.convertShopForWidget(shop);
-                                    var mapHtml = UI.createMapWidget(shopData);
-                                    var mapMessage = StateManager.addMessage(mapHtml, false, { isHtml: true });
-                                    UI.renderMessage(mapMessage);
-                                    // Mark that we have an answer in the conversation
-                                    StateManager.setHasAnswerInConversation(true);
-
-                                    // Auto-scroll to shop card when single shop + mapsLink
-                                    if (shouldAutoScroll) {
-                                        setTimeout(function() {
-                                            var messagesContainer = document.querySelector('.wwz-blizz-messages');
-                                            if (messagesContainer) {
-                                                // Scroll to show the shop card (scroll to bottom)
-                                                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                                            }
-                                        }, 100); // Small delay to ensure DOM is updated
-                                    }
-                                } else {
-                                    console.warn('[WWZBlizz] Shop not found:', shopId, '(normalized:', normalizedId + ')');
-                                }
-                            }, shopDelay + (shopIndex * 400));
-                        });
-                    }
-
-                    // Handle showAllShops - render aggregated map view with all shop pins
-                    if (response.showAllShops && CONFIG.wwzShopsMapPins && CONFIG.wwzShopsMapPins.length > 0) {
-                        var mapDelay = baseDelay;
-                        // Add extra delay if individual shop cards are being rendered
-                        if (response.shopList && response.shopList.length > 0) {
-                            mapDelay += response.shopList.length * 400 + 200;
-                        }
-                        setTimeout(function() {
-                            var aggregatedMapHtml = UI.createAggregatedMapView(CONFIG.wwzShopsMapPins);
-                            if (aggregatedMapHtml) {
-                                var mapMessage = StateManager.addMessage(aggregatedMapHtml, false, { isHtml: true });
-                                UI.renderMessage(mapMessage);
-                                // Mark that we have an answer in the conversation
-                                StateManager.setHasAnswerInConversation(true);
+                        response.shopList.forEach(function(shopId) {
+                            var normalizedId = shopId.toLowerCase();
+                            var shop = CONFIG.wwzShops[normalizedId];
+                            if (shop) {
+                                var shopData = self.convertShopForWidget(shop);
+                                combinedHtml += UI.createMapWidget(shopData);
+                                hasHtmlContent = true;
+                            } else {
+                                console.warn('[WWZBlizz] Shop not found:', shopId, '(normalized:', normalizedId + ')');
                             }
-                        }, mapDelay);
-                    }
-
-                    // Handle youtubeLinks - render video widgets for each YouTube link
-                    if (response.youtubeLinks && response.youtubeLinks.length > 0) {
-                        var youtubeDelay = baseDelay;
-                        // Add extra delay if shop cards are being rendered
-                        if (response.shopList && response.shopList.length > 0) {
-                            youtubeDelay += response.shopList.length * 400 + 200;
-                        }
-
-                        response.youtubeLinks.forEach(function(videoItem, videoIndex) {
-                            setTimeout(function() {
-                                var videoData = {
-                                    url: videoItem.url,
-                                    title: videoItem.title || 'YouTube Video'
-                                };
-
-                                var videoHtml = UI.createVideoWidget(videoData);
-                                var videoMessage = StateManager.addMessage(videoHtml, false, { isHtml: true });
-                                UI.renderMessage(videoMessage);
-                                StateManager.setHasAnswerInConversation(true);
-                            }, youtubeDelay + (videoIndex * 400));
                         });
                     }
 
+                    // D. Add aggregated map view
+                    if (response.showAllShops && CONFIG.wwzShopsMapPins && CONFIG.wwzShopsMapPins.length > 0) {
+                        var aggregatedMapHtml = UI.createAggregatedMapView(CONFIG.wwzShopsMapPins);
+                        if (aggregatedMapHtml) {
+                            combinedHtml += aggregatedMapHtml;
+                            hasHtmlContent = true;
+                        }
+                    }
+
+                    // E. Add video widgets (all combined)
+                    if (response.youtubeLinks && response.youtubeLinks.length > 0) {
+                        response.youtubeLinks.forEach(function(videoItem) {
+                            var videoData = {
+                                url: videoItem.url,
+                                title: videoItem.title || 'YouTube Video'
+                            };
+                            combinedHtml += UI.createVideoWidget(videoData);
+                            hasHtmlContent = true;
+                        });
+                    }
+
+                    // F. Add search results (last)
+                    if (response.searchResults && response.searchResults.length > 0) {
+                        combinedHtml += UI.createSearchResultsWidget(response.searchResults);
+                        hasHtmlContent = true;
+                    }
+
+                    // Create ONE message with all content
+                    var botMessage = StateManager.addMessage(combinedHtml, false, { isHtml: hasHtmlContent || isHtml });
+                    UI.renderMessage(botMessage);
+                    StateManager.setHasAnswerInConversation(true);
+
+                    // Auto-scroll to show content when single shop + mapsLink
+                    if (response.shopList && response.shopList.length === 1 && response.mapsLink) {
+                        setTimeout(function() {
+                            var messagesContainer = document.querySelector('.wwz-blizz-messages');
+                            if (messagesContainer) {
+                                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                            }
+                        }, 100);
+                    }
+
+                    // Render suggestions after a short delay
                     if (response.suggestions && response.suggestions.length > 0) {
-                        var suggestDelay = baseDelay - 100;
-                        // Add extra delay if shop cards are being rendered
-                        if (response.shopList && response.shopList.length > 0) {
-                            suggestDelay += response.shopList.length * 400 + 200;
-                        }
-                        // Add extra delay if aggregated map is being rendered
-                        if (response.showAllShops && CONFIG.wwzShopsMapPins && CONFIG.wwzShopsMapPins.length > 0) {
-                            suggestDelay += 500;
-                        }
-                        // Add extra delay if YouTube videos are being rendered
-                        if (response.youtubeLinks && response.youtubeLinks.length > 0) {
-                            suggestDelay += response.youtubeLinks.length * 400 + 200;
-                        }
                         setTimeout(function() {
                             UI.renderSuggestions(response.suggestions);
-                        }, suggestDelay);
+                        }, 200);
                     }
                 })
                 .catch(function(error) {
