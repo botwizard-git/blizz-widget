@@ -915,14 +915,15 @@
                             setTimeout(function() {
                                 var replyContent = reply;
                                 var replyIsHtml = isHtml;
-                                // Append search results and maps widget to the last reply
+                                // Append maps widget and search results to the last reply
+                                // Order: Text -> Maps Widget -> Search Results
                                 if (index === response.replies.length - 1) {
-                                    if (searchHtml) {
-                                        replyContent = reply + searchHtml;
+                                    if (mapsHtml) {
+                                        replyContent = reply + mapsHtml;
                                         replyIsHtml = true; // Force HTML mode since we're adding HTML
                                     }
-                                    if (mapsHtml) {
-                                        replyContent = replyContent + mapsHtml;
+                                    if (searchHtml) {
+                                        replyContent = replyContent + searchHtml;
                                         replyIsHtml = true; // Force HTML mode since we're adding HTML
                                     }
                                 }
@@ -935,13 +936,14 @@
                     } else if (response.message) {
                         var messageContent = response.message;
                         var messageIsHtml = isHtml;
-                        // Append search results and maps widget to the message
-                        if (searchHtml) {
-                            messageContent = response.message + searchHtml;
+                        // Append maps widget and search results to the message
+                        // Order: Text -> Maps Widget -> Search Results
+                        if (mapsHtml) {
+                            messageContent = response.message + mapsHtml;
                             messageIsHtml = true; // Force HTML mode since we're adding HTML
                         }
-                        if (mapsHtml) {
-                            messageContent = messageContent + mapsHtml;
+                        if (searchHtml) {
+                            messageContent = messageContent + searchHtml;
                             messageIsHtml = true; // Force HTML mode since we're adding HTML
                         }
                         var botMessage = StateManager.addMessage(messageContent, false, { isHtml: messageIsHtml });
@@ -950,12 +952,13 @@
                         StateManager.setHasAnswerInConversation(true);
                     } else {
                         var defaultContent = 'Entschuldigung, ich konnte keine passende Antwort finden.';
-                        // Append search results and maps widget to the default reply
-                        if (searchHtml) {
-                            defaultContent = defaultContent + searchHtml;
-                        }
+                        // Append maps widget and search results to the default reply
+                        // Order: Text -> Maps Widget -> Search Results
                         if (mapsHtml) {
                             defaultContent = defaultContent + mapsHtml;
+                        }
+                        if (searchHtml) {
+                            defaultContent = defaultContent + searchHtml;
                         }
                         var defaultReply = StateManager.addMessage(defaultContent, false, { isHtml: !!(searchHtml || mapsHtml) });
                         UI.renderMessage(defaultReply);
