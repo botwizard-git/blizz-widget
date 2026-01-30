@@ -120,7 +120,12 @@
             closeButton: 'Schliessen'
         },
 
-        // Default suggestions
+        // Default suggestions (shown after welcome message)
+        defaultSuggestions: [
+            'Produktberatung'
+        ],
+
+        // Suggestions (legacy/fallback)
         suggestions: [
             'Strom und Energie',
             'Wasser',

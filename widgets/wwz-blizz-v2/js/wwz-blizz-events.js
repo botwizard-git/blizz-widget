@@ -635,6 +635,8 @@
 
                 var botMessage = StateManager.addMessage(CONFIG.greetings.response, false);
                 UI.renderMessage(botMessage);
+                // Mark that we have an answer in the conversation
+                StateManager.setHasAnswerInConversation(true);
 
                 UI.renderSuggestions(CONFIG.greetings.suggestions);
             }, 600);
@@ -660,6 +662,8 @@
                 var videoHtml = UI.createVideoWidget(CONFIG.dummyYoutubeVideo);
                 var botMessage = StateManager.addMessage(videoHtml, false, { isHtml: true });
                 UI.renderMessage(botMessage);
+                // Mark that we have an answer in the conversation
+                StateManager.setHasAnswerInConversation(true);
 
                 UI.renderSuggestions(CONFIG.defaultSuggestions);
             }, 800);
@@ -755,6 +759,8 @@
                 var videoHtml = UI.createVideoWidget(videoData);
                 var botMessage = StateManager.addMessage(videoHtml, false, { isHtml: true });
                 UI.renderMessage(botMessage);
+                // Mark that we have an answer in the conversation
+                StateManager.setHasAnswerInConversation(true);
 
                 UI.renderSuggestions(EBB.CONFIG.defaultSuggestions);
             }, 800);
@@ -781,6 +787,8 @@
                 var textResponse = 'Hier finden Sie Informationen zum ' + shop.name + ':';
                 var textMessage = StateManager.addMessage(textResponse, false);
                 UI.renderMessage(textMessage);
+                // Mark that we have an answer in the conversation
+                StateManager.setHasAnswerInConversation(true);
 
                 // Then add the map widget
                 setTimeout(function() {
@@ -897,38 +905,62 @@
                         ? UI.createSearchResultsWidget(searchResults)
                         : '';
 
+                    // Create Google Maps widget HTML if mapsLink is present
+                    var mapsHtml = response.mapsLink
+                        ? UI.createMapsLinkWidget(response.mapsLink)
+                        : '';
+
                     if (response.replies && response.replies.length > 0) {
                         response.replies.forEach(function(reply, index) {
                             setTimeout(function() {
                                 var replyContent = reply;
                                 var replyIsHtml = isHtml;
-                                // Append search results to the last reply
-                                if (index === response.replies.length - 1 && searchHtml) {
-                                    replyContent = reply + searchHtml;
-                                    replyIsHtml = true; // Force HTML mode since we're adding HTML
+                                // Append search results and maps widget to the last reply
+                                if (index === response.replies.length - 1) {
+                                    if (searchHtml) {
+                                        replyContent = reply + searchHtml;
+                                        replyIsHtml = true; // Force HTML mode since we're adding HTML
+                                    }
+                                    if (mapsHtml) {
+                                        replyContent = replyContent + mapsHtml;
+                                        replyIsHtml = true; // Force HTML mode since we're adding HTML
+                                    }
                                 }
                                 var botMessage = StateManager.addMessage(replyContent, false, { isHtml: replyIsHtml });
                                 UI.renderMessage(botMessage);
+                                // Mark that we have an answer in the conversation
+                                StateManager.setHasAnswerInConversation(true);
                             }, index * 300);
                         });
                     } else if (response.message) {
                         var messageContent = response.message;
                         var messageIsHtml = isHtml;
-                        // Append search results to the message
+                        // Append search results and maps widget to the message
                         if (searchHtml) {
                             messageContent = response.message + searchHtml;
                             messageIsHtml = true; // Force HTML mode since we're adding HTML
                         }
+                        if (mapsHtml) {
+                            messageContent = messageContent + mapsHtml;
+                            messageIsHtml = true; // Force HTML mode since we're adding HTML
+                        }
                         var botMessage = StateManager.addMessage(messageContent, false, { isHtml: messageIsHtml });
                         UI.renderMessage(botMessage);
+                        // Mark that we have an answer in the conversation
+                        StateManager.setHasAnswerInConversation(true);
                     } else {
                         var defaultContent = 'Entschuldigung, ich konnte keine passende Antwort finden.';
-                        // Append search results to the default reply
+                        // Append search results and maps widget to the default reply
                         if (searchHtml) {
                             defaultContent = defaultContent + searchHtml;
                         }
-                        var defaultReply = StateManager.addMessage(defaultContent, false, { isHtml: !!searchHtml });
+                        if (mapsHtml) {
+                            defaultContent = defaultContent + mapsHtml;
+                        }
+                        var defaultReply = StateManager.addMessage(defaultContent, false, { isHtml: !!(searchHtml || mapsHtml) });
                         UI.renderMessage(defaultReply);
+                        // Mark that we have an answer in the conversation
+                        StateManager.setHasAnswerInConversation(true);
                     }
 
                     // Calculate base delay after text replies
@@ -949,6 +981,8 @@
                                     var mapHtml = UI.createMapWidget(shopData);
                                     var mapMessage = StateManager.addMessage(mapHtml, false, { isHtml: true });
                                     UI.renderMessage(mapMessage);
+                                    // Mark that we have an answer in the conversation
+                                    StateManager.setHasAnswerInConversation(true);
                                 } else {
                                     console.warn('[WWZBlizz] Shop not found:', shopId, '(normalized:', normalizedId + ')');
                                 }
@@ -968,6 +1002,8 @@
                             if (aggregatedMapHtml) {
                                 var mapMessage = StateManager.addMessage(aggregatedMapHtml, false, { isHtml: true });
                                 UI.renderMessage(mapMessage);
+                                // Mark that we have an answer in the conversation
+                                StateManager.setHasAnswerInConversation(true);
                             }
                         }, mapDelay);
                     }

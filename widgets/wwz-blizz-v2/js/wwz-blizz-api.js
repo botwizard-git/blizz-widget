@@ -191,6 +191,7 @@
                     shopList: data.shopList || [],
                     showAllShops: data.showAllShops || false,
                     searchResults: data.search_results || [],
+                    mapsLink: data.mapsLink || null,
                     isHtml: true
                 };
             }
@@ -207,6 +208,7 @@
                 shopList: response.shopList || data.shopList || [],
                 showAllShops: response.showAllShops || data.showAllShops || false,
                 searchResults: response.search_results || data.search_results || [],
+                mapsLink: response.mapsLink || data.mapsLink || null,
                 isHtml: false
             };
         },

@@ -23,7 +23,8 @@
         contactFormSource: null,  // 'welcome' or 'chat'
         endChatFeedback: false,   // true when feedback from end chat button
         messageFeedback: {},      // { messageId: { type: 'positive'|'negative', comment: '' } }
-        selectedCategory: null    // Selected sidebar category
+        selectedCategory: null,   // Selected sidebar category
+        hasAnswerInConversation: false  // Track if at least one bot answer exists
     };
 
     EBB.StateManager = {
@@ -40,11 +41,22 @@
                 // Session is valid, restore it
                 state.sessionId = SessionService.getSessionId();
                 state.messages = SessionService.getMessages();
+
+                // Restore hasAnswerInConversation flag - compute from messages
+                state.hasAnswerInConversation = false;
+                for (var i = 0; i < state.messages.length; i++) {
+                    if (!state.messages[i].isUser) {
+                        state.hasAnswerInConversation = true;
+                        break;
+                    }
+                }
+
                 console.log('[WWZBlizz] Valid session restored');
             } else {
                 // No valid session or expired - start fresh
                 state.sessionId = null;
                 state.messages = [];
+                state.hasAnswerInConversation = false;
                 console.log('[WWZBlizz] No valid session, starting fresh');
             }
 
@@ -52,7 +64,8 @@
                 userId: state.userId,
                 sessionId: state.sessionId,
                 messageCount: state.messages.length,
-                isCollapsed: state.isCollapsed
+                isCollapsed: state.isCollapsed,
+                hasAnswerInConversation: state.hasAnswerInConversation
             });
         },
 
@@ -315,6 +328,36 @@
         },
 
         /**
+         * Set hasAnswerInConversation flag
+         */
+        setHasAnswerInConversation: function(value) {
+            state.hasAnswerInConversation = value;
+            // Persist to localStorage
+            SessionService.saveHasAnswer(value);
+        },
+
+        /**
+         * Check if conversation has at least one bot answer
+         * Computes from messages if needed
+         */
+        hasAnswerInConversation: function() {
+            // If flag is already true, return immediately
+            if (state.hasAnswerInConversation) {
+                return true;
+            }
+
+            // Otherwise, compute from messages (in case of restore from storage)
+            var messages = state.messages;
+            for (var i = 0; i < messages.length; i++) {
+                if (!messages[i].isUser) {
+                    state.hasAnswerInConversation = true;
+                    return true;
+                }
+            }
+            return false;
+        },
+
+        /**
          * Reset state for new conversation
          * Optionally force re-initialization of server session
          */
@@ -331,6 +374,7 @@
             state.lastUserMessage = null;
             state.messageFeedback = {};
             state.selectedCategory = null;
+            state.hasAnswerInConversation = false;
 
             // Reset the API session initialized flag so it re-initializes on next call
             if (EBB.APIService) {

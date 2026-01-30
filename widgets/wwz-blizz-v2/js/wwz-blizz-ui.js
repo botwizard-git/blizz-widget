@@ -820,6 +820,37 @@
         },
 
         /**
+         * Create Google Maps widget from mapsLink
+         */
+        createMapsLinkWidget: function(mapsLink) {
+            if (!mapsLink) {
+                return '';
+            }
+
+            // Ensure the URL is properly formatted for embedding
+            var embedUrl = mapsLink;
+
+            // If it's a regular Google Maps link, convert to embed format
+            if (mapsLink.indexOf('google.com/maps') !== -1 && mapsLink.indexOf('output=embed') === -1) {
+                // Add output=embed parameter if not present
+                embedUrl = mapsLink + (mapsLink.indexOf('?') !== -1 ? '&' : '?') + 'output=embed';
+            }
+
+            return '<div class="wwz-blizz-maps-widget">' +
+                '<iframe ' +
+                'class="wwz-blizz-maps-iframe" ' +
+                'src="' + embedUrl + '" ' +
+                'width="100%" ' +
+                'height="300" ' +
+                'style="border:0;" ' +
+                'allowfullscreen="" ' +
+                'loading="lazy" ' +
+                'referrerpolicy="no-referrer-when-downgrade">' +
+                '</iframe>' +
+                '</div>';
+        },
+
+        /**
          * Detect shop mention in text
          */
         detectShopMention: function(text) {
