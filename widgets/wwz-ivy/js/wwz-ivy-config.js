@@ -122,7 +122,7 @@
 
         // Default suggestions (shown after welcome message)
         defaultSuggestions: [
-            'Produktberatung'
+            'Telekom Produktberatung'
         ],
 
         // Suggestions (legacy/fallback)

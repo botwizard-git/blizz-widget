@@ -24,6 +24,9 @@
         logErrorsEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/log_errors',
         shopsEndpoint: 'https://blizz-api.botwizard.ch/shops',
 
+        // Google Maps API Configuration
+        googleMapsApiKey: '', // Add your Google Maps Embed API key here
+
         // Internal vs External mode - detected from container class
         isInternal: function() {
             var container = document.getElementById('wwz-blizz-parent');
@@ -138,12 +141,6 @@
             thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
             title: 'WWZ Video'
         },
-
-        // Demo search_results for testing (used when API doesn't return search_results)
-        demoSearchResults: [
-            { title: "Blizz Mobile", url: "https://www.wwz.ch/-/media/hilfe/anleitungen/mobile-anleitungen/kurznummern_blizz_mobile.pdf", icon: "doc" },
-            { title: "www.wwz.ch", url: "https://www.wwz.ch/de/privatpersonen/telekommunikation/mobile", icon: "web" }
-        ],
 
         // Video library for fuzzy matching
         videoLibrary: [
