@@ -708,6 +708,31 @@
         },
 
         /**
+         * Create logomark button HTML
+         * Yellow button with WWZ logo and content (e.g. phone number)
+         * @param {string} logomark - The logomark content (e.g. phone number)
+         */
+        createLogomarkButton: function(logomark) {
+            if (!logomark) return '';
+
+            var content = this.escapeHtml(logomark);
+            // Check if it looks like a phone number
+            var cleaned = logomark.replace(/\s/g, '');
+            var isPhone = /^[+]?\d[\d\s()-]{6,}$/.test(cleaned);
+            var href = isPhone ? 'tel:' + cleaned : '#';
+            var tag = isPhone ? 'a' : 'div';
+            var hrefAttr = isPhone ? ' href="' + href + '"' : '';
+
+            return '<' + tag + hrefAttr + ' class="wwz-blizz-logomark-btn">' +
+                '<img src="' + CONFIG.wwzLogo + '" alt="WWZ" class="wwz-blizz-logomark-logo">' +
+                '<span class="wwz-blizz-logomark-text">' + content + '</span>' +
+                '<svg class="wwz-blizz-logomark-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                    '<path d="M5 12h14M12 5l7 7-7 7"/>' +
+                '</svg>' +
+                '</' + tag + '>';
+        },
+
+        /**
          * Create search results widget HTML
          * Simplified inline design - appears within bot message bubble
          * @param {Array} searchResults - Array of {title, url, icon} objects

@@ -708,6 +708,49 @@
 }
 
 /* ========================================
+   LOGOMARK BUTTON
+   ======================================== */
+.wwz-blizz-logomark-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    margin-top: 16px;
+    background: var(--lime);
+    color: var(--dark);
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    border: none;
+    font-family: inherit;
+}
+
+.wwz-blizz-logomark-btn:hover {
+    background: var(--lime-hover);
+    transform: scale(1.02);
+}
+
+.wwz-blizz-logomark-logo {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+.wwz-blizz-logomark-text {
+    color: var(--dark);
+    font-weight: 600;
+}
+
+.wwz-blizz-logomark-arrow {
+    flex-shrink: 0;
+    color: var(--dark);
+}
+
+/* ========================================
    TYPING INDICATOR
    ======================================== */
 .wwz-blizz-typing-indicator {

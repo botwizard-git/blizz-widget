@@ -192,11 +192,12 @@
                     showAllShops: data.showAllShops || false,
                     searchResults: data.search_results || [],
                     mapsLink: data.mapsLink || null,
+                    logomark: data.logomark || null,
                     isHtml: true
                 };
             }
 
-            // Handle legacy format
+    // Handle legacy format
             var response = (data && data.response) || data || {};
 
             return {
@@ -209,6 +210,7 @@
                 showAllShops: response.showAllShops || data.showAllShops || false,
                 searchResults: response.search_results || data.search_results || [],
                 mapsLink: response.mapsLink || data.mapsLink || null,
+                logomark: response.logomark || data.logomark || null,
                 isHtml: false
             };
         },

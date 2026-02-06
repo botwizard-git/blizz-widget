@@ -992,9 +992,15 @@
                         });
                     }
 
-                    // F. Add search results (last)
+                    // F. Add search results
                     if (response.searchResults && response.searchResults.length > 0) {
                         combinedHtml += UI.createSearchResultsWidget(response.searchResults);
+                        hasHtmlContent = true;
+                    }
+
+                    // G. Add logomark button (last)
+                    if (response.logomark) {
+                        combinedHtml += UI.createLogomarkButton(response.logomark);
                         hasHtmlContent = true;
                     }
 
