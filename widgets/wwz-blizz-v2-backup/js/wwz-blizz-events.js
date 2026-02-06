@@ -984,23 +984,17 @@
                     if (response.youtubeLinks && response.youtubeLinks.length > 0) {
                         response.youtubeLinks.forEach(function(videoItem) {
                             var videoData = {
-                                url: typeof videoItem === 'string' ? videoItem : videoItem.url,
-                                title: (typeof videoItem === 'object' && videoItem !== null && videoItem.title) ? videoItem.title : 'YouTube Video'
+                                url: videoItem.url,
+                                title: videoItem.title || 'YouTube Video'
                             };
                             combinedHtml += UI.createVideoWidget(videoData);
                             hasHtmlContent = true;
                         });
                     }
 
-                    // F. Add search results
+                    // F. Add search results (last)
                     if (response.searchResults && response.searchResults.length > 0) {
                         combinedHtml += UI.createSearchResultsWidget(response.searchResults);
-                        hasHtmlContent = true;
-                    }
-
-                    // G. Add logomark button (last)
-                    if (response.logomark) {
-                        combinedHtml += UI.createLogomarkButton(response.logomark);
                         hasHtmlContent = true;
                     }
 

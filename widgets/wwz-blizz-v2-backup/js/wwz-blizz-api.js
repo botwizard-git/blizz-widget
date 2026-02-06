@@ -190,15 +190,13 @@
                     suggestions: data.suggestions || [],
                     shopList: data.shopList || [],
                     showAllShops: data.showAllShops || false,
-                    searchResults: data.searchResults || data.search_results || [],
+                    searchResults: data.search_results || [],
                     mapsLink: data.mapsLink || null,
-                    logomark: data.logomark || null,
-                    youtubeLinks: data.youtubeLinks || [],
                     isHtml: true
                 };
             }
 
-    // Handle legacy format
+            // Handle legacy format
             var response = (data && data.response) || data || {};
 
             return {
@@ -209,10 +207,8 @@
                 sessionId: response.sessionId || null,
                 shopList: response.shopList || data.shopList || [],
                 showAllShops: response.showAllShops || data.showAllShops || false,
-                searchResults: response.searchResults || response.search_results || data.searchResults || data.search_results || [],
+                searchResults: response.search_results || data.search_results || [],
                 mapsLink: response.mapsLink || data.mapsLink || null,
-                logomark: response.logomark || data.logomark || null,
-                youtubeLinks: response.youtubeLinks || data.youtubeLinks || [],
                 isHtml: false
             };
         },

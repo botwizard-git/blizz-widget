@@ -14,23 +14,60 @@
          * Initialize UI element references
          */
         init: function() {
-            // Welcome screen elements (v3)
+            // Welcome screen elements
             this.elements.welcomeScreen = document.getElementById('wwz-blizz-welcome-screen');
-            this.elements.welcomeMessageInput = document.getElementById('wwz-blizz-search-input');
-            this.elements.welcomeSendBtn = document.getElementById('wwz-blizz-search-btn');
+            this.elements.welcomeMessageInput = document.getElementById('wwz-blizz-welcome-message-input');
+            this.elements.welcomeSendBtn = document.getElementById('wwz-blizz-welcome-send-btn');
+            this.elements.welcomeSuggestions = document.getElementById('wwz-blizz-welcome-suggestions');
 
-            // Chat screen elements (v3)
+            // Chat screen elements
             this.elements.chatScreen = document.getElementById('wwz-blizz-chat-screen');
             this.elements.messagesContainer = document.getElementById('wwz-blizz-messages-container');
+            this.elements.suggestionsContainer = document.getElementById('wwz-blizz-suggestions-container');
             this.elements.messageInput = document.getElementById('wwz-blizz-message-input');
             this.elements.sendBtn = document.getElementById('wwz-blizz-send-btn');
+
+            // Collapsed bar
+            this.elements.collapsedBar = document.getElementById('wwz-blizz-collapsed-bar');
+            this.elements.expandBtn = document.getElementById('wwz-blizz-expand-btn');
+            this.elements.mainContent = document.getElementById('wwz-blizz-main');
+            
+            // Header Buttons (New)
+            this.elements.newChatBtn = document.getElementById('wwz-blizz-new-chat-btn');
+            this.elements.helpBtn = document.getElementById('wwz-blizz-help-btn');
+
+            // Overlay elements
+            this.elements.chatContent = document.getElementById('wwz-blizz-chat-content');
+            this.elements.closeConfirm = document.getElementById('wwz-blizz-close-confirm');
+            this.elements.feedbackContainer = document.getElementById('wwz-blizz-feedback-screen');
+            this.elements.thankYou = document.getElementById('wwz-blizz-thank-you');
+            this.elements.feedbackText = document.getElementById('wwz-blizz-feedback-text');
+
+            // Contact form elements
+            this.elements.contactForm = document.getElementById('wwz-blizz-contact-form');
+            this.elements.contactFormBody = document.getElementById('wwz-blizz-contact-form-body');
+            this.elements.contactFormClose = document.getElementById('wwz-blizz-contact-form-close');
+            this.elements.contactSuccess = document.getElementById('wwz-blizz-contact-success');
+            this.elements.contactSuccessClose = document.getElementById('wwz-blizz-contact-success-close');
 
             // Privacy modal elements
             this.elements.privacyModal = document.getElementById('wwz-blizz-privacy-modal');
             this.elements.privacyClose = document.getElementById('wwz-blizz-privacy-close');
 
-            // Floating input wrapper (v3)
-            this.elements.floatingInput = document.getElementById('wwz-blizz-floating-input');
+            // Scroll indicator (New)
+            this.elements.scrollToBottomBtn = document.getElementById('wwz-blizz-scroll-to-bottom');
+
+            // Category label
+            this.elements.categoryLabel = document.getElementById('wwz-blizz-category-label');
+
+            // Initialize scroll listener for/hide scroll indicator
+            this.initScrollListener();
+
+            // Update disclaimer text
+            var disclaimer = document.querySelector('.wwz-blizz-disclaimer');
+            if (disclaimer) {
+                disclaimer.innerHTML = 'Hier kommt ein rechtlicher Satz, Hinweis auf die <a href="#">AGB\'s</a>';
+            }
 
             console.log('[WWZBlizz] UI elements initialized');
         },
@@ -196,41 +233,48 @@
          * Show chat screen
          */
         showChatScreen: function() {
-            var welcomeScreen = document.getElementById('wwz-blizz-welcome-screen');
-            var chatScreen = document.getElementById('wwz-blizz-chat-screen');
-            var floatingInput = document.getElementById('wwz-blizz-floating-input');
-            var messageInput = document.getElementById('wwz-blizz-message-input');
+            this.elements.welcomeScreen.classList.add('wwz-blizz-hidden');
+            this.elements.chatScreen.classList.remove('wwz-blizz-hidden');
+            this.elements.messageInput.focus();
 
-            if (welcomeScreen) welcomeScreen.classList.add('wwz-blizz-hidden');
-            if (chatScreen) chatScreen.classList.remove('wwz-blizz-hidden');
-            if (floatingInput) floatingInput.classList.remove('wwz-blizz-hidden');
-            if (messageInput) {
-                messageInput.focus();
-                this.elements.messageInput = messageInput;
+            // Exit welcome mode
+            if (this.elements.mainContent) {
+                this.elements.mainContent.classList.remove('wwz-blizz-mode-welcome');
             }
-
-            this.elements.welcomeScreen = welcomeScreen;
-            this.elements.chatScreen = chatScreen;
-            this.elements.floatingInput = floatingInput;
+            // Show new chat button
+            if (this.elements.newChatBtn) {
+                this.elements.newChatBtn.style.display = 'flex';
+            }
         },
 
         /**
          * Show welcome screen
          */
         showWelcomeScreen: function() {
-            var welcomeScreen = document.getElementById('wwz-blizz-welcome-screen');
-            var chatScreen = document.getElementById('wwz-blizz-chat-screen');
-            var floatingInput = document.getElementById('wwz-blizz-floating-input');
-            var searchInput = document.getElementById('wwz-blizz-search-input');
+            // Re-query elements if missing (Safety check)
+            if (!this.elements.welcomeScreen) this.elements.welcomeScreen = document.getElementById('wwz-blizz-welcome-screen');
+            if (!this.elements.chatScreen) this.elements.chatScreen = document.getElementById('wwz-blizz-chat-screen');
+            if (!this.elements.mainContent) this.elements.mainContent = document.getElementById('wwz-blizz-main');
+            if (!this.elements.newChatBtn) this.elements.newChatBtn = document.getElementById('wwz-blizz-new-chat-btn');
+            if (!this.elements.welcomeMessageInput) this.elements.welcomeMessageInput = document.getElementById('wwz-blizz-welcome-message-input');
 
-            if (welcomeScreen) welcomeScreen.classList.remove('wwz-blizz-hidden');
-            if (chatScreen) chatScreen.classList.add('wwz-blizz-hidden');
-            if (floatingInput) floatingInput.classList.add('wwz-blizz-hidden');
-            if (searchInput) searchInput.focus();
+            if (this.elements.welcomeScreen) this.elements.welcomeScreen.classList.remove('wwz-blizz-hidden');
+            if (this.elements.chatScreen) this.elements.chatScreen.classList.add('wwz-blizz-hidden');
+            if (this.elements.welcomeMessageInput) this.elements.welcomeMessageInput.focus();
 
-            this.elements.welcomeScreen = welcomeScreen;
-            this.elements.chatScreen = chatScreen;
-            this.elements.floatingInput = floatingInput;
+            // Enter welcome mode - FORCE CLASS ADDITION
+            if (this.elements.mainContent) {
+                this.elements.mainContent.classList.add('wwz-blizz-mode-welcome');
+            } else {
+                 // Fallback query if elements logic completely failed
+                 var main = document.getElementById('wwz-blizz-main');
+                 if (main) main.classList.add('wwz-blizz-mode-welcome');
+            }
+
+            // Hide new chat button in Welcome Mode (matches reference Image 1)
+            if (this.elements.newChatBtn) {
+                this.elements.newChatBtn.style.display = 'none';
+            }
         },
 
         /**
@@ -705,31 +749,6 @@
         extractYoutubeVideoId: function(url) {
             var match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
             return match ? match[1] : '';
-        },
-
-        /**
-         * Create logomark button HTML
-         * Yellow button with WWZ logo and content (e.g. phone number)
-         * @param {string} logomark - The logomark content (e.g. phone number)
-         */
-        createLogomarkButton: function(logomark) {
-            if (!logomark) return '';
-
-            var content = this.escapeHtml(logomark);
-            // Check if it looks like a phone number
-            var cleaned = logomark.replace(/\s/g, '');
-            var isPhone = /^[+]?\d[\d\s()-]{6,}$/.test(cleaned);
-            var href = isPhone ? 'tel:' + cleaned : '#';
-            var tag = isPhone ? 'a' : 'div';
-            var hrefAttr = isPhone ? ' href="' + href + '"' : '';
-
-            return '<' + tag + hrefAttr + ' class="wwz-blizz-logomark-btn">' +
-                '<img src="' + CONFIG.wwzLogo + '" alt="WWZ" class="wwz-blizz-logomark-logo">' +
-                '<span class="wwz-blizz-logomark-text">' + content + '</span>' +
-                '<svg class="wwz-blizz-logomark-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
-                    '<path d="M5 12h14M12 5l7 7-7 7"/>' +
-                '</svg>' +
-                '</' + tag + '>';
         },
 
         /**
