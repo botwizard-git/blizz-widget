@@ -231,6 +231,7 @@
                     // Chat Screen - IMAGE 3
                     '<div class="wwz-blizz-chat-screen wwz-blizz-hidden" id="wwz-blizz-chat-screen">' +
                         '<div class="wwz-blizz-messages-container" id="wwz-blizz-messages-container"></div>' +
+                    '<div class="wwz-blizz-suggestions-container" id="wwz-blizz-suggestions-container"></div>' +
                     '</div>' +
                     
                     // Floating Input - IMAGE 3

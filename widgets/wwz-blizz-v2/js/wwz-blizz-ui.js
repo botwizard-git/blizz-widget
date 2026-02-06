@@ -32,6 +32,9 @@
             // Floating input wrapper (v3)
             this.elements.floatingInput = document.getElementById('wwz-blizz-floating-input');
 
+            // Suggestions container
+            this.elements.suggestionsContainer = document.getElementById('wwz-blizz-suggestions-container');
+
             console.log('[WWZBlizz] UI elements initialized');
         },
 
