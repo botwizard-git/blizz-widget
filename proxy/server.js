@@ -156,6 +156,7 @@ const ALLOWED_ORIGINS = [
     'https://wwz.ch',
     'https://blizz.botwizard.ch',
     'https://blizz-uat.botwizard.ch',
+    'https://blizz-dev.vercel.app',
     'http://localhost:3000'
 ];
 
