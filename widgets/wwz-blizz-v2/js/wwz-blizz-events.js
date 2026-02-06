@@ -93,14 +93,20 @@
             }
 
             // Expand button
-            document.getElementById('wwz-blizz-expand-btn').addEventListener('click', function() {
-                self.expandWidget();
-            });
+            var expandBtn = document.getElementById('wwz-blizz-expand-btn');
+            if (expandBtn) {
+                expandBtn.addEventListener('click', function() {
+                    self.expandWidget();
+                });
+            }
 
             // Collapsed bar click
-            document.getElementById('wwz-blizz-collapsed-bar').addEventListener('click', function() {
-                self.expandWidget();
-            });
+            var collapsedBar = document.getElementById('wwz-blizz-collapsed-bar');
+            if (collapsedBar) {
+                collapsedBar.addEventListener('click', function() {
+                    self.expandWidget();
+                });
+            }
 
             // End session button
             var endSessionBtn = document.getElementById('wwz-blizz-end-session-btn');
