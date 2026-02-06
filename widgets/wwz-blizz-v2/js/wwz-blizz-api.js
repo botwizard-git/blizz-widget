@@ -193,6 +193,7 @@
                     searchResults: data.search_results || [],
                     mapsLink: data.mapsLink || null,
                     logomark: data.logomark || null,
+                    youtubeLinks: data.youtubeLinks || [],
                     isHtml: true
                 };
             }
@@ -211,6 +212,7 @@
                 searchResults: response.search_results || data.search_results || [],
                 mapsLink: response.mapsLink || data.mapsLink || null,
                 logomark: response.logomark || data.logomark || null,
+                youtubeLinks: response.youtubeLinks || data.youtubeLinks || [],
                 isHtml: false
             };
         },

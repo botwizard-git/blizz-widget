@@ -984,8 +984,8 @@
                     if (response.youtubeLinks && response.youtubeLinks.length > 0) {
                         response.youtubeLinks.forEach(function(videoItem) {
                             var videoData = {
-                                url: videoItem.url,
-                                title: videoItem.title || 'YouTube Video'
+                                url: typeof videoItem === 'string' ? videoItem : videoItem.url,
+                                title: (typeof videoItem === 'object' && videoItem !== null && videoItem.title) ? videoItem.title : 'YouTube Video'
                             };
                             combinedHtml += UI.createVideoWidget(videoData);
                             hasHtmlContent = true;
