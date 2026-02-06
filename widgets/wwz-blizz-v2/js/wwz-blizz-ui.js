@@ -703,7 +703,7 @@
          * Extract YouTube video ID from URL
          */
         extractYoutubeVideoId: function(url) {
-            var match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+            var match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^&\s?/]+)/);
             return match ? match[1] : '';
         },
 
