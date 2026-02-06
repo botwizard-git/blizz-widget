@@ -727,7 +727,7 @@
             var hrefAttr = isPhone ? ' href="' + href + '"' : '';
 
             return '<' + tag + hrefAttr + ' class="wwz-blizz-logomark-btn">' +
-                '<img src="' + CONFIG.wwzLogo + '" alt="WWZ" class="wwz-blizz-logomark-logo">' +
+                '<img src="' + CONFIG.wwzLogo + '" alt="WWZ" class="wwz-blizz-logomark-logo" >' +
                 '<span class="wwz-blizz-logomark-text">' + content + '</span>' +
                 '<svg class="wwz-blizz-logomark-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
                     '<path d="M5 12h14M12 5l7 7-7 7"/>' +
