@@ -14,60 +14,23 @@
          * Initialize UI element references
          */
         init: function() {
-            // Welcome screen elements
+            // Welcome screen elements (v3)
             this.elements.welcomeScreen = document.getElementById('wwz-blizz-welcome-screen');
-            this.elements.welcomeMessageInput = document.getElementById('wwz-blizz-welcome-message-input');
-            this.elements.welcomeSendBtn = document.getElementById('wwz-blizz-welcome-send-btn');
-            this.elements.welcomeSuggestions = document.getElementById('wwz-blizz-welcome-suggestions');
+            this.elements.welcomeMessageInput = document.getElementById('wwz-blizz-search-input');
+            this.elements.welcomeSendBtn = document.getElementById('wwz-blizz-search-btn');
 
-            // Chat screen elements
+            // Chat screen elements (v3)
             this.elements.chatScreen = document.getElementById('wwz-blizz-chat-screen');
             this.elements.messagesContainer = document.getElementById('wwz-blizz-messages-container');
-            this.elements.suggestionsContainer = document.getElementById('wwz-blizz-suggestions-container');
             this.elements.messageInput = document.getElementById('wwz-blizz-message-input');
             this.elements.sendBtn = document.getElementById('wwz-blizz-send-btn');
-
-            // Collapsed bar
-            this.elements.collapsedBar = document.getElementById('wwz-blizz-collapsed-bar');
-            this.elements.expandBtn = document.getElementById('wwz-blizz-expand-btn');
-            this.elements.mainContent = document.getElementById('wwz-blizz-main');
-            
-            // Header Buttons (New)
-            this.elements.newChatBtn = document.getElementById('wwz-blizz-new-chat-btn');
-            this.elements.helpBtn = document.getElementById('wwz-blizz-help-btn');
-
-            // Overlay elements
-            this.elements.chatContent = document.getElementById('wwz-blizz-chat-content');
-            this.elements.closeConfirm = document.getElementById('wwz-blizz-close-confirm');
-            this.elements.feedbackContainer = document.getElementById('wwz-blizz-feedback-screen');
-            this.elements.thankYou = document.getElementById('wwz-blizz-thank-you');
-            this.elements.feedbackText = document.getElementById('wwz-blizz-feedback-text');
-
-            // Contact form elements
-            this.elements.contactForm = document.getElementById('wwz-blizz-contact-form');
-            this.elements.contactFormBody = document.getElementById('wwz-blizz-contact-form-body');
-            this.elements.contactFormClose = document.getElementById('wwz-blizz-contact-form-close');
-            this.elements.contactSuccess = document.getElementById('wwz-blizz-contact-success');
-            this.elements.contactSuccessClose = document.getElementById('wwz-blizz-contact-success-close');
 
             // Privacy modal elements
             this.elements.privacyModal = document.getElementById('wwz-blizz-privacy-modal');
             this.elements.privacyClose = document.getElementById('wwz-blizz-privacy-close');
 
-            // Scroll indicator (New)
-            this.elements.scrollToBottomBtn = document.getElementById('wwz-blizz-scroll-to-bottom');
-
-            // Category label
-            this.elements.categoryLabel = document.getElementById('wwz-blizz-category-label');
-
-            // Initialize scroll listener for/hide scroll indicator
-            this.initScrollListener();
-
-            // Update disclaimer text
-            var disclaimer = document.querySelector('.wwz-blizz-disclaimer');
-            if (disclaimer) {
-                disclaimer.innerHTML = 'Hier kommt ein rechtlicher Satz, Hinweis auf die <a href="#">AGB\'s</a>';
-            }
+            // Floating input wrapper (v3)
+            this.elements.floatingInput = document.getElementById('wwz-blizz-floating-input');
 
             console.log('[WWZBlizz] UI elements initialized');
         },
@@ -233,48 +196,41 @@
          * Show chat screen
          */
         showChatScreen: function() {
-            this.elements.welcomeScreen.classList.add('wwz-blizz-hidden');
-            this.elements.chatScreen.classList.remove('wwz-blizz-hidden');
-            this.elements.messageInput.focus();
+            var welcomeScreen = document.getElementById('wwz-blizz-welcome-screen');
+            var chatScreen = document.getElementById('wwz-blizz-chat-screen');
+            var floatingInput = document.getElementById('wwz-blizz-floating-input');
+            var messageInput = document.getElementById('wwz-blizz-message-input');
 
-            // Exit welcome mode
-            if (this.elements.mainContent) {
-                this.elements.mainContent.classList.remove('wwz-blizz-mode-welcome');
+            if (welcomeScreen) welcomeScreen.classList.add('wwz-blizz-hidden');
+            if (chatScreen) chatScreen.classList.remove('wwz-blizz-hidden');
+            if (floatingInput) floatingInput.classList.remove('wwz-blizz-hidden');
+            if (messageInput) {
+                messageInput.focus();
+                this.elements.messageInput = messageInput;
             }
-            // Show new chat button
-            if (this.elements.newChatBtn) {
-                this.elements.newChatBtn.style.display = 'flex';
-            }
+
+            this.elements.welcomeScreen = welcomeScreen;
+            this.elements.chatScreen = chatScreen;
+            this.elements.floatingInput = floatingInput;
         },
 
         /**
          * Show welcome screen
          */
         showWelcomeScreen: function() {
-            // Re-query elements if missing (Safety check)
-            if (!this.elements.welcomeScreen) this.elements.welcomeScreen = document.getElementById('wwz-blizz-welcome-screen');
-            if (!this.elements.chatScreen) this.elements.chatScreen = document.getElementById('wwz-blizz-chat-screen');
-            if (!this.elements.mainContent) this.elements.mainContent = document.getElementById('wwz-blizz-main');
-            if (!this.elements.newChatBtn) this.elements.newChatBtn = document.getElementById('wwz-blizz-new-chat-btn');
-            if (!this.elements.welcomeMessageInput) this.elements.welcomeMessageInput = document.getElementById('wwz-blizz-welcome-message-input');
+            var welcomeScreen = document.getElementById('wwz-blizz-welcome-screen');
+            var chatScreen = document.getElementById('wwz-blizz-chat-screen');
+            var floatingInput = document.getElementById('wwz-blizz-floating-input');
+            var searchInput = document.getElementById('wwz-blizz-search-input');
 
-            if (this.elements.welcomeScreen) this.elements.welcomeScreen.classList.remove('wwz-blizz-hidden');
-            if (this.elements.chatScreen) this.elements.chatScreen.classList.add('wwz-blizz-hidden');
-            if (this.elements.welcomeMessageInput) this.elements.welcomeMessageInput.focus();
+            if (welcomeScreen) welcomeScreen.classList.remove('wwz-blizz-hidden');
+            if (chatScreen) chatScreen.classList.add('wwz-blizz-hidden');
+            if (floatingInput) floatingInput.classList.add('wwz-blizz-hidden');
+            if (searchInput) searchInput.focus();
 
-            // Enter welcome mode - FORCE CLASS ADDITION
-            if (this.elements.mainContent) {
-                this.elements.mainContent.classList.add('wwz-blizz-mode-welcome');
-            } else {
-                 // Fallback query if elements logic completely failed
-                 var main = document.getElementById('wwz-blizz-main');
-                 if (main) main.classList.add('wwz-blizz-mode-welcome');
-            }
-
-            // Hide new chat button in Welcome Mode (matches reference Image 1)
-            if (this.elements.newChatBtn) {
-                this.elements.newChatBtn.style.display = 'none';
-            }
+            this.elements.welcomeScreen = welcomeScreen;
+            this.elements.chatScreen = chatScreen;
+            this.elements.floatingInput = floatingInput;
         },
 
         /**

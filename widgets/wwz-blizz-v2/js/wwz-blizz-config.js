@@ -40,10 +40,10 @@
         // Widget behavior
         autoOpen: false,
 
-        // Welcome screen content
-        welcomeTitle: 'Wie kann ich dir<br>helfen?',
+        // Welcome screen content - V3 Design
+        welcomeTitle: 'Wie kann ich dir helfen?',
         welcomeSubtitle: '',
-        welcomeDescription: 'Unsere digitale Assistentin Blizz hilft Dir gerne weiter. Sie hat jedoch keinen direkten Zugang zu Kunden- und Rechnungsinformationen.',
+        welcomeDescription: '',
 
         // Chat UI text
         inputPlaceholder: 'Stelle mir eine Frage...',
