@@ -35,7 +35,7 @@
 
         // Assets
         botAvatar: 'https://chatbot2go-hybrid.enterprisebot.co/assets/botForge/67031622bbfbfaaccecd88f0/wwz_rescaled_image.png',
-        wwzLogo: 'https://chatbot2go-hybrid.enterprisebot.co/assets/botForge/67031622bbfbfaaccecd88f0/wwz_rescaled_image.png',
+        wwzLogo: 'https://blizz-uat.botwizard.ch/wwz-blizz-v2/assets/icon-internet.svg',
 
         // Widget behavior
         autoOpen: false,
