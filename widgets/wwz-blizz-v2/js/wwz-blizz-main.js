@@ -78,15 +78,18 @@
                 UI.renderWelcomeSuggestions(CONFIG.suggestions || CONFIG.defaultSuggestions);
             }
 
-            // Check for switchBot redirect question
-            var redirectQuestion = localStorage.getItem('wwz-Eb-redirectQuestion');
+            // Check for switchBot redirect question (via URL param from cross-origin redirect)
+            var urlParams = new URLSearchParams(window.location.search);
+            var redirectQuestion = urlParams.get('wwzBlizzRedirectQuestion');
             if (redirectQuestion) {
-                localStorage.removeItem('wwz-Eb-redirectQuestion');
+                // Clean up URL (remove query param without reload)
+                var cleanUrl = new URL(window.location.href);
+                cleanUrl.searchParams.delete('wwzBlizzRedirectQuestion');
+                history.replaceState(null, '', cleanUrl.toString());
+
                 console.log('[WWZBlizz] SwitchBot redirect question:', redirectQuestion);
-                // Force open widget even if user had it collapsed
                 UI.showExpanded();
                 StateManager.setCollapsed(false);
-                // Wait for session init, then auto-submit
                 setTimeout(function() {
                     UI.showChatScreen();
                     var userMessage = StateManager.addMessage(redirectQuestion, true);

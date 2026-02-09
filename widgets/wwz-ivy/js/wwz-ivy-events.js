@@ -107,8 +107,9 @@
                     var question = btn.getAttribute('data-question');
                     var redirectUrl = btn.getAttribute('data-redirect-url');
                     if (question && redirectUrl) {
-                        localStorage.setItem('wwz-Eb-redirectQuestion', question);
-                        window.location.href = redirectUrl;
+                        var url = new URL(redirectUrl, window.location.href);
+                        url.searchParams.set('wwzBlizzRedirectQuestion', question);
+                        window.location.href = url.toString();
                     }
                 }
             });
