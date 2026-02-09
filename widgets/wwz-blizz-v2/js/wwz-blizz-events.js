@@ -603,6 +603,54 @@
         },
 
         /**
+         * Handle Xurrent article click
+         */
+        handleXurrentArticleClick: function(articleId, displayText) {
+            var UI = EBB.UI;
+            var StateManager = EBB.StateManager;
+            var APIService = EBB.APIService;
+
+            if (StateManager.isLoading()) return;
+
+            // Switch to chat screen
+            UI.showChatScreen();
+
+            // Show display text as user message
+            var userMessage = StateManager.addMessage(displayText, true);
+            UI.renderMessage(userMessage);
+
+            // Show typing indicator
+            StateManager.setLoading(true);
+            UI.showTypingIndicator();
+
+            // Fire-and-forget: send tracking to blitzico
+            APIService.sendXurrentTracking(articleId);
+
+            // Fetch the Xurrent article
+            APIService.fetchXurrentArticle(articleId)
+                .then(function(data) {
+                    UI.hideTypingIndicator();
+                    StateManager.setLoading(false);
+
+                    var formattedHtml = UI.formatXurrentArticle(data);
+                    var botMessage = StateManager.addMessage(formattedHtml, false, { isHtml: true });
+                    UI.renderMessage(botMessage);
+                    StateManager.setHasAnswerInConversation(true);
+                })
+                .catch(function(error) {
+                    console.error('[WWZBlizz] Xurrent article fetch error:', error);
+                    UI.hideTypingIndicator();
+                    StateManager.setLoading(false);
+
+                    var errorMessage = StateManager.addMessage(
+                        'Artikel konnte nicht geladen werden. Bitte versuche es später erneut.',
+                        false
+                    );
+                    UI.renderMessage(errorMessage);
+                });
+        },
+
+        /**
          * Check if message is a greeting
          */
         isGreeting: function(text) {

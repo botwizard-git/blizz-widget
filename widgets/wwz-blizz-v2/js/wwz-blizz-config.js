@@ -23,6 +23,7 @@
         initEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/init',
         logErrorsEndpoint: 'https://blizz-api.botwizard.ch/wwz-blizz/log_errors',
         shopsEndpoint: 'https://blizz-api.botwizard.ch/shops',
+        xurrentEndpoint: 'https://knowledgebase-helper-548033782968.europe-west6.run.app/api/xurrent/query_xurrent_stringified',
 
         // Google Maps API Configuration
         googleMapsApiKey: '', // Add your Google Maps Embed API key here

@@ -152,6 +152,97 @@
         },
 
         /**
+         * Format Xurrent article content for display
+         */
+        formatXurrentArticle: function(data) {
+            if (!data || data.found === false) {
+                return '<div class="wwz-blizz-xurrent-article">' +
+                    '<p>Artikel nicht gefunden. Bitte versuche es mit einer anderen Anfrage.</p>' +
+                    '</div>';
+            }
+
+            var self = this;
+            var html = '<div class="wwz-blizz-xurrent-article">';
+
+            // Title
+            if (data.title) {
+                html += '<strong>' + self.escapeHtml(data.title) + '</strong><br><br>';
+            }
+
+            // Process content line by line
+            if (data.content) {
+                var lines = data.content.split('\n');
+                var inUl = false;
+                var inOl = false;
+
+                for (var i = 0; i < lines.length; i++) {
+                    var line = lines[i];
+                    var trimmed = line.trim();
+
+                    // Empty line
+                    if (trimmed === '') {
+                        if (inUl) { html += '</ul>'; inUl = false; }
+                        if (inOl) { html += '</ol>'; inOl = false; }
+                        html += '<br>';
+                        continue;
+                    }
+
+                    // ALL CAPS line → header
+                    if (trimmed.length > 2 && trimmed === trimmed.toUpperCase() && /[A-Z]/.test(trimmed)) {
+                        if (inUl) { html += '</ul>'; inUl = false; }
+                        if (inOl) { html += '</ol>'; inOl = false; }
+                        html += '<strong>' + self.escapeHtml(trimmed) + '</strong><br>';
+                        continue;
+                    }
+
+                    // Bullet list items (•, -, *)
+                    if (/^[•\-*]\s+/.test(trimmed)) {
+                        if (inOl) { html += '</ol>'; inOl = false; }
+                        if (!inUl) { html += '<ul>'; inUl = true; }
+                        html += '<li>' + self.escapeHtml(trimmed.replace(/^[•\-*]\s+/, '')) + '</li>';
+                        continue;
+                    }
+
+                    // Numbered list items (1. item)
+                    if (/^\d+\.\s+/.test(trimmed)) {
+                        if (inUl) { html += '</ul>'; inUl = false; }
+                        if (!inOl) { html += '<ol>'; inOl = true; }
+                        html += '<li>' + self.escapeHtml(trimmed.replace(/^\d+\.\s+/, '')) + '</li>';
+                        continue;
+                    }
+
+                    // Normal line
+                    if (inUl) { html += '</ul>'; inUl = false; }
+                    if (inOl) { html += '</ol>'; inOl = false; }
+                    html += self.escapeHtml(trimmed) + '<br>';
+                }
+
+                if (inUl) html += '</ul>';
+                if (inOl) html += '</ol>';
+            }
+
+            html += '</div>';
+
+            // Convert URLs in parentheses to clickable links
+            html = html.replace(/\(https?:\/\/[^\s)]+\)/g, function(match) {
+                var url = match.slice(1, -1); // remove parentheses
+                return '(<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a>)';
+            });
+
+            // Convert standalone URLs to clickable links (not already wrapped in <a>)
+            html = html.replace(/(?<!")(?<!=)(https?:\/\/[^\s<]+)/g, function(match, url, offset, string) {
+                // Check if this URL is already inside an <a> tag
+                var before = string.substring(Math.max(0, offset - 10), offset);
+                if (before.indexOf('href="') !== -1 || before.indexOf('">') !== -1) {
+                    return match;
+                }
+                return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a>';
+            });
+
+            return html;
+        },
+
+        /**
          * Sanitize HTML
          */
         sanitizeHtml: function(html) {

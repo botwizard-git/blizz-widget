@@ -154,7 +154,8 @@
                 clientUrl: window.location.href,
                 widgetId: CONFIG.widgetId,
                 agentId: CONFIG.AGENT_ID,
-                isInternal: CONFIG.isInternal()
+                isInternal: CONFIG.isInternal(),
+                dropdownCategory: localStorage.getItem('enterprisebot-blizz-product-category') || ''
             };
         },
 
@@ -269,6 +270,50 @@
                 }
 
                 return parsed;
+            });
+        },
+
+        /**
+         * Fetch Xurrent article by ID
+         */
+        fetchXurrentArticle: function(articleId) {
+            var url = CONFIG.xurrentEndpoint + '/' + articleId;
+
+            return fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Xurrent API error: ' + response.status);
+                }
+                return response.json();
+            });
+        },
+
+        /**
+         * Send Xurrent tracking to blitzico (fire-and-forget)
+         */
+        sendXurrentTracking: function(articleId) {
+            var self = this;
+
+            this.ensureSession().then(function() {
+                var payload = self.buildPayload('XURRENT_' + articleId);
+
+                self.fetchWithTimeout(CONFIG.apiEndpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json, text/plain, */*'
+                    },
+                    body: JSON.stringify(payload)
+                }).catch(function(error) {
+                    console.error('[WWZBlizz] Xurrent tracking error:', error);
+                });
+            }).catch(function(error) {
+                console.error('[WWZBlizz] Xurrent tracking session error:', error);
             });
         },
 
