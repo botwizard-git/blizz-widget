@@ -277,6 +277,8 @@
             history.replaceState(null, '', cleanUrl.toString());
 
             console.log('[WWZIvy] SwitchBot redirect question:', redirectQuestion);
+            // Force clear collapsed state immediately (override any stored preference)
+            window.WWZIvy.State.set({ isCollapsed: false });
             var state = window.WWZIvy.State.get();
             if (!state.termsAccepted) {
                 window.WWZIvy.State.acceptTerms();
