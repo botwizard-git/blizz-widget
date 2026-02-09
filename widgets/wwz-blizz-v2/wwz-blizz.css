@@ -798,11 +798,11 @@
     font-size: 15px;
     transition: background 0.2s, transform 0.2s;
     font-family: inherit;
-    filter: brightness(0);
+
 
 }
 .wwz-blizz-switchbot-btn:hover { background: var(--lime-hover); transform: scale(1.02); }
-.wwz-blizz-switchbot-logo { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; }
+.wwz-blizz-switchbot-logo { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; filter: brightness(0); }
 .wwz-blizz-switchbot-arrow { flex-shrink: 0; }
 
 /* ========================================
