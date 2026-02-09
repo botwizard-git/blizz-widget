@@ -331,16 +331,16 @@
          * Show collapsed state
          */
         showCollapsed: function() {
-            this.elements.mainContent.classList.add('wwz-blizz-hidden');
-            this.elements.collapsedBar.classList.remove('wwz-blizz-hidden');
+            if (this.elements.mainContent) this.elements.mainContent.classList.add('wwz-blizz-hidden');
+            if (this.elements.collapsedBar) this.elements.collapsedBar.classList.remove('wwz-blizz-hidden');
         },
 
         /**
          * Show expanded state
          */
         showExpanded: function() {
-            this.elements.collapsedBar.classList.add('wwz-blizz-hidden');
-            this.elements.mainContent.classList.remove('wwz-blizz-hidden');
+            if (this.elements.collapsedBar) this.elements.collapsedBar.classList.add('wwz-blizz-hidden');
+            if (this.elements.mainContent) this.elements.mainContent.classList.remove('wwz-blizz-hidden');
         },
 
         /**
