@@ -470,6 +470,19 @@
                 EBB.UI.showCategoryLabel(categoryName);
             };
 
+            // SwitchBot click handler (event delegation)
+            document.addEventListener('click', function(e) {
+                var btn = e.target.closest('.wwz-blizz-switchbot-btn');
+                if (btn) {
+                    var question = btn.getAttribute('data-question');
+                    var redirectUrl = btn.getAttribute('data-redirect-url');
+                    if (question && redirectUrl) {
+                        localStorage.setItem('wwz-Eb-redirectQuestion', question);
+                        window.location.href = redirectUrl;
+                    }
+                }
+            });
+
             console.log('[WWZBlizz] Events initialized');
         },
 
@@ -1055,6 +1068,12 @@
                     // G. Add logomark button (last)
                     if (response.logomark) {
                         combinedHtml += UI.createLogomarkButton(response.logomark);
+                        hasHtmlContent = true;
+                    }
+
+                    // H. Add switchBot button (cross-widget redirect)
+                    if (response.switchBot) {
+                        combinedHtml += UI.createSwitchBotButton(response.switchBot, text);
                         hasHtmlContent = true;
                     }
 

@@ -100,6 +100,19 @@
             // Auto-expand textarea
             elements.input.addEventListener('input', () => this.autoExpandTextarea());
 
+            // SwitchBot click handler (event delegation)
+            document.addEventListener('click', function(e) {
+                var btn = e.target.closest('.wwz-ivy-switchbot-btn');
+                if (btn) {
+                    var question = btn.getAttribute('data-question');
+                    var redirectUrl = btn.getAttribute('data-redirect-url');
+                    if (question && redirectUrl) {
+                        localStorage.setItem('wwz-Eb-redirectQuestion', question);
+                        window.location.href = redirectUrl;
+                    }
+                }
+            });
+
             return this;
         },
 
@@ -324,10 +337,14 @@
                         });
                     }
 
-                    // Add bot response
+                    // Add bot response (with switchBot button if present)
+                    var botText = response.message;
+                    if (response.switchBot) {
+                        botText += UI.createSwitchBotButton(response.switchBot, message);
+                    }
                     const botMessage = State.addMessage({
                         role: 'bot',
-                        text: response.message,
+                        text: botText,
                         references: response.references || []
                     });
                     UI.addMessage(botMessage);

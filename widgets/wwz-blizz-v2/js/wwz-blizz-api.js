@@ -195,6 +195,7 @@
                     mapsLink: data.mapsLink || null,
                     logomark: data.logomark || null,
                     youtubeLinks: data.youtubeLinks || [],
+                    switchBot: data.switchBot || null,
                     isHtml: true
                 };
             }
@@ -214,6 +215,7 @@
                 mapsLink: response.mapsLink || data.mapsLink || null,
                 logomark: response.logomark || data.logomark || null,
                 youtubeLinks: response.youtubeLinks || data.youtubeLinks || [],
+                switchBot: response.switchBot || data.switchBot || null,
                 isHtml: false
             };
         },

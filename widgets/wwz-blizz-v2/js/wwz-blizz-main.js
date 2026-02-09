@@ -78,6 +78,23 @@
                 UI.renderWelcomeSuggestions(CONFIG.suggestions || CONFIG.defaultSuggestions);
             }
 
+            // Check for switchBot redirect question
+            var redirectQuestion = localStorage.getItem('wwz-Eb-redirectQuestion');
+            if (redirectQuestion) {
+                localStorage.removeItem('wwz-Eb-redirectQuestion');
+                console.log('[WWZBlizz] SwitchBot redirect question:', redirectQuestion);
+                // Force open widget even if user had it collapsed
+                UI.showExpanded();
+                StateManager.setCollapsed(false);
+                // Wait for session init, then auto-submit
+                setTimeout(function() {
+                    UI.showChatScreen();
+                    var userMessage = StateManager.addMessage(redirectQuestion, true);
+                    UI.renderMessage(userMessage);
+                    EBB.Events.sendMessageToAPI(redirectQuestion);
+                }, 500);
+            }
+
             console.log('[WWZBlizz] Initialization complete');
         },
 

@@ -267,6 +267,25 @@
             }, 100);
         }
 
+        // Check for switchBot redirect question
+        var redirectQuestion = localStorage.getItem('wwz-Eb-redirectQuestion');
+        if (redirectQuestion) {
+            localStorage.removeItem('wwz-Eb-redirectQuestion');
+            console.log('[WWZIvy] SwitchBot redirect question:', redirectQuestion);
+            // Force open widget + auto-accept terms if needed
+            var state = window.WWZIvy.State.get();
+            if (!state.termsAccepted) {
+                window.WWZIvy.State.acceptTerms();
+            }
+            // Force expand even if previously collapsed
+            setTimeout(function() {
+                window.WWZIvy.Main.expand();
+                setTimeout(function() {
+                    window.WWZIvy.Main.sendMessage(redirectQuestion);
+                }, 300);
+            }, 500);
+        }
+
         console.log('WWZIvy: Chatbot initialized', window.WWZIvy.Main.getVersionInfo());
     }
 

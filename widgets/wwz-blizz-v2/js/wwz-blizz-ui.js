@@ -827,6 +827,22 @@
         },
 
         /**
+         * Create switchBot button HTML (cross-widget redirect)
+         * @param {Object} switchBot - { redirectTo: string, text: string }
+         * @param {string} userQuestion - The user's original question to pass along
+         */
+        createSwitchBotButton: function(switchBot, userQuestion) {
+            if (!switchBot || !switchBot.redirectTo || !switchBot.text) return '';
+            var text = this.escapeHtml(switchBot.text);
+            var redirectUrl = this.escapeHtml(switchBot.redirectTo);
+            return '<div class="wwz-blizz-switchbot-btn" data-redirect-url="' + redirectUrl + '" data-question="' + this.escapeHtml(userQuestion) + '">' +
+                '<img src="' + CONFIG.wwzLogo + '" alt="WWZ" class="wwz-blizz-switchbot-logo">' +
+                '<span class="wwz-blizz-switchbot-text">' + text + '</span>' +
+                '<svg class="wwz-blizz-switchbot-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>' +
+            '</div>';
+        },
+
+        /**
          * Create search results widget HTML
          * Simplified inline design - appears within bot message bubble
          * @param {Array} searchResults - Array of {title, url, icon} objects
