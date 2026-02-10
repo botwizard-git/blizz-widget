@@ -740,7 +740,8 @@
    LOGOMARK BUTTON
    ======================================== */
 .wwz-blizz-logomark-btn {
-    display: inline-flex;
+    display: flex;
+    width: fit-content;
     align-items: center;
     gap: 10px;
     padding: 12px 20px;
@@ -785,7 +786,8 @@
    SWITCHBOT BUTTON (cross-widget redirect)
    ======================================== */
 .wwz-blizz-switchbot-btn {
-    display: inline-flex;
+    display: flex;
+    width: fit-content;
     align-items: center;
     gap: 10px;
     padding: 12px 20px;
