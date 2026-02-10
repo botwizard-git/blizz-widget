@@ -929,3 +929,43 @@
         max-width: 400px;
     }
 }
+
+/* ========================================
+   SEARCH RESULTS
+   ======================================== */
+.wwz-blizz-search-results {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.wwz-blizz-search-results-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.wwz-blizz-search-result-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--primary);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.wwz-blizz-search-result-link:hover {
+    text-decoration: underline;
+}
+
+.wwz-blizz-search-result-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.wwz-blizz-search-result-text {
+    word-break: break-word;
+}
