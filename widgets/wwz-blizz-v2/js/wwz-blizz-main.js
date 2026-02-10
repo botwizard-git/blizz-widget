@@ -19,6 +19,9 @@
 
             console.log('[WWZBlizz] Initializing widget...');
 
+            // Clear category localStorage on page load
+            localStorage.removeItem('enterprisebot-blizz-product-category');
+
             // Initialize session cookie immediately (async, doesn't block UI)
             APIService.initSession().then(function(success) {
                 if (!success) {
@@ -73,6 +76,26 @@
                 // Fallback to welcome screen on error
                 UI.showWelcomeScreen();
                 UI.renderWelcomeSuggestions(CONFIG.suggestions || CONFIG.defaultSuggestions);
+            }
+
+            // Check for switchBot redirect question (via URL param from cross-origin redirect)
+            var urlParams = new URLSearchParams(window.location.search);
+            var redirectQuestion = urlParams.get('wwzBlizzRedirectQuestion');
+            if (redirectQuestion) {
+                // Clean up URL (remove query param without reload)
+                var cleanUrl = new URL(window.location.href);
+                cleanUrl.searchParams.delete('wwzBlizzRedirectQuestion');
+                history.replaceState(null, '', cleanUrl.toString());
+
+                console.log('[WWZBlizz] SwitchBot redirect question:', redirectQuestion);
+                UI.showExpanded();
+                StateManager.setCollapsed(false);
+                setTimeout(function() {
+                    UI.showChatScreen();
+                    var userMessage = StateManager.addMessage(redirectQuestion, true);
+                    UI.renderMessage(userMessage);
+                    EBB.Events.sendMessageToAPI(redirectQuestion);
+                }, 500);
             }
 
             console.log('[WWZBlizz] Initialization complete');

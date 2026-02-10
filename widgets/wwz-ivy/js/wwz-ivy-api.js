@@ -180,7 +180,8 @@
                     suggestions: data.suggestions || [],
                     action: data.action || null,
                     actionType: data.actionType || null,
-                    references: data.references || []
+                    references: data.references || [],
+                    switchBot: data.switchBot || null
                 };
             }
 
@@ -192,7 +193,8 @@
                     suggestions: data.suggestions || reply.suggestions || [],
                     action: data.action || null,
                     actionType: data.actionType || null,
-                    references: data.references || []
+                    references: data.references || [],
+                    switchBot: data.switchBot || null
                 };
             }
 
@@ -203,7 +205,8 @@
                     suggestions: data.suggestions || [],
                     action: data.action || null,
                     actionType: data.actionType || null,
-                    references: data.references || []
+                    references: data.references || [],
+                    switchBot: data.switchBot || null
                 };
             }
 
@@ -213,7 +216,8 @@
                 suggestions: Config.suggestions,
                 action: null,
                 actionType: null,
-                references: []
+                references: [],
+                switchBot: null
             };
         },
 

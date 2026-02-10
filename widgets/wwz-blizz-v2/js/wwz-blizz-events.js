@@ -93,14 +93,20 @@
             }
 
             // Expand button
-            document.getElementById('wwz-blizz-expand-btn').addEventListener('click', function() {
-                self.expandWidget();
-            });
+            var expandBtn = document.getElementById('wwz-blizz-expand-btn');
+            if (expandBtn) {
+                expandBtn.addEventListener('click', function() {
+                    self.expandWidget();
+                });
+            }
 
             // Collapsed bar click
-            document.getElementById('wwz-blizz-collapsed-bar').addEventListener('click', function() {
-                self.expandWidget();
-            });
+            var collapsedBar = document.getElementById('wwz-blizz-collapsed-bar');
+            if (collapsedBar) {
+                collapsedBar.addEventListener('click', function() {
+                    self.expandWidget();
+                });
+            }
 
             // End session button
             var endSessionBtn = document.getElementById('wwz-blizz-end-session-btn');
@@ -464,6 +470,20 @@
                 EBB.UI.showCategoryLabel(categoryName);
             };
 
+            // SwitchBot click handler (event delegation)
+            document.addEventListener('click', function(e) {
+                var btn = e.target.closest('.wwz-blizz-switchbot-btn');
+                if (btn) {
+                    var question = btn.getAttribute('data-question');
+                    var redirectUrl = btn.getAttribute('data-redirect-url');
+                    if (question && redirectUrl) {
+                        var url = new URL(redirectUrl, window.location.href);
+                        url.searchParams.set('wwzIvyRedirectQuestion', question);
+                        window.location.href = url.toString();
+                    }
+                }
+            });
+
             console.log('[WWZBlizz] Events initialized');
         },
 
@@ -594,6 +614,54 @@
             UI.clearSuggestions();
 
             self.sendMessageToAPI(text);
+        },
+
+        /**
+         * Handle Xurrent article click
+         */
+        handleXurrentArticleClick: function(articleId, displayText) {
+            var UI = EBB.UI;
+            var StateManager = EBB.StateManager;
+            var APIService = EBB.APIService;
+
+            if (StateManager.isLoading()) return;
+
+            // Switch to chat screen
+            UI.showChatScreen();
+
+            // Show display text as user message
+            var userMessage = StateManager.addMessage(displayText, true);
+            UI.renderMessage(userMessage);
+
+            // Show typing indicator
+            StateManager.setLoading(true);
+            UI.showTypingIndicator();
+
+            // Fire-and-forget: send tracking to blitzico
+            APIService.sendXurrentTracking(articleId);
+
+            // Fetch the Xurrent article
+            APIService.fetchXurrentArticle(articleId)
+                .then(function(data) {
+                    UI.hideTypingIndicator();
+                    StateManager.setLoading(false);
+
+                    var formattedHtml = UI.formatXurrentArticle(data);
+                    var botMessage = StateManager.addMessage(formattedHtml, false, { isHtml: true });
+                    UI.renderMessage(botMessage);
+                    StateManager.setHasAnswerInConversation(true);
+                })
+                .catch(function(error) {
+                    console.error('[WWZBlizz] Xurrent article fetch error:', error);
+                    UI.hideTypingIndicator();
+                    StateManager.setLoading(false);
+
+                    var errorMessage = StateManager.addMessage(
+                        'Artikel konnte nicht geladen werden. Bitte versuche es später erneut.',
+                        false
+                    );
+                    UI.renderMessage(errorMessage);
+                });
         },
 
         /**
@@ -1001,6 +1069,12 @@
                     // G. Add logomark button (last)
                     if (response.logomark) {
                         combinedHtml += UI.createLogomarkButton(response.logomark);
+                        hasHtmlContent = true;
+                    }
+
+                    // H. Add switchBot button (cross-widget redirect)
+                    if (response.switchBot) {
+                        combinedHtml += UI.createSwitchBotButton(response.switchBot, text);
                         hasHtmlContent = true;
                     }
 

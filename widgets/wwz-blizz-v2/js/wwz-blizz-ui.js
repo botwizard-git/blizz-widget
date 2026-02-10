@@ -32,6 +32,9 @@
             // Floating input wrapper (v3)
             this.elements.floatingInput = document.getElementById('wwz-blizz-floating-input');
 
+            // Suggestions container
+            this.elements.suggestionsContainer = document.getElementById('wwz-blizz-suggestions-container');
+
             console.log('[WWZBlizz] UI elements initialized');
         },
 
@@ -149,6 +152,97 @@
         },
 
         /**
+         * Format Xurrent article content for display
+         */
+        formatXurrentArticle: function(data) {
+            if (!data || data.found === false) {
+                return '<div class="wwz-blizz-xurrent-article">' +
+                    '<p>Artikel nicht gefunden. Bitte versuche es mit einer anderen Anfrage.</p>' +
+                    '</div>';
+            }
+
+            var self = this;
+            var html = '<div class="wwz-blizz-xurrent-article">';
+
+            // Title
+            if (data.title) {
+                html += '<strong>' + self.escapeHtml(data.title) + '</strong><br><br>';
+            }
+
+            // Process content line by line
+            if (data.content) {
+                var lines = data.content.split('\n');
+                var inUl = false;
+                var inOl = false;
+
+                for (var i = 0; i < lines.length; i++) {
+                    var line = lines[i];
+                    var trimmed = line.trim();
+
+                    // Empty line
+                    if (trimmed === '') {
+                        if (inUl) { html += '</ul>'; inUl = false; }
+                        if (inOl) { html += '</ol>'; inOl = false; }
+                        html += '<br>';
+                        continue;
+                    }
+
+                    // ALL CAPS line → header
+                    if (trimmed.length > 2 && trimmed === trimmed.toUpperCase() && /[A-Z]/.test(trimmed)) {
+                        if (inUl) { html += '</ul>'; inUl = false; }
+                        if (inOl) { html += '</ol>'; inOl = false; }
+                        html += '<strong>' + self.escapeHtml(trimmed) + '</strong><br>';
+                        continue;
+                    }
+
+                    // Bullet list items (•, -, *)
+                    if (/^[•\-*]\s+/.test(trimmed)) {
+                        if (inOl) { html += '</ol>'; inOl = false; }
+                        if (!inUl) { html += '<ul>'; inUl = true; }
+                        html += '<li>' + self.escapeHtml(trimmed.replace(/^[•\-*]\s+/, '')) + '</li>';
+                        continue;
+                    }
+
+                    // Numbered list items (1. item)
+                    if (/^\d+\.\s+/.test(trimmed)) {
+                        if (inUl) { html += '</ul>'; inUl = false; }
+                        if (!inOl) { html += '<ol>'; inOl = true; }
+                        html += '<li>' + self.escapeHtml(trimmed.replace(/^\d+\.\s+/, '')) + '</li>';
+                        continue;
+                    }
+
+                    // Normal line
+                    if (inUl) { html += '</ul>'; inUl = false; }
+                    if (inOl) { html += '</ol>'; inOl = false; }
+                    html += self.escapeHtml(trimmed) + '<br>';
+                }
+
+                if (inUl) html += '</ul>';
+                if (inOl) html += '</ol>';
+            }
+
+            html += '</div>';
+
+            // Convert URLs in parentheses to clickable links
+            html = html.replace(/\(https?:\/\/[^\s)]+\)/g, function(match) {
+                var url = match.slice(1, -1); // remove parentheses
+                return '(<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a>)';
+            });
+
+            // Convert standalone URLs to clickable links (not already wrapped in <a>)
+            html = html.replace(/(?<!")(?<!=)(https?:\/\/[^\s<]+)/g, function(match, url, offset, string) {
+                // Check if this URL is already inside an <a> tag
+                var before = string.substring(Math.max(0, offset - 10), offset);
+                if (before.indexOf('href="') !== -1 || before.indexOf('">') !== -1) {
+                    return match;
+                }
+                return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + url + '</a>';
+            });
+
+            return html;
+        },
+
+        /**
          * Sanitize HTML
          */
         sanitizeHtml: function(html) {
@@ -237,16 +331,16 @@
          * Show collapsed state
          */
         showCollapsed: function() {
-            this.elements.mainContent.classList.add('wwz-blizz-hidden');
-            this.elements.collapsedBar.classList.remove('wwz-blizz-hidden');
+            if (this.elements.mainContent) this.elements.mainContent.classList.add('wwz-blizz-hidden');
+            if (this.elements.collapsedBar) this.elements.collapsedBar.classList.remove('wwz-blizz-hidden');
         },
 
         /**
          * Show expanded state
          */
         showExpanded: function() {
-            this.elements.collapsedBar.classList.add('wwz-blizz-hidden');
-            this.elements.mainContent.classList.remove('wwz-blizz-hidden');
+            if (this.elements.collapsedBar) this.elements.collapsedBar.classList.add('wwz-blizz-hidden');
+            if (this.elements.mainContent) this.elements.mainContent.classList.remove('wwz-blizz-hidden');
         },
 
         /**
@@ -703,7 +797,7 @@
          * Extract YouTube video ID from URL
          */
         extractYoutubeVideoId: function(url) {
-            var match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+            var match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^&\s?/]+)/);
             return match ? match[1] : '';
         },
 
@@ -724,12 +818,28 @@
             var hrefAttr = isPhone ? ' href="' + href + '"' : '';
 
             return '<' + tag + hrefAttr + ' class="wwz-blizz-logomark-btn">' +
-                '<img src="' + CONFIG.wwzLogo + '" alt="WWZ" class="wwz-blizz-logomark-logo">' +
+                '<img src="' + CONFIG.wwzLogo + '" alt="WWZ" class="wwz-blizz-logomark-logo" >' +
                 '<span class="wwz-blizz-logomark-text">' + content + '</span>' +
                 '<svg class="wwz-blizz-logomark-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
                     '<path d="M5 12h14M12 5l7 7-7 7"/>' +
                 '</svg>' +
                 '</' + tag + '>';
+        },
+
+        /**
+         * Create switchBot button HTML (cross-widget redirect)
+         * @param {Object} switchBot - { redirectTo: string, text: string }
+         * @param {string} userQuestion - The user's original question to pass along
+         */
+        createSwitchBotButton: function(switchBot, userQuestion) {
+            if (!switchBot || !switchBot.redirectTo || !switchBot.text) return '';
+            var text = this.escapeHtml(switchBot.text);
+            var redirectUrl = this.escapeHtml(switchBot.redirectTo);
+            return '<div class="wwz-blizz-switchbot-btn" data-redirect-url="' + redirectUrl + '" data-question="' + this.escapeHtml(userQuestion) + '">' +
+                '<img src="' + CONFIG.wwzLogo + '" alt="WWZ" class="wwz-blizz-switchbot-logo">' +
+                '<span class="wwz-blizz-switchbot-text">' + text + '</span>' +
+                '<svg class="wwz-blizz-switchbot-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>' +
+            '</div>';
         },
 
         /**

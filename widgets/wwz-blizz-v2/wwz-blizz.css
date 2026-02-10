@@ -203,6 +203,30 @@
     border-bottom: none;
 }
 
+/* Suggestions Container (chat screen) */
+.wwz-blizz-suggestions-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 16px;
+}
+
+.wwz-blizz-suggestion-btn {
+    background: var(--lime);
+    color: var(--dark);
+    border: none;
+    border-radius: 50px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.wwz-blizz-suggestion-btn:hover {
+    background: var(--lime-hover);
+}
+
 /* Tabs - Themen / Info */
 .wwz-blizz-tabs {
     display: flex;
@@ -487,6 +511,11 @@
     text-decoration: underline;
 }
 
+.wwz-blizz-message-bot .wwz-blizz-message-bubble a.wwz-blizz-logomark-btn {
+    color: var(--dark);
+    text-decoration: none;
+}
+
 /* Message Actions */
 .wwz-blizz-message-actions {
     display: flex;
@@ -738,6 +767,8 @@
     height: 24px;
     border-radius: 50%;
     object-fit: contain;
+    filter: brightness(0);
+    text-decoration: none;
 }
 
 .wwz-blizz-logomark-text {
@@ -749,6 +780,30 @@
     flex-shrink: 0;
     color: var(--dark);
 }
+
+/* ========================================
+   SWITCHBOT BUTTON (cross-widget redirect)
+   ======================================== */
+.wwz-blizz-switchbot-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    margin-top: 16px;
+    background: var(--lime);
+    color: var(--dark);
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background 0.2s, transform 0.2s;
+    font-family: inherit;
+
+
+}
+.wwz-blizz-switchbot-btn:hover { background: var(--lime-hover); transform: scale(1.02); }
+.wwz-blizz-switchbot-logo { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; filter: brightness(0); }
+.wwz-blizz-switchbot-arrow { flex-shrink: 0; }
 
 /* ========================================
    TYPING INDICATOR
@@ -807,5 +862,70 @@
     
     .wwz-blizz-floating-input-wrapper {
         padding: 16px;
+    }
+}
+
+/* ========================================
+   YOUTUBE VIDEO WIDGET
+   ======================================== */
+.enterprisebot-blizz-video-widget {
+    max-width: 250px;
+}
+
+.enterprisebot-blizz-video-link {
+    cursor: pointer;
+    display: block;
+    position: relative;
+}
+
+.enterprisebot-blizz-video-thumbnail {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.enterprisebot-blizz-video-thumbnail img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.enterprisebot-blizz-video-play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.enterprisebot-blizz-video-play-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.enterprisebot-blizz-video-title {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #333;
+    line-height: 1.3;
+}
+
+.enterprisebot-blizz-video-iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none;
+    border-radius: 8px;
+}
+
+@media (min-width: 768px) {
+    .enterprisebot-blizz-video-widget {
+        max-width: 400px;
     }
 }

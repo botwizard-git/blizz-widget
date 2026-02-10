@@ -1477,3 +1477,24 @@
         height: var(--wwz-ivy-launcher-size-mobile, 55px);
     }
 }
+
+/* ========================================
+   SWITCHBOT BUTTON (cross-widget redirect)
+   ======================================== */
+.wwz-ivy-switchbot-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    margin-top: 12px;
+    background: var(--wwz-ivy-primary, #3b82c4);
+    color: #fff;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.2s, transform 0.2s;
+    font-family: var(--wwz-ivy-font, inherit);
+}
+.wwz-ivy-switchbot-btn:hover { opacity: 0.9; transform: scale(1.02); }
+.wwz-ivy-switchbot-arrow { flex-shrink: 0; color: #fff; }

@@ -267,6 +267,30 @@
             }, 100);
         }
 
+        // Check for switchBot redirect question (via URL param from cross-origin redirect)
+        var urlParams = new URLSearchParams(window.location.search);
+        var redirectQuestion = urlParams.get('wwzIvyRedirectQuestion');
+        if (redirectQuestion) {
+            // Clean up URL (remove query param without reload)
+            var cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete('wwzIvyRedirectQuestion');
+            history.replaceState(null, '', cleanUrl.toString());
+
+            console.log('[WWZIvy] SwitchBot redirect question:', redirectQuestion);
+            // Force clear collapsed state immediately (override any stored preference)
+            window.WWZIvy.State.set({ isCollapsed: false });
+            var state = window.WWZIvy.State.get();
+            if (!state.termsAccepted) {
+                window.WWZIvy.State.acceptTerms();
+            }
+            setTimeout(function() {
+                window.WWZIvy.Main.expand();
+                setTimeout(function() {
+                    window.WWZIvy.Main.sendMessage(redirectQuestion);
+                }, 300);
+            }, 500);
+        }
+
         console.log('WWZIvy: Chatbot initialized', window.WWZIvy.Main.getVersionInfo());
     }
 

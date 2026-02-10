@@ -231,6 +231,7 @@
                     // Chat Screen - IMAGE 3
                     '<div class="wwz-blizz-chat-screen wwz-blizz-hidden" id="wwz-blizz-chat-screen">' +
                         '<div class="wwz-blizz-messages-container" id="wwz-blizz-messages-container"></div>' +
+                    '<div class="wwz-blizz-suggestions-container" id="wwz-blizz-suggestions-container"></div>' +
                     '</div>' +
                     
                     // Floating Input - IMAGE 3
@@ -298,9 +299,38 @@
         // Category items click
         document.querySelectorAll('.wwz-blizz-category-item').forEach(function(item) {
             item.addEventListener('click', function() {
-                var text = this.querySelector('.wwz-blizz-category-item-text').textContent;
-                if (window.WWZBlizz.Events && window.WWZBlizz.Events.handleSuggestionClick) {
-                    window.WWZBlizz.Events.handleSuggestionClick(text);
+                // Check if this item has a data-xurrentarticle attribute
+                var xurrentArticleId = this.getAttribute('data-xurrentarticle');
+                if (xurrentArticleId) {
+                    var displayText = this.querySelector('.wwz-blizz-category-item-text').textContent;
+                    if (window.WWZBlizz.Events && window.WWZBlizz.Events.handleXurrentArticleClick) {
+                        window.WWZBlizz.Events.handleXurrentArticleClick(xurrentArticleId, displayText);
+                    }
+                    return;
+                }
+
+                // Otherwise, save category to localStorage (do NOT switch to chat screen)
+                var card = this.closest('.wwz-blizz-category-card');
+                if (card) {
+                    var category = card.getAttribute('data-category');
+                    if (category) {
+                        localStorage.setItem('enterprisebot-blizz-product-category', category);
+                        console.log('[WWZBlizz] Category saved to localStorage:', category);
+                    }
+                }
+            });
+        });
+
+        // Category header click - save category to localStorage
+        document.querySelectorAll('.wwz-blizz-category-header').forEach(function(header) {
+            header.addEventListener('click', function() {
+                var card = this.closest('.wwz-blizz-category-card');
+                if (card) {
+                    var category = card.getAttribute('data-category');
+                    if (category) {
+                        localStorage.setItem('enterprisebot-blizz-product-category', category);
+                        console.log('[WWZBlizz] Category saved from header click:', category);
+                    }
                 }
             });
         });
