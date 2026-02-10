@@ -156,7 +156,7 @@
                                 '</div>' +
                                 '<div class="wwz-blizz-category-items">' +
                                     '<div class="wwz-blizz-category-item" data-item="mobile-1">' +
-                                        '<span class="wwz-blizz-category-item-text">Festnetz</span>' +
+                                        '<span class="wwz-blizz-category-item-text" data-xurrentarticle="485233">Festnetz</span>' +
                                         '<div class="wwz-blizz-category-item-check">' +
                                             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
                                                 '<polyline points="6 9 12 15 18 9"></polyline>' +
