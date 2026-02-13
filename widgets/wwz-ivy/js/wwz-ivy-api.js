@@ -181,7 +181,8 @@
                     action: data.action || null,
                     actionType: data.actionType || null,
                     references: data.references || [],
-                    switchBot: data.switchBot || null
+                    switchBot: data.switchBot || null,
+                    youtubeLinks: data.youtubeLinks || []
                 };
             }
 
@@ -194,7 +195,8 @@
                     action: data.action || null,
                     actionType: data.actionType || null,
                     references: data.references || [],
-                    switchBot: data.switchBot || null
+                    switchBot: data.switchBot || null,
+                    youtubeLinks: data.youtubeLinks || []
                 };
             }
 
@@ -206,7 +208,8 @@
                     action: data.action || null,
                     actionType: data.actionType || null,
                     references: data.references || [],
-                    switchBot: data.switchBot || null
+                    switchBot: data.switchBot || null,
+                    youtubeLinks: data.youtubeLinks || []
                 };
             }
 
@@ -217,7 +220,8 @@
                 action: null,
                 actionType: null,
                 references: [],
-                switchBot: null
+                switchBot: null,
+                youtubeLinks: []
             };
         },
 

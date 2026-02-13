@@ -620,9 +620,9 @@
          * Handle Xurrent article click
          */
         handleXurrentArticleClick: function(articleId, displayText) {
+            var self = this;
             var UI = EBB.UI;
             var StateManager = EBB.StateManager;
-            var APIService = EBB.APIService;
 
             if (StateManager.isLoading()) return;
 
@@ -630,38 +630,12 @@
             UI.showChatScreen();
 
             // Show display text as user message
+            StateManager.setLastUserMessage(displayText);
             var userMessage = StateManager.addMessage(displayText, true);
             UI.renderMessage(userMessage);
 
-            // Show typing indicator
-            StateManager.setLoading(true);
-            UI.showTypingIndicator();
-
-            // Fire-and-forget: send tracking to blitzico
-            APIService.sendXurrentTracking(articleId);
-
-            // Fetch the Xurrent article
-            APIService.fetchXurrentArticle(articleId)
-                .then(function(data) {
-                    UI.hideTypingIndicator();
-                    StateManager.setLoading(false);
-
-                    var formattedHtml = UI.formatXurrentArticle(data);
-                    var botMessage = StateManager.addMessage(formattedHtml, false, { isHtml: true });
-                    UI.renderMessage(botMessage);
-                    StateManager.setHasAnswerInConversation(true);
-                })
-                .catch(function(error) {
-                    console.error('[WWZBlizz] Xurrent article fetch error:', error);
-                    UI.hideTypingIndicator();
-                    StateManager.setLoading(false);
-
-                    var errorMessage = StateManager.addMessage(
-                        'Artikel konnte nicht geladen werden. Bitte versuche es später erneut.',
-                        false
-                    );
-                    UI.renderMessage(errorMessage);
-                });
+            // Send XURRENT_{id} to blitzico chat API
+            self.sendMessageToAPI('XURRENT_' + articleId);
         },
 
         /**
@@ -1086,7 +1060,7 @@
                     // Auto-scroll to show content when single shop + mapsLink
                     if (response.shopList && response.shopList.length === 1 && response.mapsLink) {
                         setTimeout(function() {
-                            var messagesContainer = document.querySelector('.wwz-blizz-messages');
+                            var messagesContainer = document.getElementById('wwz-blizz-messages-container');
                             if (messagesContainer) {
                                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
                             }

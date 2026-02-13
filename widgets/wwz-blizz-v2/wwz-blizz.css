@@ -393,15 +393,19 @@
     flex-direction: column;
     overflow: hidden;
     padding-top: 80px;
+    min-height: 0;
 }
 
 .wwz-blizz-messages-container {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 20px 24px 280px;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    scroll-padding-top: 16px;
+    min-height: 0;
 }
 
 /* Message Styles */
@@ -740,7 +744,8 @@
    LOGOMARK BUTTON
    ======================================== */
 .wwz-blizz-logomark-btn {
-    display: inline-flex;
+    display: flex;
+    width: fit-content;
     align-items: center;
     gap: 10px;
     padding: 12px 20px;
@@ -785,7 +790,8 @@
    SWITCHBOT BUTTON (cross-widget redirect)
    ======================================== */
 .wwz-blizz-switchbot-btn {
-    display: inline-flex;
+    display: flex;
+    width: fit-content;
     align-items: center;
     gap: 10px;
     padding: 12px 20px;
@@ -928,4 +934,44 @@
     .enterprisebot-blizz-video-widget {
         max-width: 400px;
     }
+}
+
+/* ========================================
+   SEARCH RESULTS
+   ======================================== */
+.wwz-blizz-search-results {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.wwz-blizz-search-results-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.wwz-blizz-search-result-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--primary);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.wwz-blizz-search-result-link:hover {
+    text-decoration: underline;
+}
+
+.wwz-blizz-search-result-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.wwz-blizz-search-result-text {
+    word-break: break-word;
 }

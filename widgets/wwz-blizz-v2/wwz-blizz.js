@@ -156,7 +156,7 @@
                                 '</div>' +
                                 '<div class="wwz-blizz-category-items">' +
                                     '<div class="wwz-blizz-category-item" data-item="mobile-1">' +
-                                        '<span class="wwz-blizz-category-item-text">Festnetz</span>' +
+                                        '<span class="wwz-blizz-category-item-text" data-xurrentarticle="485233">Festnetz</span>' +
                                         '<div class="wwz-blizz-category-item-check">' +
                                             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
                                                 '<polyline points="6 9 12 15 18 9"></polyline>' +
@@ -299,23 +299,24 @@
         // Category items click
         document.querySelectorAll('.wwz-blizz-category-item').forEach(function(item) {
             item.addEventListener('click', function() {
-                // Check if this item has a data-xurrentarticle attribute
-                var xurrentArticleId = this.getAttribute('data-xurrentarticle');
-                if (xurrentArticleId) {
-                    var displayText = this.querySelector('.wwz-blizz-category-item-text').textContent;
-                    if (window.WWZBlizz.Events && window.WWZBlizz.Events.handleXurrentArticleClick) {
-                        window.WWZBlizz.Events.handleXurrentArticleClick(xurrentArticleId, displayText);
-                    }
-                    return;
-                }
+                var textSpan = this.querySelector('.wwz-blizz-category-item-text');
+                var xurrentArticleId = textSpan ? textSpan.getAttribute('data-xurrentarticle') : null;
 
-                // Otherwise, save category to localStorage (do NOT switch to chat screen)
+                // Always save category from parent card
                 var card = this.closest('.wwz-blizz-category-card');
                 if (card) {
                     var category = card.getAttribute('data-category');
                     if (category) {
                         localStorage.setItem('enterprisebot-blizz-product-category', category);
                         console.log('[WWZBlizz] Category saved to localStorage:', category);
+                    }
+                }
+
+                // If xurrent article → show text as user msg, send XURRENT_{id} to API
+                if (xurrentArticleId) {
+                    var displayText = textSpan ? textSpan.innerHTML : '';
+                    if (window.WWZBlizz.Events && window.WWZBlizz.Events.handleXurrentArticleClick) {
+                        window.WWZBlizz.Events.handleXurrentArticleClick(xurrentArticleId, displayText);
                     }
                 }
             });

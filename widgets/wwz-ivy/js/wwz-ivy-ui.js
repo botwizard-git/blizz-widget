@@ -781,6 +781,61 @@
         },
 
         /**
+         * Extract YouTube video ID from URL
+         */
+        extractYoutubeVideoId: function(url) {
+            var match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^&\s?/]+)/);
+            return match ? match[1] : '';
+        },
+
+        /**
+         * Create a video card HTML for a single YouTube video
+         */
+        createVideoCard: function(videoId, title) {
+            var thumbUrl = 'https://img.youtube.com/vi/' + videoId + '/mqdefault.jpg';
+            var safeTitle = title ? this.escapeHtml(title) : 'Video ansehen';
+            return '<div class="wwz-ivy-video-card" data-video-id="' + videoId + '">' +
+                '<div class="wwz-ivy-video-thumb" style="background-image:url(\'' + thumbUrl + '\')">' +
+                    '<div class="wwz-ivy-video-play">' +
+                        '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="wwz-ivy-video-info">' +
+                    '<div class="wwz-ivy-video-title">' + safeTitle + '</div>' +
+                '</div>' +
+            '</div>';
+        },
+
+        /**
+         * Create video carousel HTML from youtubeLinks array
+         */
+        createVideoCarousel: function(videos) {
+            if (!videos || videos.length === 0) return '';
+
+            var self = this;
+            var cards = '';
+
+            for (var i = 0; i < videos.length; i++) {
+                var item = videos[i];
+                var url = (typeof item === 'string') ? item : (item.url || '');
+                var title = (typeof item === 'object' && item.title) ? item.title : '';
+                var videoId = self.extractYoutubeVideoId(url);
+                if (videoId) {
+                    cards += self.createVideoCard(videoId, title);
+                }
+            }
+
+            if (!cards) return '';
+
+            if (videos.length === 1) {
+                return '<div class="wwz-ivy-video-section wwz-ivy-video-single">' + cards + '</div>';
+            }
+            return '<div class="wwz-ivy-video-section">' +
+                '<div class="wwz-ivy-video-carousel">' + cards + '</div>' +
+            '</div>';
+        },
+
+        /**
          * Generate transcript
          */
         generateTranscript: function() {

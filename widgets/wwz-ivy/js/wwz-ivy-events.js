@@ -49,6 +49,7 @@
                 const copyBtn = e.target.closest('.wwz-ivy-copy-btn');
                 const speakBtn = e.target.closest('.wwz-ivy-speak-btn');
                 const refDownloadLink = e.target.closest('.wwz-ivy-ref-download');
+                const videoCard = e.target.closest('.wwz-ivy-video-card');
 
                 if (copyBtn) {
                     this.handleCopyMessage(copyBtn.dataset.text);
@@ -57,6 +58,11 @@
                 } else if (refDownloadLink) {
                     e.preventDefault();
                     this.handleReferenceDownload(refDownloadLink.dataset.url, refDownloadLink.dataset.filename);
+                } else if (videoCard && !videoCard.classList.contains('wwz-ivy-video-playing')) {
+                    var videoId = videoCard.getAttribute('data-video-id');
+                    if (videoId) {
+                        this.playYoutubeVideo(videoCard, videoId);
+                    }
                 }
             });
 
@@ -338,8 +344,11 @@
                         });
                     }
 
-                    // Add bot response (with switchBot button if present)
+                    // Add bot response (with video carousel and switchBot button if present)
                     var botText = response.message;
+                    if (response.youtubeLinks && response.youtubeLinks.length > 0) {
+                        botText += UI.createVideoCarousel(response.youtubeLinks);
+                    }
                     if (response.switchBot) {
                         botText += UI.createSwitchBotButton(response.switchBot, message);
                     }
@@ -514,6 +523,14 @@
                 // Fallback: open in new tab
                 window.open(url, '_blank');
             }
+        },
+
+        /**
+         * Play YouTube video inline (replace card with iframe)
+         */
+        playYoutubeVideo: function(card, videoId) {
+            card.classList.add('wwz-ivy-video-playing');
+            card.innerHTML = '<iframe class="wwz-ivy-video-iframe" src="https://www.youtube.com/embed/' + videoId + '?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
         },
 
         /**

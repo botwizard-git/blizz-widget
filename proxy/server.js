@@ -157,6 +157,7 @@ const ALLOWED_ORIGINS = [
     'https://blizz.botwizard.ch',
     'https://blizz-uat.botwizard.ch',
     'https://blizz-dev.vercel.app',
+    'https://blizz-uat.vercel.app',
     'http://localhost:3000'
 ];
 
@@ -1248,7 +1249,7 @@ app.post('/log_errors', requireValidSession, (req, res) => {
  */
 const ALLOWED_DOWNLOAD_DOMAINS = [
     'www.wwz.ch',
-    'wwz.ch'
+    'wwz.ch',
 ];
 
 /**
