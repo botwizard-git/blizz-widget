@@ -393,16 +393,19 @@
     flex-direction: column;
     overflow: hidden;
     padding-top: 80px;
+    min-height: 0;
 }
 
 .wwz-blizz-messages-container {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 20px 24px 280px;
     display: flex;
     flex-direction: column;
     gap: 24px;
     scroll-padding-top: 16px;
+    min-height: 0;
 }
 
 /* Message Styles */

@@ -1060,7 +1060,7 @@
                     // Auto-scroll to show content when single shop + mapsLink
                     if (response.shopList && response.shopList.length === 1 && response.mapsLink) {
                         setTimeout(function() {
-                            var messagesContainer = document.querySelector('.wwz-blizz-messages');
+                            var messagesContainer = document.getElementById('wwz-blizz-messages-container');
                             if (messagesContainer) {
                                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
                             }

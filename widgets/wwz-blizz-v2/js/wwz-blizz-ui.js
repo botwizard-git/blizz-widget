@@ -718,7 +718,28 @@
          */
         scrollToElement: function(element) {
             if (!element || !this.elements.messagesContainer) return;
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            var container = this.elements.messagesContainer;
+            var scrollPadding = 16; // matches CSS scroll-padding-top
+
+            // Use requestAnimationFrame to ensure layout is computed
+            requestAnimationFrame(function() {
+                var targetTop = element.offsetTop - scrollPadding;
+                container.scrollTo({
+                    top: targetTop,
+                    behavior: 'smooth'
+                });
+
+                // Re-scroll after 300ms to account for images/iframes loading
+                setTimeout(function() {
+                    var updatedTop = element.offsetTop - scrollPadding;
+                    if (Math.abs(container.scrollTop - updatedTop) > 50) {
+                        container.scrollTo({
+                            top: updatedTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                }, 300);
+            });
         },
 
         /**
