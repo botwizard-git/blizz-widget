@@ -406,7 +406,7 @@
     }
 
     function init() {
-        loadCSS(baseUrl + 'wwz-blizz.css', function() {
+        loadCSS(baseUrl + 'wwz-blizz.css?v=' + Date.now(), function() {
             loadModules(0);
         });
     }
