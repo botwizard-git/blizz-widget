@@ -399,7 +399,11 @@
             }
 
             container.appendChild(messageDiv);
-            this.scrollToBottom();
+            if (message.isUser) {
+                this.scrollToBottom();
+            } else {
+                this.scrollToElement(messageDiv);
+            }
         },
 
         /**
@@ -707,6 +711,14 @@
             setTimeout(function() {
                 self.updateScrollButtonVisibility();
             }, smooth ? 300 : 0);
+        },
+
+        /**
+         * Scroll to a specific element (used for bot messages to show beginning of answer)
+         */
+        scrollToElement: function(element) {
+            if (!element || !this.elements.messagesContainer) return;
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         },
 
         /**
@@ -1630,7 +1642,7 @@
                 '</div>';
 
             container.appendChild(messageDiv);
-            this.scrollToBottom();
+            this.scrollToElement(messageDiv);
         },
 
         /**
