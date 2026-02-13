@@ -402,7 +402,33 @@
             if (message.isUser) {
                 this.scrollToBottom();
             } else {
-                this.scrollToElement(messageDiv);
+                // Scroll to previous user message so the question stays visible
+                var prevMessage = messageDiv.previousElementSibling;
+                if (prevMessage && prevMessage.classList.contains('wwz-blizz-message-user')) {
+                    this.scrollToElement(prevMessage);
+                } else {
+                    this.scrollToElement(messageDiv);
+                }
+            }
+
+            // Add fade effect for scrollable bot bubbles
+            if (!message.isUser) {
+                var bubble = messageDiv.querySelector('.wwz-blizz-message-bubble');
+                if (bubble) {
+                    setTimeout(function() {
+                        if (bubble.scrollHeight > bubble.clientHeight) {
+                            bubble.classList.add('wwz-blizz-bubble-fade-bottom');
+
+                            bubble.addEventListener('scroll', function() {
+                                var atTop = bubble.scrollTop <= 5;
+                                var atBottom = (bubble.scrollTop + bubble.clientHeight) >= (bubble.scrollHeight - 5);
+
+                                bubble.classList.toggle('wwz-blizz-bubble-fade-bottom', !atBottom);
+                                bubble.classList.toggle('wwz-blizz-bubble-fade-top', !atTop);
+                            });
+                        }
+                    }, 50);
+                }
             }
         },
 

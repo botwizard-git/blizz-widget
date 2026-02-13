@@ -406,6 +406,7 @@
     gap: 24px;
     scroll-padding-top: 16px;
     min-height: 0;
+    position: relative;
 }
 
 /* Message Styles */
@@ -478,6 +479,24 @@
     background: transparent;
     color: var(--text);
     padding: 0;
+    max-height: 325px;
+    overflow-y: auto;
+}
+
+/* Fade effect for scrollable bot bubbles */
+.wwz-blizz-message-bubble.wwz-blizz-bubble-fade-bottom {
+    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 25px), transparent);
+    mask-image: linear-gradient(to bottom, black calc(100% - 25px), transparent);
+}
+
+.wwz-blizz-message-bubble.wwz-blizz-bubble-fade-top {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 25px);
+    mask-image: linear-gradient(to bottom, transparent, black 25px);
+}
+
+.wwz-blizz-message-bubble.wwz-blizz-bubble-fade-top.wwz-blizz-bubble-fade-bottom {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 25px, black calc(100% - 25px), transparent);
+    mask-image: linear-gradient(to bottom, transparent, black 25px, black calc(100% - 25px), transparent);
 }
 
 /* Bot message text styling */
