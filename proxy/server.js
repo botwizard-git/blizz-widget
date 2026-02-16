@@ -710,7 +710,7 @@ app.post('/:widgetId/chat-v2', requireValidSession, async (req, res) => {
             return res.status(404).json({ error: `V2 endpoint not configured for widget: ${widgetId}` });
         }
 
-        const { blizzUserMsg, blizzSessionId, blizzBotMessageId, clientUrl, agentId, isInternal } = req.body;
+        const { blizzUserMsg, blizzSessionId, blizzBotMessageId, clientUrl, agentId, isInternal, dropdownCategory, dropdownSubCategory } = req.body;
 
         if (!blizzUserMsg) {
             return res.status(400).json({ error: 'blizzUserMsg is required' });
@@ -731,7 +731,9 @@ app.post('/:widgetId/chat-v2', requireValidSession, async (req, res) => {
                 blizzUserMsg,
                 blizzSessionId,
                 blizzBotMessageId,
-                clientUrl
+                clientUrl,
+                dropdownCategory,
+                dropdownSubCategory
             })
         });
 
