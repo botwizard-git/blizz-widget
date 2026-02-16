@@ -274,7 +274,54 @@
                 links[l].setAttribute('rel', 'noopener noreferrer');
             }
 
+            // Wrap <img> tags in clickable <a> to open full image in new tab
+            var images = temp.querySelectorAll('img');
+            for (var m = 0; m < images.length; m++) {
+                var img = images[m];
+                var src = img.getAttribute('src');
+                if (src && img.parentNode.tagName !== 'A') {
+                    var imgLink = document.createElement('a');
+                    imgLink.setAttribute('href', src);
+                    imgLink.setAttribute('target', '_blank');
+                    imgLink.setAttribute('rel', 'noopener noreferrer');
+                    img.parentNode.insertBefore(imgLink, img);
+                    imgLink.appendChild(img);
+                }
+            }
+
             return temp.innerHTML;
+        },
+
+        /**
+         * Extract file attachment links from HTML
+         * Returns { html: cleanedHtml, attachments: [{url, title, icon}] }
+         */
+        extractFileAttachments: function(html) {
+            var fileExtensions = /\.(pdf|docx?|xlsx?|pptx?|zip|rar|csv|txt)(\?.*)?$/i;
+            var temp = document.createElement('div');
+            temp.innerHTML = html;
+
+            var attachments = [];
+            var links = temp.querySelectorAll('a');
+
+            for (var i = links.length - 1; i >= 0; i--) {
+                var link = links[i];
+                var href = link.getAttribute('href');
+                if (href && fileExtensions.test(href)) {
+                    var title = (link.textContent || '').trim() || href.split('/').pop().split('?')[0];
+                    attachments.unshift({
+                        url: href,
+                        title: title,
+                        icon: 'doc'
+                    });
+                    link.parentNode.removeChild(link);
+                }
+            }
+
+            return {
+                html: temp.innerHTML,
+                attachments: attachments
+            };
         },
 
         /**
@@ -402,7 +449,33 @@
             if (message.isUser) {
                 this.scrollToBottom();
             } else {
-                this.scrollToElement(messageDiv);
+                // Scroll to previous user message so the question stays visible
+                var prevMessage = messageDiv.previousElementSibling;
+                if (prevMessage && prevMessage.classList.contains('wwz-blizz-message-user')) {
+                    this.scrollToElement(prevMessage);
+                } else {
+                    this.scrollToElement(messageDiv);
+                }
+            }
+
+            // Add fade effect for scrollable bot bubbles
+            if (!message.isUser) {
+                var bubble = messageDiv.querySelector('.wwz-blizz-message-bubble');
+                if (bubble) {
+                    setTimeout(function() {
+                        if (bubble.scrollHeight > bubble.clientHeight) {
+                            bubble.classList.add('wwz-blizz-bubble-fade-bottom');
+
+                            bubble.addEventListener('scroll', function() {
+                                var atTop = bubble.scrollTop <= 5;
+                                var atBottom = (bubble.scrollTop + bubble.clientHeight) >= (bubble.scrollHeight - 5);
+
+                                bubble.classList.toggle('wwz-blizz-bubble-fade-bottom', !atBottom);
+                                bubble.classList.toggle('wwz-blizz-bubble-fade-top', !atTop);
+                            });
+                        }
+                    }, 50);
+                }
             }
         },
 
@@ -880,7 +953,7 @@
          * Simplified inline design - appears within bot message bubble
          * @param {Array} searchResults - Array of {title, url, icon} objects
          */
-        createSearchResultsWidget: function(searchResults) {
+        createSearchResultsWidget: function(searchResults, title) {
             if (!searchResults || searchResults.length === 0) {
                 return '';
             }
@@ -915,7 +988,7 @@
             }
 
             return '<div class="wwz-blizz-search-results">' +
-                '<div class="wwz-blizz-search-results-title">Hilfe zum Nachlesen</div>' +
+                '<div class="wwz-blizz-search-results-title">' + (title || 'Hilfe zum Nachlesen') + '</div>' +
                 linksHtml +
                 '</div>';
         },

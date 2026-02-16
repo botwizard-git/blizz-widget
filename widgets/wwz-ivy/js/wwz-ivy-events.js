@@ -115,7 +115,7 @@
                     if (question && redirectUrl) {
                         var url = new URL(redirectUrl, window.location.href);
                         url.searchParams.set('wwzBlizzRedirectQuestion', question);
-                        window.location.href = url.toString();
+                        window.open(url.toString(), '_blank');
                     }
                 }
             });

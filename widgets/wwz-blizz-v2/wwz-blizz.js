@@ -302,7 +302,7 @@
                 var textSpan = this.querySelector('.wwz-blizz-category-item-text');
                 var xurrentArticleId = textSpan ? textSpan.getAttribute('data-xurrentarticle') : null;
 
-                // Always save category from parent card
+                // Always save category and subcategory from parent card
                 var card = this.closest('.wwz-blizz-category-card');
                 if (card) {
                     var category = card.getAttribute('data-category');
@@ -310,6 +310,12 @@
                         localStorage.setItem('enterprisebot-blizz-product-category', category);
                         console.log('[WWZBlizz] Category saved to localStorage:', category);
                     }
+                }
+                // Save subcategory from the clicked item
+                var subcategory = this.getAttribute('data-item');
+                if (subcategory) {
+                    localStorage.setItem('enterprisebot-blizz-subcategory', subcategory);
+                    console.log('[WWZBlizz] Subcategory saved to localStorage:', subcategory);
                 }
 
                 // If xurrent article → show text as user msg, send XURRENT_{id} to API
@@ -322,7 +328,7 @@
             });
         });
 
-        // Category header click - save category to localStorage
+        // Category header click - save category to localStorage, clear subcategory
         document.querySelectorAll('.wwz-blizz-category-header').forEach(function(header) {
             header.addEventListener('click', function() {
                 var card = this.closest('.wwz-blizz-category-card');
@@ -330,6 +336,7 @@
                     var category = card.getAttribute('data-category');
                     if (category) {
                         localStorage.setItem('enterprisebot-blizz-product-category', category);
+                        localStorage.removeItem('enterprisebot-blizz-subcategory');
                         console.log('[WWZBlizz] Category saved from header click:', category);
                     }
                 }
@@ -406,7 +413,7 @@
     }
 
     function init() {
-        loadCSS(baseUrl + 'wwz-blizz.css', function() {
+        loadCSS(baseUrl + 'wwz-blizz.css?v=' + Date.now(), function() {
             loadModules(0);
         });
     }

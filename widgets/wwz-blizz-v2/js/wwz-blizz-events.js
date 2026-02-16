@@ -479,7 +479,7 @@
                     if (question && redirectUrl) {
                         var url = new URL(redirectUrl, window.location.href);
                         url.searchParams.set('wwzIvyRedirectQuestion', question);
-                        window.location.href = url.toString();
+                        window.open(url.toString(), '_blank');
                     }
                 }
             });
@@ -992,6 +992,14 @@
                         combinedHtml += 'Entschuldigung, ich konnte keine passende Antwort finden.';
                     }
 
+                    // A2. Extract file attachments from inline HTML
+                    var fileAttachments = [];
+                    if (isHtml) {
+                        var processed = UI.extractFileAttachments(combinedHtml);
+                        combinedHtml = processed.html;
+                        fileAttachments = processed.attachments;
+                    }
+
                     // B. Add mapsLink widget (Google Maps embed)
                     if (response.mapsLink) {
                         combinedHtml += UI.createMapsLinkWidget(response.mapsLink);
@@ -1037,6 +1045,12 @@
                     // F. Add search results
                     if (response.searchResults && response.searchResults.length > 0) {
                         combinedHtml += UI.createSearchResultsWidget(response.searchResults);
+                        hasHtmlContent = true;
+                    }
+
+                    // F2. Add file attachments (from inline HTML)
+                    if (fileAttachments.length > 0) {
+                        combinedHtml += UI.createSearchResultsWidget(fileAttachments, 'Anhänge');
                         hasHtmlContent = true;
                     }
 

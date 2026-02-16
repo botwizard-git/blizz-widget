@@ -19,8 +19,9 @@
 
             console.log('[WWZBlizz] Initializing widget...');
 
-            // Clear category localStorage on page load
+            // Clear category and subcategory localStorage on page load
             localStorage.removeItem('enterprisebot-blizz-product-category');
+            localStorage.removeItem('enterprisebot-blizz-subcategory');
 
             // Initialize session cookie immediately (async, doesn't block UI)
             APIService.initSession().then(function(success) {
@@ -86,6 +87,10 @@
                 var cleanUrl = new URL(window.location.href);
                 cleanUrl.searchParams.delete('wwzBlizzRedirectQuestion');
                 history.replaceState(null, '', cleanUrl.toString());
+
+                // Force a new session for switchBot redirect (avoid bugs with stale sessions)
+                StateManager.reset();
+                UI.clearMessages();
 
                 console.log('[WWZBlizz] SwitchBot redirect question:', redirectQuestion);
                 UI.showExpanded();
