@@ -24,6 +24,7 @@
         endChatFeedback: false,   // true when feedback from end chat button
         messageFeedback: {},      // { messageId: { type: 'positive'|'negative', comment: '' } }
         selectedCategory: null,   // Selected sidebar category
+        selectedSubCategory: null, // Selected subcategory
         hasAnswerInConversation: false  // Track if at least one bot answer exists
     };
 
@@ -328,6 +329,20 @@
         },
 
         /**
+         * Set selected subcategory
+         */
+        setSelectedSubCategory: function(subCategory) {
+            state.selectedSubCategory = subCategory;
+        },
+
+        /**
+         * Get selected subcategory
+         */
+        getSelectedSubCategory: function() {
+            return state.selectedSubCategory;
+        },
+
+        /**
          * Set hasAnswerInConversation flag
          */
         setHasAnswerInConversation: function(value) {
@@ -384,6 +399,7 @@
             state.lastUserMessage = null;
             state.messageFeedback = {};
             state.selectedCategory = null;
+            state.selectedSubCategory = null;
             this.setHasAnswerInConversation(false);
 
             // Reset the API session initialized flag so it re-initializes on next call

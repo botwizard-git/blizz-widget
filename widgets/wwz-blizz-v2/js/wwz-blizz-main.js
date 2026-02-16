@@ -19,8 +19,9 @@
 
             console.log('[WWZBlizz] Initializing widget...');
 
-            // Clear category localStorage on page load
+            // Clear category and subcategory localStorage on page load
             localStorage.removeItem('enterprisebot-blizz-product-category');
+            localStorage.removeItem('enterprisebot-blizz-subcategory');
 
             // Initialize session cookie immediately (async, doesn't block UI)
             APIService.initSession().then(function(success) {

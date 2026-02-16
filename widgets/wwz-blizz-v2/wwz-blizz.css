@@ -549,6 +549,15 @@
     text-decoration: none;
 }
 
+.wwz-blizz-message-bot .wwz-blizz-message-bubble img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    margin: 8px 0;
+    cursor: pointer;
+}
+
 /* Message Actions */
 .wwz-blizz-message-actions {
     display: flex;

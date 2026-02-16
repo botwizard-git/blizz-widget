@@ -155,7 +155,8 @@
                 widgetId: CONFIG.widgetId,
                 agentId: CONFIG.AGENT_ID,
                 isInternal: CONFIG.isInternal(),
-                dropdownCategory: localStorage.getItem('enterprisebot-blizz-product-category') || ''
+                dropdownCategory: localStorage.getItem('enterprisebot-blizz-product-category') || '',
+                dropdownSubCategory: localStorage.getItem('enterprisebot-blizz-subcategory') || ''
             };
         },
 
