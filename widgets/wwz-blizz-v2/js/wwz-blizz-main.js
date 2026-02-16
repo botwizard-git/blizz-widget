@@ -87,6 +87,10 @@
                 cleanUrl.searchParams.delete('wwzBlizzRedirectQuestion');
                 history.replaceState(null, '', cleanUrl.toString());
 
+                // Force a new session for switchBot redirect (avoid bugs with stale sessions)
+                StateManager.reset();
+                UI.clearMessages();
+
                 console.log('[WWZBlizz] SwitchBot redirect question:', redirectQuestion);
                 UI.showExpanded();
                 StateManager.setCollapsed(false);
