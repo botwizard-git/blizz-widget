@@ -206,8 +206,8 @@
 
             return {
                 type: 'legacy',
-                message: '',
-                replies: response.replies || [],
+                message: message || '',
+                replies: response.replies || (message ? [message] : []),
                 suggestions: response.suggestions || [],
                 sessionId: response.sessionId || null,
                 shopList: response.shopList || data.shopList || [],
