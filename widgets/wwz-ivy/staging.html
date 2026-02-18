@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WWZ Ivy Chatbot - Test Page</title>
+    <style>
+        /* Sample page styles */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px 40px;
+            color: white;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .page-content {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            margin: 0 0 16px 0;
+            color: #1f2937;
+            font-size: 20px;
+        }
+
+        .card p {
+            margin: 0 0 16px 0;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .card ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #6b7280;
+        }
+
+        .card li {
+            margin-bottom: 8px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #147bd1;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1065ab;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .info-box {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .info-box code {
+            background: #e0f2fe;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .sample-content {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .sample-content h3 {
+            margin: 0 0 12px 0;
+            color: #374151;
+            font-size: 16px;
+        }
+
+        .sample-content p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        footer a {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1>WWZ Ivy Chatbot - Test Page</h1>
+    </div>
+
+    <div class="page-content">
+        <div class="card">
+            <h2>Willkommen auf der Testseite</h2>
+            <p>Diese Seite demonstriert das WWZ Ivy Chatbot-Widget, welches per API auf Blitzico zugreift. Klicke auf das Ivy-Icon in der unteren rechten Ecke, um den Chatbot zu öffnen.</p>
+
+            <div class="sample-content">
+                <h3>Funktionen</h3>
+                <ul>
+                    <li>Begrüssungsbildschirm mit Nutzungsbedingungen</li>
+                    <li>Chat-Interface mit Nachrichtenblasen</li>
+                    <li>Copy-to-Clipboard und Text-to-Speech für Bot-Nachrichten</li>
+                    <li>Spracheingabe (Spracherkennung)</li>
+                    <li>Vorschlags-Buttons</li>
+                    <li>Feedback-Bewertung (1-5)</li>
+                    <li>Chat-Transkript herunterladen</li>
+                    <li>HTML-Rendering für Bot-Antworten</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>API-Steuerung</h2>
+            <p>Das Widget kann programmatisch über die <code>window.WWZIvy.Main</code> API gesteuert werden:</p>
+
+            <div class="controls">
+                <button class="btn btn-primary" onclick="window.WWZIvy.Main.expand()">
+                    Widget öffnen
+                </button>
+                <button class="btn btn-secondary" onclick="window.WWZIvy.Main.collapse()">
+                    Widget schliessen
+                </button>
+                <button class="btn btn-secondary" onclick="window.WWZIvy.Main.startNewSession()">
+                    Neue Sitzung
+                </button>
+                <button class="btn btn-secondary" onclick="console.log(window.WWZIvy.Main.getVersionInfo())">
+                    Versionsinfo loggen
+                </button>
+                <button class="btn btn-secondary" onclick="console.log(window.WWZIvy.Main.getState())">
+                    Status loggen
+                </button>
+                <button class="btn btn-danger" onclick="localStorage.clear(); location.reload();">
+                    Speicher löschen & neu laden
+                </button>
+            </div>
+
+            <div class="info-box">
+                <p><strong>Verfügbare Methoden:</strong></p>
+                <ul>
+                    <li><code>WWZIvy.Main.expand()</code> - Widget öffnen</li>
+                    <li><code>WWZIvy.Main.collapse()</code> - Widget schliessen</li>
+                    <li><code>WWZIvy.Main.startNewSession()</code> - Neuen Chat starten</li>
+                    <li><code>WWZIvy.Main.sendMessage(text)</code> - Nachricht senden</li>
+                    <li><code>WWZIvy.Main.getVersionInfo()</code> - Versionsinfo abrufen</li>
+                    <li><code>WWZIvy.Main.getState()</code> - Aktuellen Status abrufen</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Einbindungsanleitung</h2>
+            <p>Um diesen Chatbot auf der Website einzubinden, füge folgenden Code hinzu:</p>
+
+            <div class="info-box">
+                <code>&lt;div id="wwz-ivy-parent"&gt;&lt;/div&gt;</code><br><br>
+                <code>&lt;script src="wwz-ivy.js"&gt;&lt;/script&gt;</code>
+            </div>
+
+            <p style="margin-top: 16px;">Das Widget wird automatisch initialisiert und das Start-Icon erscheint.</p>
+        </div>
+    </div>
+
+    <footer>
+        WWZ Ivy Chatbot v1.0.0 | Powered by <a href="https://botwizard.ch" target="_blank">Botwizard</a>
+    </footer>
+
+    <!-- WWZ Ivy Chatbot Widget (UAT/Staging mode) -->
+    <div id="wwz-ivy-parent"></div>
+    <script src="wwz-ivy.js" data-env="uat"></script>
+</body>
+</html>

@@ -170,4 +170,23 @@
         // Version
         version: '1.0.0'
     };
+
+    // UAT/Staging override: detect data-env="uat" on script tag
+    const ivyScripts = document.getElementsByTagName('script');
+    let wwzIvyEnv = '';
+    for (let s = 0; s < ivyScripts.length; s++) {
+        if (ivyScripts[s].src && ivyScripts[s].src.indexOf('wwz-ivy') !== -1) {
+            wwzIvyEnv = ivyScripts[s].getAttribute('data-env') || '';
+            break;
+        }
+    }
+    if (wwzIvyEnv === 'uat') {
+        const cfg = window.WWZIvy.Config;
+        ['apiEndpoint', 'contactEndpoint', 'initEndpoint'].forEach(function(key) {
+            if (cfg[key]) {
+                cfg[key] = cfg[key].replace('/wwz-ivy/', '/wwz-ivy-stage/');
+            }
+        });
+        console.log('[WWZIvy] UAT mode enabled - using staging endpoints');
+    }
 })();

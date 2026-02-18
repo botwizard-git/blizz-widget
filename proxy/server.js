@@ -240,6 +240,38 @@ const WIDGETS = {
             'https://wwz-blitzico.enterprisebot.co/blitz267fe73aa1504f04829e90195b206def',
         BOTFLOW_ENDPOINT: process.env.WWZ_IVY_BOTFLOW_ENDPOINT ||
             'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f'
+    },
+    'wwz-blizz-stage': {
+        CHAT_ENDPOINT: process.env.WWZ_BLIZZ_STAGE_CHAT_ENDPOINT ||
+            'https://ndi-staging-blitzico.enterprisebot.co/blitza831817673e8448aa6babfb05f80e118',
+        CHAT_ENDPOINT_V2: process.env.WWZ_BLIZZ_STAGE_CHAT_ENDPOINT_V2 ||
+            'https://ndi-staging-blitzico.enterprisebot.co/blitza831817673e8448aa6babfb05f80e118',
+        CHAT_ENDPOINT_INTERNAL: process.env.WWZ_BLIZZ_STAGE_CHAT_ENDPOINT_INTERNAL ||
+            'https://ndi-staging-blitzico.enterprisebot.co/blitz95ba0cc52a8c4935aa797a016c2066ab',
+        FORM_ENDPOINT: process.env.WWZ_BLIZZ_STAGE_FORM_ENDPOINT ||
+            'https://ndi-staging-blitzico.enterprisebot.co/blitz75bf6077627f44739042fca174d32b1b',
+        FEEDBACK_ENDPOINT: process.env.WWZ_BLIZZ_STAGE_FEEDBACK_ENDPOINT ||
+            'https://ndi-staging-blitzico.enterprisebot.co/blitz7dc510b2dd11424b907fafcb600b6e15',
+        FEEDBACK_ENDPOINT_INTERNAL: process.env.WWZ_BLIZZ_STAGE_FEEDBACK_ENDPOINT_INTERNAL ||
+            'https://ndi-staging-blitzico.enterprisebot.co/blitzf18c8fb03c1d47378017d68782b3f609',
+        BOTFLOW_ENDPOINT: process.env.WWZ_BLIZZ_STAGE_BOTFLOW_ENDPOINT ||
+            'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
+        THUMBS_FEEDBACK_ENDPOINT: process.env.WWZ_BLIZZ_STAGE_THUMBS_FEEDBACK_ENDPOINT ||
+            'https://ndi-staging-blitzico.enterprisebot.co/blitz08b301b2910846ce92cc353a52a67964'
+    },
+    'wwz-ivy-stage': {
+        CHAT_ENDPOINT: process.env.WWZ_IVY_STAGE_CHAT_ENDPOINT ||
+            'https://ndi-staging-blitzico.enterprisebot.co/blitz7be45c93671f42c9a200cecc3a8bec29',
+        CHAT_ENDPOINT_INTERNAL: process.env.WWZ_IVY_STAGE_CHAT_ENDPOINT_INTERNAL ||
+            'https://ndi-staging-blitzico.enterprisebot.co/blitz95ba0cc52a8c4935aa797a016c2066ab',
+        FORM_ENDPOINT: process.env.WWZ_IVY_STAGE_FORM_ENDPOINT ||
+            'https://ndi-staging-blitzico.enterprisebot.co/blitz75bf6077627f44739042fca174d32b1b',
+        FEEDBACK_ENDPOINT: process.env.WWZ_IVY_STAGE_FEEDBACK_ENDPOINT ||
+            'https://ndi-staging-blitzico.enterprisebot.co/blitz7e6b322d84c74c24a8c1a1e52b30a46f',
+        FEEDBACK_ENDPOINT_INTERNAL: process.env.WWZ_IVY_STAGE_FEEDBACK_ENDPOINT_INTERNAL ||
+            'https://ndi-staging-blitzico.enterprisebot.co/blitzf18c8fb03c1d47378017d68782b3f609',
+        BOTFLOW_ENDPOINT: process.env.WWZ_IVY_STAGE_BOTFLOW_ENDPOINT ||
+            'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f'
     }
 };
 
