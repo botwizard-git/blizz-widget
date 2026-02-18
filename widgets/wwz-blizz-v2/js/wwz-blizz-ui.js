@@ -82,10 +82,22 @@
         },
 
         /**
+         * Convert base64 data URIs to img tags
+         */
+        convertBase64Images: function(text) {
+            return text.replace(/data:image\/[a-zA-Z0-9+.-]+;base64,[A-Za-z0-9+\/=]+/g, function(match) {
+                return '<img src="' + match + '" />';
+            });
+        },
+
+        /**
          * Format bot message
          */
         formatBotMessage: function(text, isHtml) {
             if (isHtml) {
+                if (text.indexOf('data:image/') !== -1) {
+                    text = this.convertBase64Images(text);
+                }
                 return this.sanitizeHtml(text);
             }
 
@@ -147,6 +159,11 @@
 
             var urlRegex = /(https?:\/\/[^\s<]+)/g;
             formatted = formatted.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+
+            // Convert base64 data URIs to img tags
+            if (formatted.indexOf('data:image/') !== -1) {
+                formatted = this.convertBase64Images(formatted);
+            }
 
             return formatted;
         },

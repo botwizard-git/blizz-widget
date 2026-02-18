@@ -293,5 +293,26 @@
         HAS_ANSWER: window.WWZBlizz.CONFIG.storageKeys.hasAnswer
     };
 
+    // UAT/Staging override: detect data-env="uat" on script tag
+    var scripts = document.getElementsByTagName('script');
+    var wwzBlizzEnv = '';
+    for (var s = 0; s < scripts.length; s++) {
+        if (scripts[s].src && scripts[s].src.indexOf('wwz-blizz') !== -1) {
+            wwzBlizzEnv = scripts[s].getAttribute('data-env') || '';
+            break;
+        }
+    }
+    if (wwzBlizzEnv === 'uat') {
+        var cfg = window.WWZBlizz.CONFIG;
+        var endpoints = ['apiEndpoint', 'feedbackEndpoint', 'thumbsFeedbackEndpoint',
+                         'contactEndpoint', 'initEndpoint', 'logErrorsEndpoint'];
+        for (var i = 0; i < endpoints.length; i++) {
+            if (cfg[endpoints[i]]) {
+                cfg[endpoints[i]] = cfg[endpoints[i]].replace('/wwz-blizz/', '/wwz-blizz-stage/');
+            }
+        }
+        console.log('[WWZBlizz] UAT mode enabled - using staging endpoints');
+    }
+
     console.log('[WWZBlizz] Config loaded');
 })();
