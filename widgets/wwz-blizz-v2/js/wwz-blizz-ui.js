@@ -35,6 +35,10 @@
             // Suggestions container
             this.elements.suggestionsContainer = document.getElementById('wwz-blizz-suggestions-container');
 
+            // Feedback & Thank You screens
+            this.elements.feedbackContainer = document.getElementById('wwz-blizz-feedback-screen');
+            this.elements.thankYou = document.getElementById('wwz-blizz-thank-you');
+
             console.log('[WWZBlizz] UI elements initialized');
         },
 

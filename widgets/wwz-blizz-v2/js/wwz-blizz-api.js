@@ -372,23 +372,23 @@
         /**
          * Submit message-level feedback (thumbs up/down)
          */
-        submitMessageFeedback: function(messageId, feedbackType, comment) {
+        submitMessageFeedback: function(messageId, feedbackType, comment, messageText) {
             var self = this;
 
             return this.ensureSession().then(function() {
-                // Convert feedbackType to thumb boolean
-                // Handle multiple formats: 'up'/'positive' → true, 'down'/'negative' → false, null → null
+                // Normalize feedbackType to "up"/"down" string (or null)
                 var thumb = null;
                 if (feedbackType === 'up' || feedbackType === 'positive') {
-                    thumb = true;
+                    thumb = 'up';
                 } else if (feedbackType === 'down' || feedbackType === 'negative') {
-                    thumb = false;
+                    thumb = 'down';
                 }
 
                 var payload = {
+                    blizzSessionId: SessionService.getSessionId(),
+                    message: messageText || '',
                     thumb: thumb,
-                    comment: comment || '',
-                    sessionId: SessionService.getSessionId()
+                    comment: comment || ''
                 };
 
                 console.log('[WWZBlizz] Submitting message feedback:', payload);

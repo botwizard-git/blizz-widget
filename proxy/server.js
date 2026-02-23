@@ -910,17 +910,17 @@ app.post('/:widgetId/thumbs-feedback', requireValidSession, async (req, res) => 
             return res.status(404).json({ error: `Thumbs feedback endpoint not configured for widget: ${widgetId}` });
         }
 
-        const { thumb, comment, sessionId } = req.body;
+        const { blizzSessionId, message, thumb, comment } = req.body;
 
         if (thumb === undefined) {
             return res.status(400).json({ error: 'thumb is required' });
         }
 
-        if (!sessionId) {
-            return res.status(400).json({ error: 'sessionId is required' });
+        if (!blizzSessionId) {
+            return res.status(400).json({ error: 'blizzSessionId is required' });
         }
 
-        console.log(`[${widgetId}/ThumbsFeedback] Submitting thumb:`, thumb ? 'up' : 'down');
+        console.log(`[${widgetId}/ThumbsFeedback] Submitting thumb:`, thumb);
 
         const response = await fetchWithTimeout(widgetConfig.THUMBS_FEEDBACK_ENDPOINT, {
             method: 'POST',
@@ -930,9 +930,10 @@ app.post('/:widgetId/thumbs-feedback', requireValidSession, async (req, res) => 
                 'api-key': config.API_KEY
             },
             body: JSON.stringify({
+                blizzSessionId,
+                message: message || '',
                 thumb,
-                comment: comment || '',
-                sessionId
+                comment: comment || ''
             })
         });
 

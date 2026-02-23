@@ -223,8 +223,9 @@
                         // API Call
                         if (EBB.APIService && EBB.APIService.submitMessageFeedback) {
                             var messageId = btn.dataset.messageId;
+                            var messageText = self.getMessageTextById(messageId);
                             console.log('[WWZBlizz] Sending API request for message:', messageId);
-                            EBB.APIService.submitMessageFeedback(messageId, type, null)
+                            EBB.APIService.submitMessageFeedback(messageId, type, null, messageText)
                                 .then(function(success) {
                                     console.log('[WWZBlizz] Feedback API result:', success);
                                 });
@@ -1165,8 +1166,32 @@
 
         /**
          * Start new conversation
+         * Shows feedback screen first if user has sent messages
          */
         startNewConversation: function() {
+            var StateManager = EBB.StateManager;
+            var UI = EBB.UI;
+
+            // Check if user has sent any messages in this session
+            var messages = StateManager.getMessages();
+            var hasUserMessage = messages && messages.some(function(msg) { return msg.isUser; });
+
+            if (hasUserMessage) {
+                // Show feedback screen before resetting
+                console.log('[WWZBlizz] User has messages, showing feedback first');
+                StateManager.setEndChatFeedback(true);
+                UI.resetFeedbackForm();
+                UI.updateView('feedback');
+            } else {
+                // No messages, just reset directly
+                this.doNewConversation();
+            }
+        },
+
+        /**
+         * Actually perform the new conversation reset (called after feedback or directly)
+         */
+        doNewConversation: function() {
             var CONFIG = EBB.CONFIG;
             var UI = EBB.UI;
             var StateManager = EBB.StateManager;
@@ -1212,7 +1237,7 @@
             var APIService = EBB.APIService;
 
             var rating = StateManager.getRating();
-            var comment = document.getElementById('wwz-blizz-feedback-text').value.trim();
+            var comment = document.getElementById('wwz-blizz-feedback-text-input').value.trim();
 
             console.log('[WWZBlizz] Submitting feedback:', { rating: rating, comment: comment });
 
@@ -1498,7 +1523,7 @@
             }
 
             // Get additional text
-            var feedbackTextarea = document.getElementById('wwz-blizz-feedback-text');
+            var feedbackTextarea = document.getElementById('wwz-blizz-feedback-text-input');
             var additionalText = feedbackTextarea ? feedbackTextarea.value.trim() : '';
 
             // Build feedback data object
@@ -1581,11 +1606,11 @@
         },
 
         /**
-         * Close feedback screen
+         * Close feedback screen (go back to chat without resetting)
          */
         closeFeedbackScreen: function() {
             console.log('[WWZBlizz] Closing feedback screen');
-            EBB.UI.hideFeedbackScreen();
+            EBB.UI.updateView('chat');
             EBB.UI.resetFeedbackForm();
         },
 
@@ -1599,6 +1624,19 @@
             EBB.UI.clearMessages();
             EBB.UI.showWelcomeScreen();
             EBB.UI.renderWelcomeSuggestions(EBB.CONFIG.defaultSuggestions);
+        },
+
+        /**
+         * Get bot message text by message ID from state
+         */
+        getMessageTextById: function(messageId) {
+            var messages = EBB.StateManager.getMessages();
+            for (var i = 0; i < messages.length; i++) {
+                if (messages[i].id === messageId) {
+                    return messages[i].text || '';
+                }
+            }
+            return '';
         },
 
         /**
@@ -1624,7 +1662,8 @@
             StateManager.setMessageFeedback(messageId, 'positive', '');
 
             // Submit to API
-            APIService.submitMessageFeedback(messageId, 'positive', '')
+            var messageText = this.getMessageTextById(messageId);
+            APIService.submitMessageFeedback(messageId, 'positive', '', messageText)
                 .then(function(success) {
                     if (success) {
                         console.log('[WWZBlizz] Message feedback submitted successfully');
@@ -1672,7 +1711,8 @@
             StateManager.setMessageFeedback(messageId, 'negative', comment);
 
             // Submit to API
-            APIService.submitMessageFeedback(messageId, 'negative', comment)
+            var messageText = this.getMessageTextById(messageId);
+            APIService.submitMessageFeedback(messageId, 'negative', comment, messageText)
                 .then(function(success) {
                     if (success) {
                         console.log('[WWZBlizz] Message feedback submitted successfully');
@@ -1701,7 +1741,8 @@
             console.log('[WWZBlizz] Submitting comment for message:', messageId);
 
             // Submit to API with thumb: null for standalone comment
-            APIService.submitMessageFeedback(messageId, null, comment)
+            var messageText = this.getMessageTextById(messageId);
+            APIService.submitMessageFeedback(messageId, null, comment, messageText)
                 .then(function(success) {
                     if (success) {
                         console.log('[WWZBlizz] Comment submitted successfully');
