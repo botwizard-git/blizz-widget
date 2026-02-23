@@ -285,6 +285,69 @@
                         
                     '</div>' +
                     
+                    // Feedback Screen (overlay)
+                    '<div class="wwz-blizz-feedback-screen wwz-blizz-hidden" id="wwz-blizz-feedback-screen">' +
+                        '<div class="wwz-blizz-feedback-content">' +
+                            '<button class="wwz-blizz-feedback-close-btn" id="wwz-blizz-feedback-close-btn" type="button">' +
+                                '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                                    '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>' +
+                                '</svg>' +
+                            '</button>' +
+                            '<h2 class="wwz-blizz-feedback-question">Wie war Deine Erfahrung mit unserem digitalen Assistenten?</h2>' +
+                            '<div class="wwz-blizz-rating" id="wwz-blizz-rating">' +
+                                '<div class="wwz-blizz-rating-item">' +
+                                    '<button class="wwz-blizz-rating-btn wwz-blizz-rating-1" data-rating="1">1</button>' +
+                                    '<span class="wwz-blizz-rating-label">Sehr mangelhaft</span>' +
+                                '</div>' +
+                                '<div class="wwz-blizz-rating-item">' +
+                                    '<button class="wwz-blizz-rating-btn wwz-blizz-rating-2" data-rating="2">2</button>' +
+                                    '<span class="wwz-blizz-rating-label">Mangelhaft</span>' +
+                                '</div>' +
+                                '<div class="wwz-blizz-rating-item">' +
+                                    '<button class="wwz-blizz-rating-btn wwz-blizz-rating-3" data-rating="3">3</button>' +
+                                    '<span class="wwz-blizz-rating-label">Befriedigend</span>' +
+                                '</div>' +
+                                '<div class="wwz-blizz-rating-item">' +
+                                    '<button class="wwz-blizz-rating-btn wwz-blizz-rating-4" data-rating="4">4</button>' +
+                                    '<span class="wwz-blizz-rating-label">Gut</span>' +
+                                '</div>' +
+                                '<div class="wwz-blizz-rating-item">' +
+                                    '<button class="wwz-blizz-rating-btn wwz-blizz-rating-5" data-rating="5">5</button>' +
+                                    '<span class="wwz-blizz-rating-label">Sehr gut</span>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="wwz-blizz-feedback-second-question wwz-blizz-hidden" id="wwz-blizz-feedback-second-question">' +
+                                '<h3 class="wwz-blizz-feedback-second-title" id="wwz-blizz-feedback-second-title"></h3>' +
+                                '<div class="wwz-blizz-feedback-options" id="wwz-blizz-feedback-options"></div>' +
+                            '</div>' +
+                            '<div class="wwz-blizz-feedback-text-toggle-wrapper wwz-blizz-hidden" id="wwz-blizz-feedback-text-toggle-wrapper">' +
+                                '<button class="wwz-blizz-feedback-text-toggle-btn" id="wwz-blizz-feedback-text-toggle" type="button">Zusätzliches Feedback geben</button>' +
+                            '</div>' +
+                            '<div class="wwz-blizz-feedback-text-panel" id="wwz-blizz-feedback-text-panel">' +
+                                '<textarea class="wwz-blizz-feedback-text-input" id="wwz-blizz-feedback-text-input" placeholder="Dein Feedback hier eingeben..." rows="3"></textarea>' +
+                            '</div>' +
+                            '<div class="wwz-blizz-feedback-actions">' +
+                                '<button class="wwz-blizz-feedback-send-btn" id="wwz-blizz-feedback-send-btn" type="button">Feedback senden</button>' +
+                                '<button class="wwz-blizz-feedback-download-btn" id="wwz-blizz-download-transcript" type="button">Chat-Transkript</button>' +
+                                '<button class="wwz-blizz-feedback-skip-btn" id="wwz-blizz-feedback-skip" type="button">Feedback überspringen</button>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+
+                    // Thank You Screen (overlay)
+                    '<div class="wwz-blizz-thankyou wwz-blizz-hidden" id="wwz-blizz-thank-you">' +
+                        '<div class="wwz-blizz-thankyou-content">' +
+                            '<div class="wwz-blizz-thankyou-icon">' +
+                                '<svg class="wwz-blizz-success-animation" viewBox="0 0 24 24" fill="none">' +
+                                    '<circle class="wwz-blizz-success-circle" cx="12" cy="12" r="10" stroke="#10b981" stroke-width="2"/>' +
+                                    '<path class="wwz-blizz-success-check" d="M8 12l3 3 5-5" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+                                '</svg>' +
+                            '</div>' +
+                            '<h2 class="wwz-blizz-thankyou-title">Vielen Dank!</h2>' +
+                            '<p class="wwz-blizz-thankyou-text">Dein Feedback hilft uns, unseren Service zu verbessern.</p>' +
+                        '</div>' +
+                    '</div>' +
+
                 '</main>' +
             '</div>';
 

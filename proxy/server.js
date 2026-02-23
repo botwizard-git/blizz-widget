@@ -225,7 +225,7 @@ const WIDGETS = {
         BOTFLOW_ENDPOINT: process.env.WWZ_BLIZZ_BOTFLOW_ENDPOINT ||
             'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
         THUMBS_FEEDBACK_ENDPOINT: process.env.WWZ_BLIZZ_THUMBS_FEEDBACK_ENDPOINT ||
-            'https://wwz-blitzico.enterprisebot.co/blitz0a03d969b90c45f9afe3b6557fe9f36b'
+            'https://wwz-blitzico.enterprisebot.co/blitz436638f015894fcc914c7af1edf93fef'
     },
     'wwz-ivy': {
         CHAT_ENDPOINT: process.env.WWZ_IVY_CHAT_ENDPOINT ||
@@ -257,7 +257,7 @@ const WIDGETS = {
         BOTFLOW_ENDPOINT: process.env.WWZ_BLIZZ_STAGE_BOTFLOW_ENDPOINT ||
             'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
         THUMBS_FEEDBACK_ENDPOINT: process.env.WWZ_BLIZZ_STAGE_THUMBS_FEEDBACK_ENDPOINT ||
-            'https://ndi-staging-blitzico.enterprisebot.co/blitz08b301b2910846ce92cc353a52a67964'
+            'https://wwz-blitzico.enterprisebot.co/blitz436638f015894fcc914c7af1edf93fef'
     },
     'wwz-ivy-stage': {
         CHAT_ENDPOINT: process.env.WWZ_IVY_STAGE_CHAT_ENDPOINT ||
@@ -912,17 +912,17 @@ app.post('/:widgetId/thumbs-feedback', requireValidSession, async (req, res) => 
             return res.status(404).json({ error: `Thumbs feedback endpoint not configured for widget: ${widgetId}` });
         }
 
-        const { thumb, comment, sessionId } = req.body;
+        const { blizzSessionId, message, thumb, comment } = req.body;
 
         if (thumb === undefined) {
             return res.status(400).json({ error: 'thumb is required' });
         }
 
-        if (!sessionId) {
-            return res.status(400).json({ error: 'sessionId is required' });
+        if (!blizzSessionId) {
+            return res.status(400).json({ error: 'blizzSessionId is required' });
         }
 
-        console.log(`[${widgetId}/ThumbsFeedback] Submitting thumb:`, thumb ? 'up' : 'down');
+        console.log(`[${widgetId}/ThumbsFeedback] Submitting thumb:`, thumb);
 
         const response = await fetchWithTimeout(widgetConfig.THUMBS_FEEDBACK_ENDPOINT, {
             method: 'POST',
@@ -932,9 +932,10 @@ app.post('/:widgetId/thumbs-feedback', requireValidSession, async (req, res) => 
                 'api-key': config.API_KEY
             },
             body: JSON.stringify({
+                blizzSessionId,
+                message: message || '',
                 thumb,
-                comment: comment || '',
-                sessionId
+                comment: comment || ''
             })
         });
 
