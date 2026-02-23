@@ -147,7 +147,7 @@
                         '<div class="wwz-blizz-categories">' +
                             
                             // Mobile Daten - Non-collapsible with checkmarks
-                            '<div class="wwz-blizz-category-card" data-category="mobile">' +
+                            '<div class="wwz-blizz-category-card">' +
                                 '<div class="wwz-blizz-category-header">' +
                                     '<div class="wwz-blizz-category-icon">' +
                                         '<img src="' + baseUrl + 'assets/icon-mobile.svg" alt="">' +
@@ -155,7 +155,7 @@
                                     '<div class="wwz-blizz-category-title">Mobile Daten</div>' +
                                 '</div>' +
                                 '<div class="wwz-blizz-category-items">' +
-                                    '<div class="wwz-blizz-category-item" data-item="mobile-1">' +
+                                    '<div class="wwz-blizz-category-item">' +
                                         '<span class="wwz-blizz-category-item-text" data-xurrentarticle="485233">Festnetz</span>' +
                                         '<div class="wwz-blizz-category-item-check">' +
                                             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
@@ -163,7 +163,7 @@
                                             '</svg>' +
                                         '</div>' +
                                     '</div>' +
-                                    '<div class="wwz-blizz-category-item" data-item="mobile-2">' +
+                                    '<div class="wwz-blizz-category-item">' +
                                         '<span class="wwz-blizz-category-item-text">Festnetz</span>' +
                                         '<div class="wwz-blizz-category-item-check">' +
                                             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
@@ -171,7 +171,7 @@
                                             '</svg>' +
                                         '</div>' +
                                     '</div>' +
-                                    '<div class="wwz-blizz-category-item" data-item="mobile-3">' +
+                                    '<div class="wwz-blizz-category-item">' +
                                         '<span class="wwz-blizz-category-item-text">Festnetz</span>' +
                                         '<div class="wwz-blizz-category-item-check">' +
                                             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
@@ -183,7 +183,7 @@
                             '</div>' +
                             
                             // Internet - Non-collapsible with checkmarks
-                            '<div class="wwz-blizz-category-card" data-category="internet">' +
+                            '<div class="wwz-blizz-category-card">' +
                                 '<div class="wwz-blizz-category-header">' +
                                     '<div class="wwz-blizz-category-icon">' +
                                         '<img src="' + baseUrl + 'assets/icon-internet.svg" alt="">' +
@@ -191,7 +191,7 @@
                                     '<div class="wwz-blizz-category-title">Internet</div>' +
                                 '</div>' +
                                 '<div class="wwz-blizz-category-items">' +
-                                    '<div class="wwz-blizz-category-item" data-item="internet-1">' +
+                                    '<div class="wwz-blizz-category-item">' +
                                         '<span class="wwz-blizz-category-item-text">Festnetz</span>' +
                                         '<div class="wwz-blizz-category-item-check">' +
                                             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
@@ -199,7 +199,7 @@
                                             '</svg>' +
                                         '</div>' +
                                     '</div>' +
-                                    '<div class="wwz-blizz-category-item" data-item="internet-2">' +
+                                    '<div class="wwz-blizz-category-item">' +
                                         '<span class="wwz-blizz-category-item-text">Festnetz</span>' +
                                         '<div class="wwz-blizz-category-item-check">' +
                                             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
@@ -207,7 +207,7 @@
                                             '</svg>' +
                                         '</div>' +
                                     '</div>' +
-                                    '<div class="wwz-blizz-category-item" data-item="internet-3">' +
+                                    '<div class="wwz-blizz-category-item">' +
                                         '<span class="wwz-blizz-category-item-text">Festnetz</span>' +
                                         '<div class="wwz-blizz-category-item-check">' +
                                             '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
@@ -368,14 +368,15 @@
                 // Always save category and subcategory from parent card
                 var card = this.closest('.wwz-blizz-category-card');
                 if (card) {
-                    var category = card.getAttribute('data-category');
+                    var titleEl = card.querySelector('.wwz-blizz-category-title');
+                    var category = titleEl ? titleEl.innerHTML.trim() : '';
                     if (category) {
                         localStorage.setItem('enterprisebot-blizz-product-category', category);
                         console.log('[WWZBlizz] Category saved to localStorage:', category);
                     }
                 }
                 // Save subcategory from the clicked item
-                var subcategory = this.getAttribute('data-item');
+                var subcategory = textSpan ? textSpan.innerHTML.trim() : '';
                 if (subcategory) {
                     localStorage.setItem('enterprisebot-blizz-subcategory', subcategory);
                     console.log('[WWZBlizz] Subcategory saved to localStorage:', subcategory);
@@ -396,7 +397,8 @@
             header.addEventListener('click', function() {
                 var card = this.closest('.wwz-blizz-category-card');
                 if (card) {
-                    var category = card.getAttribute('data-category');
+                    var titleEl = card.querySelector('.wwz-blizz-category-title');
+                    var category = titleEl ? titleEl.innerHTML.trim() : '';
                     if (category) {
                         localStorage.setItem('enterprisebot-blizz-product-category', category);
                         localStorage.removeItem('enterprisebot-blizz-subcategory');
