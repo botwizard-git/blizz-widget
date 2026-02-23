@@ -225,7 +225,7 @@ const WIDGETS = {
         BOTFLOW_ENDPOINT: process.env.WWZ_BLIZZ_BOTFLOW_ENDPOINT ||
             'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
         THUMBS_FEEDBACK_ENDPOINT: process.env.WWZ_BLIZZ_THUMBS_FEEDBACK_ENDPOINT ||
-            'https://wwz-blitzico.enterprisebot.co/blitz0a03d969b90c45f9afe3b6557fe9f36b'
+            'https://wwz-blitzico.enterprisebot.co/blitz436638f015894fcc914c7af1edf93fef'
     },
     'wwz-ivy': {
         CHAT_ENDPOINT: process.env.WWZ_IVY_CHAT_ENDPOINT ||
@@ -257,7 +257,7 @@ const WIDGETS = {
         BOTFLOW_ENDPOINT: process.env.WWZ_BLIZZ_STAGE_BOTFLOW_ENDPOINT ||
             'https://wwz-blitzico.enterprisebot.co/blitz65aadf8a736349dd9ad6fd93ca69684f',
         THUMBS_FEEDBACK_ENDPOINT: process.env.WWZ_BLIZZ_STAGE_THUMBS_FEEDBACK_ENDPOINT ||
-            'https://ndi-staging-blitzico.enterprisebot.co/blitz08b301b2910846ce92cc353a52a67964'
+            'https://wwz-blitzico.enterprisebot.co/blitz436638f015894fcc914c7af1edf93fef'
     },
     'wwz-ivy-stage': {
         CHAT_ENDPOINT: process.env.WWZ_IVY_STAGE_CHAT_ENDPOINT ||
