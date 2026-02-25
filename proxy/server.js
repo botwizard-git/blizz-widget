@@ -152,8 +152,10 @@ function parseCookies(cookieHeader) {
  * List of allowed origins for requests without cookie (Safari ITP fallback)
  */
 const ALLOWED_ORIGINS = [
-    'https://www.wwz.ch',
     'https://wwz.ch',
+    'https://blizz.ch',
+    'https://dev.blizz.ch',
+    'https://uat.blizz.ch',
     'https://blizz.botwizard.ch',
     'https://blizz-uat.botwizard.ch',
     'https://blizz-dev.vercel.app',
@@ -163,11 +165,12 @@ const ALLOWED_ORIGINS = [
 
 /**
  * Check if origin is in allowed list
+ * Automatically handles www. variants (e.g. www.wwz.ch matches wwz.ch)
  */
 function isAllowedOrigin(origin) {
     if (!origin) return false;
-    // Normalize origin (remove trailing slash)
-    const normalizedOrigin = origin.replace(/\/$/, '');
+    // Normalize: remove trailing slash and strip www.
+    const normalizedOrigin = origin.replace(/\/$/, '').replace(/^(https?:\/\/)www\./, '$1');
     return ALLOWED_ORIGINS.some(allowed => normalizedOrigin.startsWith(allowed));
 }
 
