@@ -16,6 +16,7 @@
         console.error('WWZIvy: currentScript not available');
     }
     const baseUrl = new URL('.', currentScript.src).href;
+    const VERSION = '1.0.1'; // bump on each deploy
 
     // Module loading order
     const modules = [
@@ -36,7 +37,7 @@
     function loadCSS() {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
-        link.href = baseUrl + 'wwz-ivy.css';
+        link.href = baseUrl + 'wwz-ivy.css?v=' + VERSION;
         document.head.appendChild(link);
     }
 
@@ -45,7 +46,7 @@
      */
     function loadScript(src, callback) {
         const script = document.createElement('script');
-        script.src = baseUrl + src;
+        script.src = baseUrl + src + '?v=' + VERSION;
         script.onload = callback;
         script.onerror = function () {
             console.error('WWZIvy: Failed to load ' + src);
