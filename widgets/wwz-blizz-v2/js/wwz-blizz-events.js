@@ -956,6 +956,10 @@
 
             StateManager.setLoading(true);
             UI.showTypingIndicator();
+            // Clear previous suggestions while waiting for new response
+            if (UI.elements.suggestionsContainer) {
+                UI.elements.suggestionsContainer.innerHTML = '';
+            }
 
             APIService.sendMessage(text)
                 .then(function(response) {
