@@ -1203,6 +1203,8 @@
             StateManager.reset();
             UI.clearMessages();
             UI.clearSuggestions();
+            UI.clearInput();
+            UI.clearWelcomeInput();
             UI.showWelcomeScreen();
             UI.renderWelcomeSuggestions(CONFIG.defaultSuggestions);
 
