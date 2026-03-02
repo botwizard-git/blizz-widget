@@ -16,7 +16,7 @@
    CONTAINER
    ======================================== */
 .wwz-blizz-app-container {
-    --primary: #7C5CFC;
+    --primary: #8152FE;
     --primary-light: #9B7FFD;
     --lime: #E2F57E;
     --lime-hover: #D4E870;
@@ -129,7 +129,7 @@
 .wwz-blizz-welcome-title {
     font-size: 44px;
     font-weight: 700;
-    color: #7C5CFC;
+    color: #8152FE;
     text-align: center;
     line-height: 1.15;
     margin: 0 0 40px 0;
@@ -238,6 +238,15 @@
     font-family: inherit;
     cursor: pointer;
     transition: background 0.2s;
+}
+
+/* Chat suggestions (inside messages scroll area) */
+.wwz-blizz-chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 0;
+    box-sizing: border-box;
 }
 
 .wwz-blizz-suggestion-btn:hover {
@@ -483,7 +492,7 @@ input:checked + .wwz-blizz-radio-custom {
 .wwz-blizz-category-icon {
     width: 20px;
     height: 20px;
-    color: #7C5CFC;
+    color: #8152FE;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -498,7 +507,7 @@ input:checked + .wwz-blizz-radio-custom {
     flex: 1;
     font-size: 16px;
     font-weight: 600;
-    color: #7C5CFC;
+    color: #8152FE;
 }
 
 /* Category items always visible - full width lines */
@@ -666,7 +675,7 @@ input:checked + .wwz-blizz-radio-custom {
     background: transparent;
     color: var(--text);
     padding: 0;
-    max-height: 325px;
+    max-height: 350px;
     overflow-y: auto;
 }
 
@@ -717,7 +726,7 @@ input:checked + .wwz-blizz-radio-custom {
 }
 
 .wwz-blizz-message-bot .wwz-blizz-message-bubble a {
-    color: #7C5CFC;
+    color: #8152FE;
     text-decoration: underline;
 }
 
@@ -992,7 +1001,7 @@ input:checked + .wwz-blizz-radio-custom {
 }
 
 .wwz-blizz-bottom-tab:hover {
-    color: #7C5CFC;
+    color: #8152FE;
 }
 
 .wwz-blizz-bottom-tab-icon {
@@ -1134,6 +1143,10 @@ input:checked + .wwz-blizz-radio-custom {
 /* ========================================
    SWITCHBOT BUTTON (cross-widget redirect)
    ======================================== */
+.wwz-blizz-chat-switchbot {
+    padding: 0 16px 0 52px;
+}
+
 .wwz-blizz-switchbot-btn {
     display: flex;
     width: fit-content;

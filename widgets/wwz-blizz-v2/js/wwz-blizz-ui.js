@@ -657,26 +657,68 @@
         },
 
         /**
+         * Render switchBot button outside the message bubble
+         */
+        renderSwitchBot: function(switchBot, userQuestion) {
+            var messagesContainer = this.elements.messagesContainer;
+            if (!messagesContainer) return;
+            var html = this.createSwitchBotButton(switchBot, userQuestion);
+            if (!html) return;
+            var wrapper = document.createElement('div');
+            wrapper.className = 'wwz-blizz-chat-switchbot';
+            wrapper.innerHTML = html;
+            messagesContainer.appendChild(wrapper);
+            this.scrollToBottom();
+        },
+
+        /**
          * Render suggestions
          */
         renderSuggestions: function(suggestions) {
-            var self = this;
-            var container = this.elements.suggestionsContainer;
-            container.innerHTML = '';
-
             if (!suggestions || suggestions.length === 0) {
                 return;
             }
 
+            var messagesContainer = this.elements.messagesContainer;
+            if (!messagesContainer) return;
+
+            // Remove any previous chat suggestions from the messages area
+            var prev = messagesContainer.querySelectorAll('.wwz-blizz-chat-suggestions');
+            for (var i = 0; i < prev.length; i++) {
+                prev[i].parentNode.removeChild(prev[i]);
+            }
+
+            // Find the last bot message's bubble (inside bubble so suggestions scroll with content)
+            var botMessages = messagesContainer.querySelectorAll('.wwz-blizz-message-bot');
+            var lastBot = botMessages[botMessages.length - 1];
+            if (!lastBot) return;
+            var bubble = lastBot.querySelector('.wwz-blizz-message-bubble');
+            if (!bubble) return;
+
             console.log('[WWZBlizz] Rendering', suggestions.length, 'chat suggestions:', suggestions);
+
+            var wrapper = document.createElement('div');
+            wrapper.className = 'wwz-blizz-chat-suggestions';
+
             suggestions.forEach(function(text) {
                 var btn = document.createElement('button');
                 btn.className = 'wwz-blizz-suggestion-btn';
                 btn.textContent = text;
                 btn.dataset.suggestion = text;
-                console.log('[WWZBlizz] Created suggestion button:', btn.className, btn.dataset.suggestion);
-                container.appendChild(btn);
+                wrapper.appendChild(btn);
             });
+
+            bubble.appendChild(wrapper);
+
+            // Re-evaluate fade effect after adding suggestions
+            setTimeout(function() {
+                if (bubble.scrollHeight > bubble.clientHeight) {
+                    var atBottom = (bubble.scrollTop + bubble.clientHeight) >= (bubble.scrollHeight - 5);
+                    bubble.classList.toggle('wwz-blizz-bubble-fade-bottom', !atBottom);
+                }
+            }, 50);
+
+            this.scrollToBottom();
         },
 
         /**
@@ -735,8 +777,17 @@
          * Clear suggestions
          */
         clearSuggestions: function() {
+            // Clear suggestions from the floating container (welcome suggestions / errors)
             if (this.elements.suggestionsContainer) {
                 this.elements.suggestionsContainer.innerHTML = '';
+            }
+            // Remove chat suggestions from the messages area
+            var messagesContainer = this.elements.messagesContainer;
+            if (messagesContainer) {
+                var items = messagesContainer.querySelectorAll('.wwz-blizz-chat-suggestions');
+                for (var i = 0; i < items.length; i++) {
+                    items[i].parentNode.removeChild(items[i]);
+                }
             }
         },
 
