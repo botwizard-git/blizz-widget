@@ -125,16 +125,8 @@
          * Start a new chat session
          */
         startNewSession: function() {
-            var CONFIG = EBB.CONFIG;
-            var UI = EBB.UI;
-            var StateManager = EBB.StateManager;
-
             console.log('[WWZBlizz] Starting new session...');
-
-            StateManager.reset();
-            UI.showWelcomeScreen();
-            UI.renderWelcomeSuggestions(CONFIG.defaultSuggestions);
-
+            EBB.Events.doNewConversation();
             console.log('[WWZBlizz] New session started');
         },
 

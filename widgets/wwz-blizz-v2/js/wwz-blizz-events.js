@@ -126,18 +126,16 @@
                 });
             }
 
-            // Chat suggestions (event delegation)
-            var chatSuggestionsEl = document.getElementById('wwz-blizz-suggestions-container');
-            if (chatSuggestionsEl) {
-                chatSuggestionsEl.addEventListener('click', function(e) {
-                    console.log('[WWZBlizz] Chat suggestions click detected', e.target);
-                    if (e.target.classList.contains('wwz-blizz-suggestion-btn')) {
+            // Chat suggestions (event delegation on messages container)
+            var messagesContainerEl = document.getElementById('wwz-blizz-messages-container');
+            if (messagesContainerEl) {
+                messagesContainerEl.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('wwz-blizz-suggestion-btn') &&
+                        e.target.closest('.wwz-blizz-chat-suggestions')) {
                         console.log('[WWZBlizz] Suggestion button clicked:', e.target.dataset.suggestion);
                         self.handleSuggestionClick(e.target.dataset.suggestion);
                     }
                 });
-            } else {
-                console.error('[WWZBlizz] Chat suggestions container not found during init');
             }
 
             // Scroll indicator click
@@ -957,9 +955,7 @@
             StateManager.setLoading(true);
             UI.showTypingIndicator();
             // Clear previous suggestions while waiting for new response
-            if (UI.elements.suggestionsContainer) {
-                UI.elements.suggestionsContainer.innerHTML = '';
-            }
+            UI.clearSuggestions();
 
             APIService.sendMessage(text)
                 .then(function(response) {
@@ -1040,7 +1036,7 @@
                         response.youtubeLinks.forEach(function(videoItem) {
                             var videoData = {
                                 url: typeof videoItem === 'string' ? videoItem : videoItem.url,
-                                title: (typeof videoItem === 'object' && videoItem !== null && videoItem.title) ? videoItem.title : 'YouTube Video'
+                                title: (typeof videoItem === 'object' && videoItem !== null && videoItem.title) ? videoItem.title : ''
                             };
                             combinedHtml += UI.createVideoWidget(videoData);
                             hasHtmlContent = true;
@@ -1065,16 +1061,15 @@
                         hasHtmlContent = true;
                     }
 
-                    // H. Add switchBot button (cross-widget redirect)
-                    if (response.switchBot) {
-                        combinedHtml += UI.createSwitchBotButton(response.switchBot, text);
-                        hasHtmlContent = true;
-                    }
-
                     // Create ONE message with all content
                     var botMessage = StateManager.addMessage(combinedHtml, false, { isHtml: hasHtmlContent || isHtml });
                     UI.renderMessage(botMessage);
                     StateManager.setHasAnswerInConversation(true);
+
+                    // H. Add switchBot button outside the message bubble
+                    if (response.switchBot) {
+                        UI.renderSwitchBot(response.switchBot, text);
+                    }
 
                     // Auto-scroll to show content when single shop + mapsLink
                     if (response.shopList && response.shopList.length === 1 && response.mapsLink) {
@@ -1203,6 +1198,8 @@
             StateManager.reset();
             UI.clearMessages();
             UI.clearSuggestions();
+            UI.clearInput();
+            UI.clearWelcomeInput();
             UI.showWelcomeScreen();
             UI.renderWelcomeSuggestions(CONFIG.defaultSuggestions);
 

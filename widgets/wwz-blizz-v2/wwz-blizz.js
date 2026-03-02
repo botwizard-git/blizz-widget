@@ -253,7 +253,7 @@
                         '</div>' +
                         
                         // Disclaimer
-                        '<p class="wwz-blizz-disclaimer">Alle Angaben ohne Gewähr. Hinweis auf die <a href="#">AGB\'s</a></p>' +
+                        '<p class="wwz-blizz-disclaimer">Alle Angaben ohne Gewähr. Hinweis auf die <a href="https://www.wwz.ch/-/media/rechtliches/agb/2506_rechtliches_telekom_agb_blizz_b2c.pdf" target="_blank">AGB\'s</a></p>' +
                         
                         // Bottom Tabs
                         '<div class="wwz-blizz-bottom-tabs">' +
@@ -415,6 +415,17 @@
             tab.addEventListener('click', function() {
                 document.querySelectorAll('.wwz-blizz-tab').forEach(function(t) { t.classList.remove('active'); });
                 this.classList.add('active');
+
+                if (this.getAttribute('data-tab') === 'themen') {
+                    var welcomeScreen = document.getElementById('wwz-blizz-welcome-screen');
+                    var categories = document.querySelector('.wwz-blizz-categories');
+                    if (welcomeScreen && categories) {
+                        var offset = categories.getBoundingClientRect().top
+                                   - welcomeScreen.getBoundingClientRect().top
+                                   + welcomeScreen.scrollTop;
+                        welcomeScreen.scrollTo({ top: offset, behavior: 'smooth' });
+                    }
+                }
             });
         });
 
