@@ -1509,7 +1509,7 @@
                     markers.push(marker);
 
                     // Info window content
-                    var infoContent = '<div style="font-family: Blizz, sans-serif; padding: 8px; min-width: 180px;">' +
+                    var infoContent = '<div style="font-family: Blizz, \'Inter\', sans-serif; padding: 8px; min-width: 180px;">' +
                         '<div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">' + pin.name + '</div>' +
                         '<div style="font-size: 12px; color: #666; margin-bottom: 6px;">' + pin.address + '</div>' +
                         '<div style="font-size: 11px; font-weight: 500; color: ' + (pin.openNow ? '#22c55e' : '#ef4444') + ';">' + statusText + '</div>' +
