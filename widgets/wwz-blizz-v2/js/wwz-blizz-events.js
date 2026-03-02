@@ -570,6 +570,12 @@
             UI.clearInput();
             UI.clearSuggestions();
 
+            // Re-lock Themen if open
+            var mainContent = document.getElementById('wwz-blizz-main');
+            var chatCategories = document.getElementById('wwz-blizz-chat-categories');
+            if (mainContent) mainContent.classList.remove('wwz-blizz-themen-open');
+            if (chatCategories) chatCategories.classList.add('wwz-blizz-hidden');
+
             StateManager.setLastUserMessage(text);
 
             var userMessage = StateManager.addMessage(text, true);
@@ -605,6 +611,12 @@
             if (EBB.UI.showChatScreen) {
                 EBB.UI.showChatScreen();
             }
+
+            // Re-lock Themen if open
+            var mainContent = document.getElementById('wwz-blizz-main');
+            var chatCategories = document.getElementById('wwz-blizz-chat-categories');
+            if (mainContent) mainContent.classList.remove('wwz-blizz-themen-open');
+            if (chatCategories) chatCategories.classList.add('wwz-blizz-hidden');
 
             StateManager.setLastUserMessage(text);
 

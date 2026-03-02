@@ -284,9 +284,81 @@
                                 'Neuer Chat' +
                             '</button>' +
                         '</div>' +
-                        
+
+                        // Chat Categories (shown when Themen is open in chat mode)
+                        '<div class="wwz-blizz-chat-categories wwz-blizz-hidden" id="wwz-blizz-chat-categories">' +
+                            '<div class="wwz-blizz-category-card">' +
+                                '<div class="wwz-blizz-category-header">' +
+                                    '<div class="wwz-blizz-category-icon">' +
+                                        '<img src="' + baseUrl + 'assets/icon-mobile.svg" alt="">' +
+                                    '</div>' +
+                                    '<div class="wwz-blizz-category-title">Mobile Daten</div>' +
+                                '</div>' +
+                                '<div class="wwz-blizz-category-items">' +
+                                    '<div class="wwz-blizz-category-item">' +
+                                        '<span class="wwz-blizz-category-item-text" data-xurrentarticle="485233">Festnetz</span>' +
+                                        '<div class="wwz-blizz-category-item-check">' +
+                                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+                                                '<polyline points="6 9 12 15 18 9"></polyline>' +
+                                            '</svg>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<div class="wwz-blizz-category-item">' +
+                                        '<span class="wwz-blizz-category-item-text">Festnetz</span>' +
+                                        '<div class="wwz-blizz-category-item-check">' +
+                                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+                                                '<polyline points="6 9 12 15 18 9"></polyline>' +
+                                            '</svg>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<div class="wwz-blizz-category-item">' +
+                                        '<span class="wwz-blizz-category-item-text">Festnetz</span>' +
+                                        '<div class="wwz-blizz-category-item-check">' +
+                                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+                                                '<polyline points="6 9 12 15 18 9"></polyline>' +
+                                            '</svg>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="wwz-blizz-category-card">' +
+                                '<div class="wwz-blizz-category-header">' +
+                                    '<div class="wwz-blizz-category-icon">' +
+                                        '<img src="' + baseUrl + 'assets/icon-internet.svg" alt="">' +
+                                    '</div>' +
+                                    '<div class="wwz-blizz-category-title">Internet</div>' +
+                                '</div>' +
+                                '<div class="wwz-blizz-category-items">' +
+                                    '<div class="wwz-blizz-category-item">' +
+                                        '<span class="wwz-blizz-category-item-text">Festnetz</span>' +
+                                        '<div class="wwz-blizz-category-item-check">' +
+                                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+                                                '<polyline points="6 9 12 15 18 9"></polyline>' +
+                                            '</svg>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<div class="wwz-blizz-category-item">' +
+                                        '<span class="wwz-blizz-category-item-text">Festnetz</span>' +
+                                        '<div class="wwz-blizz-category-item-check">' +
+                                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+                                                '<polyline points="6 9 12 15 18 9"></polyline>' +
+                                            '</svg>' +
+                                        '</div>' +
+                                    '</div>' +
+                                    '<div class="wwz-blizz-category-item">' +
+                                        '<span class="wwz-blizz-category-item-text">Festnetz</span>' +
+                                        '<div class="wwz-blizz-category-item-check">' +
+                                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' +
+                                                '<polyline points="6 9 12 15 18 9"></polyline>' +
+                                            '</svg>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+
                     '</div>' +
-                    
+
                     // Feedback Screen (overlay)
                     '<div class="wwz-blizz-feedback-screen wwz-blizz-hidden" id="wwz-blizz-feedback-screen">' +
                         '<div class="wwz-blizz-feedback-content">' +
@@ -412,7 +484,8 @@
 
         // Tab switching
         document.querySelectorAll('.wwz-blizz-tab').forEach(function(tab) {
-            tab.addEventListener('click', function() {
+            tab.addEventListener('click', function(e) {
+                e.stopPropagation();
                 document.querySelectorAll('.wwz-blizz-tab').forEach(function(t) { t.classList.remove('active'); });
                 this.classList.add('active');
 
@@ -425,6 +498,16 @@
                                    + welcomeScreen.scrollTop;
                         welcomeScreen.scrollTo({ top: offset, behavior: 'smooth' });
                     }
+                } else if (this.getAttribute('data-tab') === 'info') {
+                    // Toggle info tooltip on welcome screen
+                    var existingTooltip = this.querySelector('.wwz-blizz-info-tooltip');
+                    if (!existingTooltip) {
+                        existingTooltip = document.createElement('div');
+                        existingTooltip.className = 'wwz-blizz-info-tooltip';
+                        existingTooltip.textContent = 'Dies ist ein Info-Tooltip';
+                        this.appendChild(existingTooltip);
+                    }
+                    existingTooltip.classList.toggle('wwz-blizz-visible');
                 }
             });
         });
@@ -450,15 +533,27 @@
             });
         }
 
-        // Suggestion links
-        document.querySelectorAll('.wwz-blizz-suggestion-link').forEach(function(link) {
-            link.addEventListener('click', function() {
-                var text = this.getAttribute('data-suggestion');
-                if (text && window.WWZBlizz.Events) {
+        // Suggestion links (event delegation for robustness)
+        var suggestionLinksContainer = document.querySelector('.wwz-blizz-suggestion-links');
+        if (suggestionLinksContainer) {
+            suggestionLinksContainer.addEventListener('click', function(e) {
+                var link = e.target.closest('.wwz-blizz-suggestion-link');
+                if (!link) return;
+                var text = link.getAttribute('data-suggestion');
+                if (!text) return;
+
+                // Fill the search input with the suggestion text
+                var searchInput = document.getElementById('wwz-blizz-search-input');
+                if (searchInput) {
+                    searchInput.value = text;
+                }
+
+                // Trigger the send flow
+                if (window.WWZBlizz.Events) {
                     window.WWZBlizz.Events.handleSuggestionClick(text);
                 }
             });
-        });
+        }
 
         // Contact button
         var contactBtn = document.getElementById('wwz-blizz-contact-btn');
@@ -470,13 +565,48 @@
             });
         }
 
-        // Bottom tabs
+        // Bottom tabs — Themen toggle
         var themenTab = document.getElementById('wwz-blizz-bottom-themen');
         if (themenTab) {
             themenTab.addEventListener('click', function() {
-                if (window.WWZBlizz.UI && window.WWZBlizz.UI.showWelcomeScreen) {
-                    window.WWZBlizz.UI.showWelcomeScreen();
+                var mainContent = document.getElementById('wwz-blizz-main');
+                var chatCategories = document.getElementById('wwz-blizz-chat-categories');
+                if (!mainContent) return;
+
+                var isOpen = mainContent.classList.contains('wwz-blizz-themen-open');
+                if (isOpen) {
+                    mainContent.classList.remove('wwz-blizz-themen-open');
+                    if (chatCategories) chatCategories.classList.add('wwz-blizz-hidden');
+                } else {
+                    mainContent.classList.add('wwz-blizz-themen-open');
+                    if (chatCategories) chatCategories.classList.remove('wwz-blizz-hidden');
+                    setTimeout(function() {
+                        if (chatCategories) {
+                            chatCategories.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }, 50);
                 }
+            });
+        }
+
+        // Bottom tabs — Info tooltip
+        var infoTab = document.getElementById('wwz-blizz-bottom-info');
+        if (infoTab) {
+            var tooltip = document.createElement('div');
+            tooltip.className = 'wwz-blizz-info-tooltip';
+            tooltip.textContent = 'Dies ist ein Info-Tooltip';
+            infoTab.appendChild(tooltip);
+
+            infoTab.addEventListener('click', function(e) {
+                e.stopPropagation();
+                tooltip.classList.toggle('wwz-blizz-visible');
+            });
+
+            document.addEventListener('click', function() {
+                // Close all info tooltips
+                document.querySelectorAll('.wwz-blizz-info-tooltip').forEach(function(t) {
+                    t.classList.remove('wwz-blizz-visible');
+                });
             });
         }
 

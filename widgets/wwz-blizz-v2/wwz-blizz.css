@@ -28,7 +28,7 @@
     --border: #E5E5E5;
     --card-border: #E8E8E8;
     
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Blizz, 'Inter', sans-serif;
     font-size: 15px;
     line-height: 1.5;
     color: var(--text);
@@ -681,18 +681,18 @@ input:checked + .wwz-blizz-radio-custom {
 
 /* Fade effect for scrollable bot bubbles */
 .wwz-blizz-message-bubble.wwz-blizz-bubble-fade-bottom {
-    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 25px), transparent);
-    mask-image: linear-gradient(to bottom, black calc(100% - 25px), transparent);
+    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 20px), transparent);
+    mask-image: linear-gradient(to bottom, black calc(100% - 20px), transparent);
 }
 
 .wwz-blizz-message-bubble.wwz-blizz-bubble-fade-top {
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black 25px);
-    mask-image: linear-gradient(to bottom, transparent, black 25px);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 20px);
+    mask-image: linear-gradient(to bottom, transparent, black 20px);
 }
 
 .wwz-blizz-message-bubble.wwz-blizz-bubble-fade-top.wwz-blizz-bubble-fade-bottom {
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black 25px, black calc(100% - 25px), transparent);
-    mask-image: linear-gradient(to bottom, transparent, black 25px, black calc(100% - 25px), transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 20px, black calc(100% - 20px), transparent);
+    mask-image: linear-gradient(to bottom, transparent, black 20px, black calc(100% - 20px), transparent);
 }
 
 /* Bot message text styling */
@@ -1808,4 +1808,64 @@ input:checked + .wwz-blizz-radio-custom {
     font-size: 15px;
     color: var(--text-muted);
     line-height: 1.5;
+}
+
+/* ========================================
+   THEMEN OPEN STATE — unlocks scroll
+   ======================================== */
+.wwz-blizz-themen-open {
+    overflow-y: auto;
+}
+.wwz-blizz-themen-open .wwz-blizz-chat-screen {
+    overflow: visible;
+    flex: none;
+}
+.wwz-blizz-themen-open .wwz-blizz-messages-container {
+    overflow: visible;
+    flex: none;
+    padding-bottom: 24px;
+}
+.wwz-blizz-themen-open .wwz-blizz-floating-input-wrapper {
+    position: relative;
+}
+
+/* Chat categories (inside floating input, hidden by default) */
+.wwz-blizz-chat-categories {
+    width: 100%;
+    max-width: 520px;
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px 0 40px;
+}
+.wwz-blizz-themen-open .wwz-blizz-chat-categories {
+    display: flex;
+}
+
+/* ========================================
+   INFO TOOLTIP
+   ======================================== */
+.wwz-blizz-info-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2D2D2D;
+    color: #fff;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    white-space: nowrap;
+    z-index: 200;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.wwz-blizz-info-tooltip.wwz-blizz-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+.wwz-blizz-bottom-tab,
+.wwz-blizz-tab {
+    position: relative;
 }
